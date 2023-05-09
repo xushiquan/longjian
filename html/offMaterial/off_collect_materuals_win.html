@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>收料页</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<style>
+		.aui-bar-nav .aui-btn.aui-btn-outlined{
+			 border-width: 0px;
+ 			 background: transparent !important;
+ 			 border-color: none;
+		}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();">
+				<span class="aui-iconfont aui-icon-left"></span>返回
+			</a>
+			<div class="aui-title">
+				<a id="title"></a>
+			</div>
+			<a class="aui-pull-right aui-btn aui-btn-outlined slSubmit" >
+					<span>收料</span>
+	 		</a>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+		 apiready = function() {
+		 	var header = $api.byId('header');
+		 	$api.fixIos7Bar(header);
+			//接收打开win页面带过来的参数
+       var paramsName = api.pageParam.name;
+			var carNo = api.pageParam.carNo;
+			var header_h = $api.offset(header).h;
+			api.openFrame({
+				name : 'off_collect_materuals_frm',
+				url : 'off_collect_materuals_frm.html',
+				rect : {
+					x : 0,
+					y : header_h,
+					w : 'auto',
+					h : 'auto'
+				},
+				 pageParam:{
+				 	carNo:carNo
+				 }
+			});
+			var jsfun = 'submit();';
+			$('.slSubmit').click(function(){
+				api.execScript({
+					 name: 'collect_materuals_win',
+					 frameName: 'collect_materuals_frm',
+					 script: jsfun
+				});
+		 })
+		 };
+
+		 function changeTitle(arg){
+			 $("#title").text(arg);
+		 }
+	</script>
+</html>

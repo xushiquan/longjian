@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>homepage</title>
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+	<style>
+		@import url("../../templates/dot/dashcard.css");
+
+		.dashcard-data .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 20%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+
+		.dashcard-menu .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 10%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+	</style>
+</head>
+
+<body >
+	<script type="text/x-dot-template" id="templDashcard">
+		<!-- dashcard卡片窗体模板, src="../../template/dot/" -->
+		<section class="aui-card-list">
+			{{#def.templDashcardHeader || ''}}
+			<div class="aui-card-list-content-padded">
+				{{? it.body.data && it.body.data.length > 0 }}
+				{{#def.templDashcardData || ''}}
+				{{?}}
+				{{? it.body.menu && it.body.menu.length > 0 }}
+				{{#def.templDashcardMenu || ''}}
+				{{?}}
+			</div>
+		</section>
+
+		{{##def.templDashcardHeader:
+			<div class="aui-card-list-header">
+			{{? it.header.icon }}
+				<img class="header-icon" src="{{=it.header.icon}}"/>
+			{{??}}
+				<span class="header-icon-default"></span>
+			{{?}}
+			<label class="header-title">{{=it.header.title}}</label>
+			{{? it.header.url }}
+				<a class="header-right-btn aui-btn"
+					onclick="{{=it.header.url}}">
+					<span class="iconfont icon-gengduo"></span>
+				</a>
+			{{?}}
+			</div>
+		#}}
+
+		{{##def.templDashcardData:
+			<div class="dashcard-data">
+				<section class="aui-grid aui-margin-b-15">
+					{{~ it.body.data :p:i }}
+					{{? i%4 === 0 }}
+					<div class="aui-row aui-padded">
+					{{?}}
+						<div class="aui-col-xs-3">
+							{{? p.url && p.url != ''}}
+							<a href="{{=p.url}}">
+								{{#def.dataCardDataField}}
+							</a>
+							{{??}}
+								{{#def.dataCardDataField}}
+							{{?}}
+						</div>
+					{{? i%4 === 3 || i === it.body.data.length - 1 }}
+					</div>
+					{{?}}
+					{{~}}
+				</section>
+			</div>
+		#}}
+
+		{{##def.templDashcardMenu:
+			<div class="dashcard-menu">
+				<section class="aui-grid aui-margin-b-15">
+					{{~ it.body.menu :p:i }}
+					{{? i%4 === 0 }}
+					<div class="aui-row aui-padded">
+					{{?}}
+						<div class="aui-col-xs-3">
+							{{? p.badegCountField}}
+							<div class="aui-badge aui-hide" id="{{=p.badegCountField}}"></div>
+							{{?}}
+							{{? p.url && p.url != ''}}
+							<a onclick="openWin('{{=p.label}}', '{{=p.url}}')">
+								{{#def.menuCardMenuIcon || ''}}
+							</a>
+							{{??}}
+							<a onclick="alert('功能暂未上线，敬请期待')">
+								{{#def.menuCardMenuIcon || ''}}
+							</a>
+							{{?}}
+							<div class="aui-grid-label">{{=p.label}}</div>
+						</div>
+					{{? i%4 === 3 || i === it.length - 1 }}
+					</div>
+					{{?}}
+					{{~}}
+				</section>
+			</div>
+		#}}
+
+		{{##def.templDashcardFooter:
+			<div class="dashcard-footer">
+			</div>
+		#}}
+
+
+		<!-- Components -->
+
+		{{##def.dataCardDataField:
+			<div class="data-field">
+					{{? p.style && p.style != ''}}
+					<div class="data-value {{=p.style.substr(1)}}" id="{{=p.field}}">N/A</div>
+					{{??}}
+					<div class="data-value" id="{{=p.field}}">N/A</div>
+					{{?}}
+					{{? p.unit && p.unit != ''}}
+					<div class="data-unit">{{=p.unit}}</div>
+					{{?}}
+				</div>
+			<div class="aui-grid-label">{{=p.label}}</div>
+		#}}
+
+
+		{{##def.menuCardMenuIcon:
+			{{? p.icon && p.icon != ''}}
+				{{? p.icon.match("#.+")}}
+				<i class="menu-icon {{=p.icon.substr(1)}}"></i>
+				{{??}}
+				<i class="aui-iconfont menu-icon" src="{{=p.icon}}"></i>
+				{{?}}
+			{{??}}
+			<i class="aui-iconfont menu-icon default-icon"></i>
+			{{?}}
+		#}}
+	</script>
+	<div id="main">
+		<section class="aui-content-padded" id="dashcards">
+		</section>
+	</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script>
+	apiready = function () {
+
+		var dotDef = {
+			debug: true,
+		}
+		var templFile = loadFile('../../templates/dot/dashcard.html');
+		var templDashcard = doT.template(templFile.toString(), undefined, dotDef);
+		// var templDashcard = doT.template($api.dom('#templDashcard').innerHTML);
+
+		var dashCards = [{
+			header: {
+				title: '人员信息',
+				icon: '../../image/homepage/label_personnel_info_homepage_dashcard.png',
+				url: '../../worker/test.html',
+			},
+			body: {
+				data: [{
+					field: 'currentHeadCount',
+					label: '在场人数',
+					unit: '人',
+					url: '',
+				}, {
+					field: 'attendenceHeadCount',
+					label: '出勤人数',
+					unit: '人',
+					url: '',
+				}, {
+					field: 'attendenceRate',
+					label: '出勤率',
+					unit: '%',
+					url: '',
+				}, {
+					field: 'RegisteredHeadCount',
+					label: '花名册人数',
+					unit: '人',
+					url: '',
+				}],
+				menu: [],
+				text: '',
+			},
+			footer: {},
+		}, {
+			header: {
+				title: '质量信息',
+				icon: '../../image/homepage/label_quality_info_homepage_dashcard.png',
+				url: '',
+			},
+			body: {
+				data: [{
+					field: '',
+					label: '未销项问题',
+					unit: '',
+					style: '#red',
+					url: '',
+				}, {
+					field: '',
+					label: '超期',
+					unit: '',
+					style: '#red',
+					url: '',
+				}, {
+					field: '',
+					label: '验收申请',
+					unit: '%',
+					url: '',
+				}, {
+					field: '',
+					label: '今日验收',
+					unit: '',
+					url: '',
+				}]
+			}
+		}, {
+			header: {
+				title: '安全信息',
+				icon: '../../image/homepage/label_security_info_homepage_dashcard.png',
+				url: '',
+			},
+			body: {
+				data: [{
+					field: '',
+					label: '未销项问题',
+					unit: '',
+					style: '#red',
+					url: '',
+				}, {
+					field: '',
+					label: '超期',
+					style: '#red',
+					unit: '',
+					url: '',
+				}, {
+					field: '',
+					label: '验收申请',
+					unit: '%',
+					url: '',
+				}, {
+					field: '',
+					label: '今日验收',
+					unit: '',
+					url: '',
+				}]
+			}
+		}, {
+			header: {
+				title: '设备信息',
+				icon: '../../image/homepage/label_device_info_homepage_dashcard.png',
+				url: '',
+			},
+			body: {
+				menu: [{
+					label: '塔机',
+					badegCountField: 'craneMsgCount',
+					icon: '#iconfont icon-jianshe-3',
+					url: '',
+				}, {
+					label: '施工电梯',
+					badegCountField: 'elevatorMsgCount',
+					icon: '#iconfont icon-dianti01',
+					url: '',
+				}, {
+					label: '卸料平台',
+					badegCountField: 'unloadPlatformMsgCount',
+					icon: '#iconfont icon-guancai',
+					url: '',
+				}, {
+					label: '智能水表',
+					badegCountField: 'waterMeterMsgCount',
+					icon: '#iconfont icon-shuibiao_o',
+					url: '',
+				}, {
+					label: '环境监测',
+					badegCountField: 'environMonMsgCount',
+					icon: '#iconfont icon-huanjing',
+					url: '',
+				}, {
+					label: '雾炮喷淋',
+					badegCountField: 'dustReductionMsgCount',
+					icon: '#iconfont icon-shuipenlin',
+					url: '',
+				}]
+			}
+		}]
+		api.setPrefs({
+			key: 'dashCards',
+			value: dashCards,
+		})
+		api.getPrefs({
+			key: 'dashCards',
+		}, function (ret, err) {
+			var v = ret.value;
+			if (v === '') {
+				// 不存在该变量
+			} else {
+				var dashCards = JSON.parse(ret.value);
+				for (var i in dashCards) {
+					$('#dashcards').append(templDashcard(dashCards[i]));
+				}
+			}
+		});
+		// api.showProgress({
+		// 	style: 'default',
+		// 	animationType: 'fade',
+		// 	title: '努力加载中...',
+		// 	text: '先喝杯茶...',
+		// 	modal: true
+		// });
+		// UIScrollPicture = api.require('UIScrollPicture');
+		// fnOpen();
+		// var e = document.getElementById("main");
+		// var width = api.winHeight / 3 + 20;
+		// e.style.marginTop = width + "px";
+	};
+
+
+
+	// var UIScrollPicture;
+
+	// function fnOpen() {
+	// 	UIScrollPicture.open({
+	// 		rect: {
+	// 			x: 0,
+	// 			y: 0,
+	// 			w: api.winWidth,
+	// 			h: api.winHeight / 3
+	// 		},
+	// 		data: {
+	// 			paths: ['../../image/l1.png', '../../image/l2.png', '../../image/l3.png']
+	// 		},
+	// 		styles: {
+	// 			caption: {
+	// 				height: 35,
+	// 				color: '#E0FFFF',
+	// 				size: 13,
+	// 				bgColor: '#696969',
+	// 				position: 'bottom'
+	// 			},
+	// 			indicator: {
+	// 				align: 'center',
+	// 				color: '#FFFFFF',
+	// 				activeColor: '#DA70D6'
+	// 			}
+	// 		},
+	// 		placeholderImg: '../../image/l1.png',
+	// 		contentMode: 'scaleToFill',
+	// 		interval: 3,
+	// 		loop: true,
+	// 		fixedOn: 'homepage',
+	// 		fixed: false
+	// 	}, function (ret, err) {
+	// 		if (ret) {} else {}
+	// 	});
+	// };
+
+	function refresh() {
+
+	}
+
+	function loadFile(url) {
+		return api.readFile({
+			sync: true,
+			path: url || '',
+		}, function (ret, err) {
+			if (ret.status) {
+				api.alert({
+					msg: ret.data
+				});
+			} else {
+				api.alert({
+					msg: '错误码: ' + err.code + '错误信息' + err.msg
+				});
+			}
+		});
+	}
+</script>
+
+</html>

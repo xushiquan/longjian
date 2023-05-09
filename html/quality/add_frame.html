@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	  <link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css"/>
+    <style>
+        .img-container {
+            float: left;
+            width: 80px;
+            margin: 5px;
+            height: 100px;
+        }
+
+        .img-item {
+            line-height: 80px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .img-bottom-btn {
+            width: 78px;
+            height: 18px;
+            line-height: 18px;
+            font-size: 10px;
+            color: red;
+            border: 1px solid red;
+            border-radius: 1px;
+            display: inline;
+        }
+
+        .pic {
+            display: inline;
+        }
+
+        .pic img {
+            display: block;
+            margin: 9px;
+            width: 80px;
+            height: 80px;
+            float: left;
+        }
+
+        .aui-btn-row:after {
+            border: none;
+        }
+        .btn_{
+            width: 80%;
+            text-align: center;
+
+            border-radius: 3px;
+            height: 35px;
+            line-height: 35px;
+        }
+        .btn2{
+          color:#ffffff;
+          background:linear-gradient(to right,#23d2ff,#138dc5);
+        }
+        .xrequired:before{
+  				content:"* ";
+  				color:red;
+  			}
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+          <li class="aui-list-item">
+  	        <div class="aui-list-item-inner">
+  	            <div class="aui-list-item-label xrequired">
+  	                巡检日期
+  	            </div>
+  	            <div class="aui-list-item-input">
+  	                  <input class="aui-input" id="checkDate" type="text"  readonly="" placeholder="请输入巡检日期">
+  	            </div>
+  	          </div>
+  	      </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label xrequired">
+                    是否合格
+                </div>
+                <div class="aui-list-item-input" id="pass">
+                  <label><input class="aui-radio" type="radio" name="pass" value="1" checked=""> 合格</label>
+                  <label><input class="aui-radio" type="radio" name="pass" value="0"> 不合格</label>
+                </div>
+              </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    参与人员
+                </div>
+                <div class="aui-list-item-input" id="pass">
+                    <textarea style="height:20px;" class="aui-input" id="participant" type="text" placeholder="请输入参与人员"></textarea>
+              </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    检查部位
+                </div>
+                <div class="aui-list-item-input">
+                  <textarea style="height:20px;" class="aui-input" id="checkPoint" type="text" placeholder="请输入检查部位(简记)"></textarea>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label xrequired">
+                    检查内容
+                </div>
+                <div class="aui-list-item-input" >
+                  <textarea style="height:180px;" class="aui-input" id="checkContent" type="text" placeholder="请输入检查内容"></textarea>
+              </div>
+          </li>
+          <li class="aui-list-item noPass">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    理&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp由
+                </div>
+                <div class="aui-list-item-input" >
+                  <textarea style="height:150px;" class="aui-input" id="reasonNopass" placeholder="不合格理由(合格请忽略)"></textarea>
+              </div>
+              </div>
+          </li>
+          <li class="aui-list-item noPass">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label xrequired">
+                    是否整改
+                </div>
+                <div class="aui-list-item-input" >
+                  <label><input class="aui-radio" type="radio" name="amend" checked="" value="0"> 不需要整改</label>
+                  <label><input class="aui-radio" type="radio" name="amend" value="1"> 需要整改</label>
+              </div>
+              </div>
+          </li>
+          <li class="aui-list-item amend">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    整&nbsp&nbsp改&nbsp&nbsp人
+                </div>
+                <div class="aui-list-item-input" >
+                  <select  class='materiel' id="amendUserAccount">
+                    <option value="">请选择整改人</option>
+                  </select>
+                </div>
+          </li>
+          <li class="aui-list-item amend">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    整改期限
+                </div>
+                <div class="aui-list-item-input" >
+                  <input class="aui-input" id="amendTerm" type="text"  readonly="" placeholder="请输入整改期限">
+                </div>
+          </li>
+          <li class="aui-list-item amend">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    整改意见
+                </div>
+                <div class="aui-list-item-input" >
+                    <textarea style="height:180px;" class="aui-input" id="handlingSuggestion" type="text" placeholder="请输入整改意见"></textarea>
+                </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    上传附件
+                </div>
+                <div class="aui-list-item-input" >
+                  <div id="img_container"></div>
+                  <div class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openSetting();"></img>
+                  </div>
+                </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">
+                    小&nbsp&nbsp视&nbsp&nbsp频
+                </div>
+                <div class="aui-list-item-input" >
+                  <div id="video_container"></div>
+                  <div  class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openVideoSetting();"></img>
+                  </div>
+                </div>
+          </li>
+          <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                         <div class="btn_ btn2" onclick="send();">提交</div>
+                    </div>
+                </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/echo.js"></script>
+<script type="text/javascript" src="../../script/toucher.js"></script>
+<script src="../../script/LCalendar/js/LCalendar.js"></script>
+<script type="text/x-dot-template" id="img_tpl">
+    <div class="img-container">
+        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg(this.src,{{=it.isNet}});" />
+        <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+    </div>
+</script>
+<!-- 小视频 -->
+<script type="text/x-dot-template" id="video_tpl">
+    <div class="img-container">
+        <img class="img-item" data-video="{{=it.video_url}}" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showVideo('{{=it.video_url}}');" />
+        <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+    </div>
+</script>
+<script type="text/javascript">
+    var projectCode;
+    var projectName;
+    var username;
+    var files;
+    var token;
+    var lat = '';
+    var lng = '';
+    apiready = function() {
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret.value !== "") {
+                var loginInfo = JSON.parse(ret.value);
+                name = loginInfo.name;
+                username = loginInfo.account;
+                projectCode = loginInfo.projects.projectCode;
+                projectName = loginInfo.projects.projectName;
+                materialSelect(username,projectCode);
+            }
+        });
+        api.getPrefs({
+            key: 'userJwtToken'
+        }, function(ret, err){
+            if( ret ){
+                 token = ret.value;
+            }else{
+                 alert( JSON.stringify( err ) );
+            }
+        });
+
+        var bMap = api.require('bMap');
+        bMap.getLocation({
+            accuracy: '100m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                lat = ret.lat;
+                lng = ret.lon;
+            } else {
+                console.log(err.code);
+            }
+        });
+
+        var calendar = new LCalendar();
+        var calendar1 = new LCalendar();
+        calendar.init({
+          'trigger' : '#checkDate', //标签ID
+          'type' : 'date', //date 调出日期选择
+          'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+          'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+        });
+
+        calendar1.init({
+          'trigger' : '#amendTerm', //标签ID
+          'type' : 'date', //date 调出日期选择
+          'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+          'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+        });
+        $(".noPass").hide();
+        $(".amend").hide();
+        $('input[type=radio][name=pass]').change(function() {
+            if (this.value == '1') {
+                $(".noPass").hide();
+            } else if (this.value == '0') {
+                $(".noPass").show();
+            }
+        });
+        $('input[type=radio][name=amend]').change(function() {
+            if (this.value == '0') {
+                console.log("Allot Thai Gayo Bhai");
+                $(".amend").hide();
+            } else if (this.value == '1') {
+                console.log("Transfer Thai Gayo");
+                $(".amend").show();
+            }
+        });
+    };
+    //下拉选择
+    var materialSelect = function(username,projectCode){
+        var uRolesStr = $reiz.uRoles.toString();
+        $reiz.request.post($reiz.urls['safe'].getUsersByProject, {
+            body: {
+                "account": username,
+                "projectCode": projectCode,
+                "roles": uRolesStr,
+            }
+        }, function (ret, err) {
+            var data = ret.QualityAmend;
+            if(data){
+                for(var i = 0; i < data.length; i++){
+                    $('.materiel').append('<option value='+data[i].account+'>'+data[i].name+'</option>')
+                }
+            }
+        });
+    }
+
+    /*//下拉选择
+    var materialSelect = function(username){
+        $reiz.request.post($reiz.urls['safe'].getUsersByAccount, {
+            body: {
+                "account": username,
+            }
+        }, function (ret, err) {
+            var data = ret;
+            for(var i = 0; i < data.length; i++){
+                $('.materiel').append('<option value='+data[i].account+'>'+data[i].name+'</option>')
+            }
+        });
+    }*/
+
+    var openVideoSetting = function(){
+      isSettingOpen = true;
+      api.openFrame({
+          name: 'takepic_video',
+          url: './takepic_video.html',
+          bgColor: 'rgba(0,0,0,0.6)',
+          bounces: false,
+          rect: {
+              x: 0,
+              y: 0,
+              w: 'auto',
+              h: 'auto'
+          },
+          pageParam: {
+              winName: 'add_frame'
+          }
+      });
+    };
+    var setVideoInfo = function(path){
+      var video_tpl = doT.template($api.byId("video_tpl").text);
+      $api.byId("video_container").innerHTML += video_tpl({
+          img_url: '../../image/10.png',
+          video_url:path,
+          isNet: false
+      });
+
+      api.closeFrame({
+          name: 'takepic_video'
+      });
+    };
+    var setVideoInfos = function(pathsStr){
+        var paths = pathsStr.split(',');
+        var video_tpl = doT.template($api.byId("video_tpl").text);
+        for (var i in paths) {
+            $api.byId("video_container").innerHTML += video_tpl({
+                img_url: '../../image/10.png',
+                video_url:paths[i],
+                isNet: false
+            });
+        }
+        api.closeFrame({
+            name: 'takepic_video'
+        });
+    };
+
+    function showVideo(videoUrl){
+        api.openWin({
+          name: 'videoplay',
+          url: './videoplay_win.html',
+          pageParam: {
+            "videoUrl":videoUrl
+          }
+        })
+
+    }
+    function send() {
+        var checkDate = $('#checkDate').val();
+        if (checkDate == "") {
+            api.alert({
+                msg: "请选择巡查日期！"
+            });
+            return;
+        }
+        var checkContent = $('#checkContent').val();
+        if(checkContent && checkContent == ''){
+          api.alert({
+              msg: "请填写检查内容！"
+          });
+          return;
+        }
+        var isPass = $('input[type=radio][name=pass]:checked').val();
+        if(isPass && isPass == ''){
+          api.alert({
+              msg: "请选择是否通过！"
+          });
+          return;
+        }
+        var checkContent = $('#checkContent').val();
+        var isPass = $('input[type=radio][name=pass]:checked').val();
+        var isAmend = $('input[type=radio][name=amend]:checked').val();
+        var amendUserAccount = $('#amendUserAccount').val();
+        if (username == amendUserAccount) {
+            api.alert({
+                msg: "整改人不能是当前登录用户!"
+            });
+            return;
+        }
+        var amendTerm = $('#amendTerm').val();
+        var participant = $('#participant').val();
+        var checkPoint = $('#checkPoint').val();
+        var reasonNopass = $('#reasonNopass').val();
+        var handlingSuggestion = $('#handlingSuggestion').val();
+        var img = [];
+        var fileIdList = [];
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '加载中...',
+            text: '请稍后...',
+            modal: false
+        });
+        $('#img_container').find('img').each(function() {
+            if ($(this).attr('isNet') != "true") {
+                img.push($(this).attr('src'));
+            };
+        });
+        $('#video_container').find('img').each(function() {
+            if ($(this).attr('isNet') != "true") {
+                img.push($(this).data('video'));
+            };
+        });
+        if (img.length != 0) {
+            /*$reiz.request.post($reiz.urls['file'].upload_fujian, {
+              data: {
+              values: {
+                  masterType: 'bizCheck'
+              },
+              files: {
+                  file: img
+              }
+          }*/
+          api.ajax({
+				    url: $reiz.urls['file'].upload_fujian,
+				    method: 'post',
+            headers: {
+        		"Authorization": token
+        		},
+				    data: {
+				        values: {
+				            masterType: 'bizCheck'
+				        },
+				        files: {
+				            file: img
+				        }
+				    }
+            }, function(ret, err) {
+                if (ret.code == "200") {
+                    var retData = ret.data;
+                    var objData = JSON.parse(retData);
+                    for (var i = 0; i　 < objData.length; i++) {
+                        fileIdList.push(objData[i].fileId)
+                    }
+                    $reiz.request.post($reiz.urls['safe'].addCheck, {
+                        body: {
+                            "projectCode": projectCode,
+                            "account": username,
+                            "checkType": '2',
+                            "checkContent": checkContent,
+                            "isPass": isPass,
+                            "isAmend": isAmend,
+                            "checkDate": checkDate,
+                            "amendUserAccount":amendUserAccount,
+                            "amendTerm":amendTerm,
+                            "participant":participant,
+                            "checkPoint":checkPoint,
+                            "reasonNopass":reasonNopass,
+                            "handlingSuggestion":handlingSuggestion,
+                            "lat":lat,
+                            "lng":lng,
+                            "fileIdList": fileIdList
+                        }
+                    }, function(ret, err) {
+                      api.hideProgress();
+                        if (ret) {
+                            if (ret.code == '200') {
+
+                                api.alert({
+                                    msg: ret.msg
+                                }, function(ret, err) {
+                                  api.execScript({
+                                   name:'quality_check_win',
+                                   frameName : 'quality_check_frame',
+                                   script : 'getSafeDate();'
+                                 });
+                                    api.closeWin();
+                                });
+                            } else {
+                                api.alert({
+                                    msg: ret.msg
+                                });
+                            }
+                        } else {
+                            api.toast({
+                                msg: $reiz.error.getErrorMsg(err)
+                            });
+                        }
+                    })
+                } else {
+                    alert(JSON.stringify(err));
+                }
+            });
+        } else {
+          api.toast({
+              msg: "附件不能为空"
+          });
+
+          api.hideProgress();
+            /**$reiz.request.post($reiz.urls['safe'].addCheck, {
+                body: {
+                  "projectCode": projectCode,
+                  "checkType": '2',
+                  "checkContent": checkContent,
+                  "isPass": isPass,
+                  "isAmend": isAmend,
+                  "checkDate": checkDate,
+                  "amendUserAccount":amendUserAccount,
+                  "amendTerm":amendTerm,
+                  "participant":participant,
+                  "checkPoint":checkPoint,
+                  "reasonNopass":reasonNopass,
+                  "handlingSuggestion":handlingSuggestion,
+                  "lat":lat,
+                  "lng":lng,
+                  "fileIdList": fileIdList
+                }
+            }, function(ret, err) {
+                console.log(JSON.stringify(ret))
+                api.hideProgress();
+                if (ret) {
+                    if (ret.code == '200') {
+                        api.openWin({
+                            name: 'quality_check_win',
+                            url: './quality_check_win.html',
+                            animation: {
+                                type: 'none'
+                            },
+                            reload: true
+                        });
+                        api.alert({
+                            msg: ret.msg
+                        }, function(ret, err) {
+                            api.closeWin();
+                        });
+                    } else {
+                      api.toast({
+                          msg:  ret.msg
+                      });
+                      api.hideProgress();
+                    }
+                } else {
+                    api.toast({
+                        msg: $reiz.error.getErrorMsg(err)
+                    });
+                }
+            })*/
+        }
+    }
+
+    function openSetting() {
+        isSettingOpen = true;
+        api.openFrame({
+            name: 'takepic',
+            url: './takepic.html',
+            bgColor: 'rgba(0,0,0,0.6)',
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                winName: 'add_frame'
+            }
+        });
+    };
+    var setPicInfo = function(path) {
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        $api.byId("img_container").innerHTML += img_tpl({
+            img_url: path,
+            isNet: false
+        });
+
+        api.closeFrame({
+            name: 'takepic'
+        });
+
+    };
+    var setPicInfos = function(pathsStr) {
+        var paths = pathsStr.split(',');
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        for (var i in paths) {
+            $api.byId("img_container").innerHTML += img_tpl({
+                img_url: paths[i],
+                isNet: false
+            });
+        }
+        api.closeFrame({
+            name: 'takepic'
+        });
+    };
+    var setPicNet = function(paths) {
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        for (var i in paths) {
+            $api.byId("img_container").innerHTML += img_tpl({
+                img_url: $reiz.imgurls['huiyiThumbImgbase'].url + paths[i].storeName,
+                isNet: true,
+                id: paths[i].id
+            });
+        }
+    };
+
+    function removeImg(el, isNet, id) {
+        if (isNet) {
+            api.showProgress();
+            api.ajax({
+                url: $reiz.urls['file'].delete_fujian,
+                method: 'post',
+                timeout: 60,
+                dataType: 'json',
+                cache: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                data: {
+                    body: {
+                        "id": id
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.hideProgress();
+                    if (ret.code == '200') {
+                        el.parentNode.remove();
+                    } else {
+                        api.alert({
+                            msg: ret.msg
+                        });
+                        api.hideProgress();
+                    }
+                } else {
+                    api.toast({
+                        msg: $reiz.error.getErrorMsg(err)
+                    });
+                    api.hideProgress();
+                }
+            });
+        } else {
+            el.parentNode.remove();
+        }
+    }
+
+    function showImg(src, isNet) {
+        var photoBrowser = api.require('photoBrowser');
+        if (!isNet) {
+          var img_path = new Array();
+          img_path = src.split('/');
+          var fs = api.require('fs');
+          fs.copyTo({
+              oldPath: src,
+              newPath: 'fs://res'
+          },function(ret,err){
+              if (ret.status) {
+                  var fs_path= 'fs://res/'+img_path[img_path.length-1];
+                  photoBrowser.open({
+                    images : [fs_path],
+                    placeholderImg : 'widget://res/img/apicloud.png',
+                    bgColor : '#000'
+                  }, function(ret, err) {
+                    if (ret) {
+                      if (ret.eventType == 'click')
+                        photoBrowser.close();
+                    } else {
+                      alert(JSON.stringify(err));
+                    }
+                  });
+              }else {
+                  console.log(err.msg);
+              };
+          });
+        } else {
+            src = src.replace('thumb/thumb_', '/');
+            photoBrowser.open({
+                images: [src],
+                placeholderImg: 'widget://res/img/apicloud.png',
+                bgColor: '#000'
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.eventType == 'click')
+                        photoBrowser.close();
+                } else {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+    }
+
+    var removepic = function() {
+        document.getElementById("takepic").src = "../../image/common/camero.png";
+        var del = $api.byId("delpic");
+        $api.attr(del, 'style', 'display:none');
+    };
+</script>
+
+</html>

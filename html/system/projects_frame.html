@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui-1.1.7.css" />
+	<style>
+		body {}
+	</style>
+</head>
+
+<body>
+	<script id="template" type="text/x-dot-template">
+		{{ for(var i=0;i<it.length;i++) { }}
+			<li class="aui-list-view-cell" onclick="switchProject({{=i}})">
+			{{=it[i].projectName}}
+			</li>
+			{{ } }}
+		</script>
+	<ul class="aui-list-view"></ul>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+	var gongdilist = [];
+	var loginInfo;
+	apiready = function () {
+		api.showProgress({
+			style: 'default',
+			animationType: 'fade',
+			title: '努力加载中...',
+			text: '先喝杯茶...',
+			modal: false
+		});
+		api.getPrefs({
+			key: 'loginInfo'
+		}, function (ret, err) {
+			if (ret.value != null) {
+				loginInfo = JSON.parse(ret.value);
+				account = loginInfo.account;
+				sendAjax();
+			} else {
+				api.hideProgress();
+				api.toast({
+					msg: '请重新登录获取权限'
+				});
+			}
+		});
+	};
+
+	function sendAjax(dis_name) {
+		api.getPrefs({
+			key: 'userJwtToken'
+		}, function (ret, err) {
+			if (ret) {
+				api.ajax({
+					url: $reiz.urls['project'].querylist,
+					method: 'get',
+					headers: {
+						'Content-Type': 'application/json',
+						'token': ret.value
+					},
+					data: {
+						body: {
+							"account": account
+						}
+					}
+				}, function (ret, err) {
+					if (ret) {
+						var data = ret.data;
+						gongdilist = JSON.parse(data);
+						$(".aui-list-view").html(doT.template($("#template").text())(gongdilist));
+						api.hideProgress();
+
+					} else {
+						api.hideProgress();
+						api.toast({
+							msg: $reiz.error.getErrorMsg(err)
+						});
+					}
+				});
+			} else {
+				alert(JSON.stringify(err));
+			}
+		});
+	}
+
+	function switchProject(num) {
+		api.execScript({
+			name: 'main',
+			script: 'changeTitle("' + gongdilist[num].projectName + '");'
+		});
+		api.execScript({
+			name: 'main',
+			frameName: 'homepage',
+			script: 'refresh();'
+		});
+		loginInfo.projectCode = gongdilist[num].projectCode;
+		loginInfo.projectName = gongdilist[num].projectName;
+		api.setPrefs({
+			key: 'loginInfo',
+			value: loginInfo
+		});
+		api.closeWin();
+	}
+</script>
+
+</html>

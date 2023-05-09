@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>动态</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../icon/iconfont.css" />
+    </script>
+    <style type="text/css">
+      html,body{
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+      }
+      .iconfont{
+        height: 1.4rem;
+        font-size: 1.4rem;
+        line-height: 1.4rem;
+        color: #1492CA;
+      }
+      .divWrap{
+        position: relative;
+      }
+      .divWrap:after{
+        content: '';
+        position: absolute;
+        top: 35px;
+        width: 0px;
+        right: 0;
+        height: 20px;
+        border-right: 1px solid #B3B3B3;
+      }
+      .textInfo{
+        padding: 0.03rem 0.53rem;
+        font-size: 0.58rem;
+        line-height: 0.90rem;
+        margin-right: 0.67rem;
+        border-radius: 9px;
+      }
+      .danger{
+        border:1px solid #70D2F2;
+        background-color: #F0FAFF;
+        color:#20A7D6;
+      }
+      .changing{
+        border:1px solid #F86496;
+        background-color: #FEF3F5;
+        color:#F96496;
+      }
+      .changed{
+        border:1px solid #0FC1C3;
+        background-color: #EEFFFE;
+        color:#0FC1C3;
+      }
+      .textinnerWrap{
+        height: 3rem;
+        position: absolute;
+        font-size: 0.65rem;
+      }
+    </style>
+</head>
+<body>
+  <section class="aui-grid">
+    <div class="aui-row">
+        <div class="aui-col-xs-4 divWrap">
+             <div class="aui-badge">88</div>
+             <i class="icon iconfont">&#xe640;</i>
+             <div class="aui-grid-label">预警信息</div>
+         </div>
+         <div class="aui-col-xs-4 divWrap">
+           <div class="aui-badge">88</div>
+           <i class="icon iconfont">&#xe629;</i>
+           <div class="aui-grid-label">任务代办</div>
+       </div>
+       <div class="aui-col-xs-4 divWrap">
+           <div class="aui-badge">88</div>
+           <i class="icon iconfont">&#xe64d;</i>
+           <div class="aui-grid-label">最新消息</div>
+       </div>
+    </div>
+  </section>
+  <div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-media-list">
+    <li class="aui-list-item">
+        <div class="aui-info" style="padding: 10px 0 0 0px;">
+            <div class="aui-info-item">
+              <span class='textInfo danger'>一般隐患</span><span class='textInfo changing'>待整改</span>
+            </div>
+            <div class="aui-info-item">
+              <i style='color:#676767;' class="aui-iconfont aui-icon-right"></i>
+            </div>
+        </div>
+        <div class="aui-media-list-item-inner listItem">
+            <div class="aui-list-item-media">
+                <img src="../../image/demo1.png">
+            </div>
+            <div class="aui-list-item-inner ">
+                <div class="aui-list-item-text textinnerWrap aui-ellipsis-2">
+                    在下方我们加入了aui-info信息条
+                    在下方我们加入了aui-info信息条在下方我们加入
+                </div>
+                <div class="aui-list-item-text">
+                    2019-05-09
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="aui-list-item">
+        <div class="aui-info" style="padding: 10px 0 0 0px;">
+            <div class="aui-info-item">
+              <span class='textInfo changing'>严重隐患</span>
+              <span class='textInfo changed'>已整改</span>
+            </div>
+            <div class="aui-info-item">
+              <i style='color:#676767;' class="aui-iconfont aui-icon-right"></i>
+            </div>
+        </div>
+        <div class="aui-media-list-item-inner listItem">
+            <div class="aui-list-item-media">
+                <img src="../../image/demo1.png">
+            </div>
+            <div class="aui-list-item-inner ">
+                <div class="aui-list-item-text textinnerWrap aui-ellipsis-2">
+                    在下方我们加入了aui-info信息条
+                    在下方我们加入了aui-info信息条在下方我们加入
+                </div>
+                <div class="aui-list-item-text">
+                    2019-05-09
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+  </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript">
+    apiready = function () {
+    }
+</script>
+</html>

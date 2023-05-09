@@ -1,0 +1,839 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>AUI快速完成布局</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../icon/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css"/>
+    <style type="text/css">
+        .content-time{
+            width: 100%;
+            padding: 20px 20px;
+            text-align: left;
+            margin: auto; 
+            background-color: #ffffff;
+        }
+        .content-tdi{
+            display: inline-block;
+        }
+        .content-ui{
+            margin-top: 30px;
+            text-align: left;
+        }
+        ul{
+            width: 96%;
+            margin: auto;
+            color: #069fe6;
+        }
+        ul li{
+           list-style-type: disc;
+           list-style-position: inside;
+           margin-bottom: 20px;
+           color: #000;
+        }
+        ul li .content-di{
+            text-align: center;
+            width: 90%;
+            padding: 10px 16px;
+            border-radius: 10px;
+            margin: auto;
+            justify-content: center;
+            border: 1px solid #dddddd;
+            background-color: #ffffff;
+        }
+        .content-di-btn{
+            padding-top:30px;
+            text-align: center;
+            width: 90%;
+            margin: auto;
+        }
+        .clock-title{
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .clock-time{
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .btn_{
+            width: 60%;
+            text-align: center;
+            justify-content: center;
+            border-radius: 50px;
+            height: 50px;
+            line-height: 50px;
+        }
+        .btn2{
+          color:#ffffff;
+          background: #069fe6;
+	      margin: 0 auto;
+          margin-top: 6px;
+          margin-bottom: 6px;
+        }
+        .scope-tips{
+            color: #424040d0;
+            font-size: 14px;
+            padding: 14px 0px;
+        }
+        .disabled {
+            pointer-events: none;
+            background: #797a7a;
+            cursor: default;
+            opacity: 0.6;
+        }
+        .disabled-n {
+           display: none;
+        }
+        .disabled-y {
+           display: block;
+        }
+        .network-di{
+            float: left;
+        }
+        .network-di-y{
+            color: springgreen; 
+        }
+        .network-di-n{
+            color: #e31313; 
+        }
+        .clear{
+            clear:both;
+        }
+        .clock-time-inp{
+            width:200px;
+            border: 1px solid #dddddd;
+            display: inline-block;
+            padding-left: 10px;
+        }
+        .network-di-con{
+            display: inline-block;
+        }
+        .img-container {
+            float: left;
+            width: 80px;
+            margin: 5px;
+            height: 100px;
+        }
+        .img-item {
+            line-height: 80px;
+            width: 80px;
+            height: 80px;
+        }
+        .img-bottom-btn {
+            width: 78px;
+            height: 18px;
+            line-height: 18px;
+            font-size: 10px;
+            color: red;
+            border: 1px solid red;
+            border-radius: 1px;
+            display: inline;
+        }
+        .pic-pa{
+            margin: 0px auto;
+        }
+        .pic {
+            /* display: inline; */
+            /* display: block; */
+            margin: 0px auto;
+        }
+        .pic img {
+            margin: 9px;
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <div class="content-time">
+            <div class="aui-list-item-input" style="width:80%;float: left;">
+                日期&nbsp&nbsp&nbsp&nbsp<input class="aui-input clock-time-inp" id="swipeTime" type="text" readonly="" placeholder="请输入打卡时间" 
+                style="width: 200px;border: 1px solid #dddddd;display: inline-block;padding-left: 10px;font-weight: bold;"
+                oninput="loadTimeAttendanceRecord();">
+            </div>
+            <div class="aui-list-item-input network-di">
+                <!-- <img src="../../image/nvtabbar/home-hover.png" alt=""> -->
+                <div class="network-di-con" id="networkLogo"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <ul class="content-ui" id="message_list">
+            <li>
+                <div class="clock-title">上班</div>
+                <div class="content-di content-on-work">
+                    <div class="clock-time" id="onWorkTime" statusC="-1"></div>
+                    <div class="btn_ btn2 disabled" onclick="oWorkClockSendSubmit('01');" id="onWorkClockBtn">上班打卡</div>
+                    <div class="scope-tips" id="onWorkTips"></div>
+                    <div class="pic-pa">
+                        <div id="img_container01"></div>
+                        <div class="pic" id="onTakepicDi">
+                            <img id="onTakepic" src="../../image/common/camero.png"  onclick="openSetting('01');"></img>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            <li>
+                <div class="clock-title">下班</div>
+                <div class="content-di content-off-work">
+                    <div class="clock-time" id="offWorkTime" statusC="-1"></div>
+                    <div class="btn_ btn2 disabled" onclick="oWorkClockSendSubmit('02');" id="offWorkClockBtn">下班打卡</div>
+                    <div class="scope-tips" id="offWorkTips"></div>
+                    <div class="pic-pa">
+                        <div id="img_container02"></div>
+                        <div class="pic" id="offTakepicDi">
+                            <img id="onTakepic" src="../../image/common/camero.png"  onclick="openSetting('02');"></img>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </li>
+        </ul>
+        <!-- <div class="content-di-btn">
+            <div class="btn_ btn2" onclick="deleteDbOfflineAttendance();">清理本地考勤数据</div>
+        </div> -->
+        <div class="content-di-btn">
+            <div class="btn_ btn2 disabled" onclick="syncAttendanceUpDbDataToCloud();" id="handSyncBtn">手动同步<span id="attendanceDbCount">0</span></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script src="../../script/LCalendar/js/LCalendar.js"></script>
+<script type="text/javascript" src="../../script/db-api.js"></script>
+<script type="text/javascript" src="../../script/offline-sync-attendance.js"></script>
+<script type="text/x-dot-template" id="img_tpl">
+    <div class="img-container">
+        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg(this.src,{{=it.isNet}});"/>
+        <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+    </div>
+</script>
+<script type="text/x-dot-template" id="img_tpl_show">
+    <div class="img-container">
+        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg(this.src,{{=it.isNet}});"/>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var loginInfo;
+    var token;
+    var account;
+    var idCardNumber;
+    var projectCode;
+    var pageIndex;
+    var pageSize = 10;
+    var arrayLength;
+    var datas = [];
+    var dataTimer = null;
+    var position10Timer = null;
+    var networkTimer = null;
+    var aMapLBS; // 高德定位模块
+    var punchClockData = {};
+    var judgeBoo = false;
+    var currTimeV;
+    var currDayTime;
+    var currLonlat=[];
+    var currFenceName="";
+    //statusC:-1:未开始；0未打卡；1已打卡；
+    var statusNetWork;
+    var statusNetWorkMiddle = false;
+    var db;
+    var directionTemp;//方向变量
+
+    $("#onWorkClockBtn").hide();
+    $("#offWorkTime").hide();
+    $("#offWorkClockBtn").hide();
+    $("#onTakepicDi").hide();
+    $("#offTakepicDi").hide();
+
+    apiready = function() {
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret) {
+                loginInfo = JSON.parse(ret.value);
+                account = loginInfo.account;
+                projectCode = loginInfo.projects.projectCode;
+                idCardNumber = loginInfo.idCardNumber;
+
+                statusNetWork = $api.getStorage('connectionStatus');
+                db = api.require('db');
+                
+                initSwipeTime();
+                initAMapLBS();
+                getCurrentLocation();
+                loadNetwork(statusNetWork);
+                initLoadAttendance();
+                loadNetworkTimer();
+            } else {
+                alert("请退出重新登录");
+            }
+        });
+        api.getPrefs({
+            key: 'userJwtToken'
+        }, function(ret, err){
+            if( ret ){
+                 token = ret.value;
+                 $api.rmStorage('token')
+                 $api.setStorage('token',token);
+            }else{
+            }
+        });
+    }
+
+    function initSwipeTime(){
+        currDayTime = new Date().Format("yyyy-MM-dd");
+        var calendar = new LCalendar();
+        calendar.init({
+          'trigger' : '#swipeTime', //标签ID
+          'type' : 'date', //date 调出日期选择
+          'minDate' : (new Date().getFullYear() - 1) + '-' + 1 + '-' + 1, //最小日期
+          'maxDate' : (new Date().getFullYear() + 0) + '-' + (new Date().Format("MM")) + '-' + (new Date().Format("dd")) //最大日期
+        });
+        $("#swipeTime").val(currDayTime);
+    }
+
+    //本地
+    function handSyncAttendanceDbCount(){
+        var db = api.require('db');
+        var records = queryMain.attendanceSyncListDbData(db,"0");
+        if(records.length>0){
+            $("#attendanceDbCount").html(records.length);
+            $("#handSyncBtn").removeClass("disabled");
+        }else{
+            $("#attendanceDbCount").html(0);
+            $("#handSyncBtn").addClass("disabled");
+        }
+    }
+
+    //初始化加载考勤数据
+    function initLoadAttendance(){
+        if(statusNetWork == "1" || statusNetWork == "2"){//有网
+            getOnCurrPunchClockData();
+        }else{//无网
+            queryOffDbPunchClockData();
+        }
+    }
+
+    //加载网络标识
+    function loadNetwork(){//有网√
+        handSyncAttendanceDbCount();
+        statusNetWork = $api.getStorage('connectionStatus');
+        if(statusNetWork == "1" || statusNetWork == "2"){
+            if(statusNetWorkMiddle){
+                var dataLength=Object.keys(punchClockData)
+                if(dataLength>0){
+                    setTimeout(function(){
+                        getOnCurrPunchClockData();
+                    },12000);
+                }
+                statusNetWorkMiddle = false;
+            }
+            $("#networkLogo").html("√有网");
+            $("#networkLogo").removeClass("network-di-n");
+            $("#networkLogo").addClass("network-di-y");
+            $("#swipeTime").removeClass("disabled");
+            $("#swipeTime").css("background-color","#ffffff");
+            $("#onTakepicDi").hide();
+            $("#offTakepicDi").hide();
+            $("#handSyncBtn").show();
+        }else{
+            $("#networkLogo").html("×无网");
+            $("#networkLogo").removeClass("network-di-y");
+            $("#networkLogo").addClass("network-di-n");
+            $("#swipeTime").addClass("disabled");
+            $("#swipeTime").css("background-color","#d1d5d5");
+            statusNetWorkMiddle = true;
+            currFenceName = "离线打卡";
+            $("#handSyncBtn").hide();
+        }
+    }
+
+    //开启定时器判断网络（有/无）
+    function loadNetworkTimer(){
+        if(!networkTimer){
+            loadNetwork();
+            networkTimer = setInterval(()=>{
+                loadNetwork();
+            },8000)
+        }
+    }
+
+    //加载高德地图
+    function initAMapLBS() { // 定位相关设置
+        aMapLBS = api.require('aMapLBS');
+        aMapLBS.updateLocationPrivacy({ // 设置定位类隐私权限
+            privacyAgree: 'didAgree',
+            privacyShow: 'didShow',
+            containStatus: 'didContain'
+        });
+        aMapLBS.configManager({ // 配置定位信息
+            accuracy: 'hundredMeters',
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                //先取消其他定位
+			    aMapLBS.stopUpdatingLocation();
+                //console.log('定位管理器初始化成功！');
+            }
+        });
+    }
+
+    //加载gps模块
+    function getCurrentLocation() {
+        let that = this
+        var gpsmodel = api.require('gpsState'); // gps状态模块
+        gpsmodel.gpsstate(function(ret) {
+            if (!ret.gps) {
+                api.confirm({
+                    message: '定位未开启，是否开启',
+                    buttons: ['确定', '取消']
+                }, function(ret) {
+                    if (ret.buttonIndex == 1) {
+                        gpsmodel.opengps();
+                    }
+                });
+                return
+            }else{
+                $reiz.nativePermission('location', '定位', load10IntervalPosition)
+            }
+        });
+    };
+
+    //10秒定位一次
+    function load10IntervalPosition(){
+        if(!position10Timer){
+            //loadPosition();
+            position10Timer = setInterval(()=>{
+                loadNetwork();
+                if(statusNetWork == "1" || statusNetWork == "2"){
+                    loadPosition();
+                }else{
+                    queryOffDbPunchClockData();
+                }
+            },8000)
+        }
+    } 
+
+    //获取经纬度-有网络下
+    function loadPosition() {
+        aMapLBS.singleLocation({ // 单次定位;连续定位 startLocation
+            timeout: 10
+        }, function(ret, err) {
+            if (ret.status) {
+                var lonlat = [ret.lon, ret.lat];
+                currLonlat = lonlat;
+                loadJudgeClockScope(lonlat);
+            }
+            if (err) {
+                alert("error",JSON.stringify(err.msg))
+            }
+        });
+    }
+
+    //判断是否进入范围
+    function loadJudgeClockScope(lonlat){
+        $reiz.request.post($reiz.urls['attendancePunchFence'].judgeCurrPointInPunchFence, {
+            body: {
+                "projectCode": projectCode,
+                "lon": lonlat[0], 
+                "lat": lonlat[1]
+                // "lon":  130.288134,
+                // "lat":  47.362092 
+            }
+        }, function(ret, err) {
+            if(ret){
+                var data = ret.data;
+                var dataR = JSON.parse(data);
+                judgeBoo = dataR.reBoo;
+                var fenceCount = dataR.fenceCount;
+                var fenceName = dataR.fenceName;
+                currFenceName = fenceName;
+
+                if($("#onWorkTime").attr("statusC") == "0"){
+                    if(fenceCount < 1){
+                        $("#onWorkTips").html("无法打卡，请设置范围");
+                    }else{
+                        if(judgeBoo){
+                            $("#onWorkClockBtn").removeClass("disabled");
+                            $("#onWorkTips").html("已进入打卡范围："+fenceName);
+                        }else{
+                            $("#onWorkClockBtn").addClass("disabled");
+                            $("#onWorkTips").html("未进入打卡范围");
+                        }
+                    }
+                    
+                }else if($("#onWorkTime").attr("statusC") == "-1"){
+                    $("#onWorkTime").hide();
+                    $("#onWorkClockBtn").addClass("disabled");
+                }else if($("#onWorkTime").attr("statusC") == "1"){
+                    $("#offWorkTips").html("未进入打卡范围");
+                }
+
+                if($("#offWorkTime").attr("statusC") == "0"){
+                    if(fenceCount < 1){
+                        $("#offWorkTips").html("无法打卡，请设置范围");
+                    }else{
+                        if(judgeBoo){
+                            $("#offWorkClockBtn").removeClass("disabled");
+                            $("#offWorkTips").html("已进入打卡范围："+fenceName);
+                        }else{
+                            $("#offWorkClockBtn").addClass("disabled");
+                            $("#offWorkTips").html("未进入打卡范围");
+                        }
+                    }
+                }else if($("#offWorkTime").attr("statusC") == "-1"){
+                    $("#offWorkTime").hide();
+                    $("#offWorkClockBtn").addClass("disabled");
+                }
+            }
+        });
+    }
+
+    //加载当前打卡记录
+    function loadTimeAttendanceRecord(){
+        if(statusNetWork == "1" || statusNetWork == "2"){//有网
+            getOnCurrPunchClockData();
+        }else{//无网
+        }
+    }
+
+    //加载打卡数据
+    function getOnCurrPunchClockData() {
+        var sTime = $("#swipeTime").val();
+
+        if(currDayTime==sTime){
+            loadIntervalCurrTime();
+            load10IntervalPosition();
+        }else{
+            cancleClockTimer();
+        }
+
+        $reiz.request.post($reiz.urls['attendance'].selectCurrAttendance, {
+            body: {
+                "account": account,
+                "proCode": projectCode,
+                "attendanceDate": sTime//'2023-03-19'
+            }
+        }, function(ret, err) {
+            if (ret && ret.code == '200'){
+                var data1 = JSON.parse(ret.data);
+                if(data1){
+                    punchClockData = data1;
+                }else{
+                    punchClockData = {};
+                }
+            }
+
+            if(punchClockData.hasOwnProperty("01")){//上班
+                var currData = punchClockData["01"]
+                var swipeTime = currData.swipeTime.substr(10, currData.swipeTime.length);
+                $("#onWorkTime").show();
+                $("#onWorkTime").attr("statusC","1");
+                $("#onWorkTime").css("font-size","20px;");
+                $("#onWorkTime").html("已打卡&nbsp"+ swipeTime);
+                $("#onWorkClockBtn").hide();
+                $("#onWorkTips").html(currData.fenceName);
+                $(".content-on-work").css("text-align","left");
+                
+                addAndEmptyOnSetPic(currData,"01");
+                $("#offWorkTime").attr("statusC","0");
+            }else{
+                addAndEmptyOnSetPic("","01");
+                if(currDayTime==sTime){
+                    $(".content-on-work").css("text-align","center");
+                    $("#onWorkTime").attr("statusC","0");
+                    $("#onWorkTime").show();
+                    $("#onWorkClockBtn").show();
+                    $("#onWorkTips").html("未进入打卡范围");
+
+                    $("#offWorkTime").attr("statusC","-1")
+                }else{
+                    $(".content-on-work").css("text-align","left");
+                    $("#onWorkTime").attr("statusC","-1");
+                    $("#onWorkTime").hide();
+                    $("#onWorkClockBtn").hide();
+                    $("#onWorkTips").html("当日未打卡");
+                }
+            }
+
+            if(punchClockData.hasOwnProperty("02")){//下班
+                var currData = punchClockData["02"]
+                var swipeTime = currData.swipeTime.substr(10, currData.swipeTime.length);
+                $("#offWorkTime").attr("statusC","1");
+                $("#offWorkTime").css("font-size","20px;");
+                $("#offWorkTime").html("已打卡&nbsp"+ swipeTime);
+                $("#offWorkTime").show();
+                $("#offWorkClockBtn").hide();
+                $("#offWorkTips").html(currData.fenceName);
+                $(".content-off-work").css("text-align","left");
+
+                addAndEmptyOnSetPic(currData,"02");
+                cancleClockTimer();
+            }else{
+                addAndEmptyOnSetPic("","02");
+                if(currDayTime==sTime){
+                    $(".content-off-work").css("text-align","center");
+                    if($("#offWorkTime").attr("statusC") == "0"){
+                        $("#offWorkTime").show();
+                        $("#offWorkClockBtn").show();
+                        $("#offWorkTips").html("未进入打卡范围");
+                    }else{
+                        $("#offWorkTime").hide();
+                        $("#offWorkClockBtn").hide();
+                        $("#offWorkTips").html("未开始");
+                    }
+                }else{
+                    $(".content-off-work").css("text-align","left");
+                    $("#offWorkTime").attr("statusC","-1");
+                    $("#offWorkTime").hide();
+                    $("#offWorkClockBtn").hide();
+                    $("#offWorkTips").html("当日未打卡");
+                }
+            }
+        });
+    }
+
+    //添加图片
+    function addAndEmptyOnSetPic(currData,dit){
+        if(currData != "" && currData.files.length >0){
+            var Img1 = currData.files
+            setPicNet(Img1,'img_container'+currData.direction);
+        }else{
+            $("#img_container"+dit).empty();
+        }
+    }
+    
+    //上班打卡/下班打卡
+    function oWorkClockSendSubmit(drct){
+        offlineAttendanceSubmit(drct);
+    }
+
+    //在线打卡
+    function onlineAttendanceSubmit(drct,dbid){
+        $reiz.request.post($reiz.urls['attendance'].addOneWorkerAttendance, {
+            body: {
+                "account": account,
+                "projectCode": projectCode,
+                "swipeTime": $("#swipeTime").val()+" "+ currTimeV,
+                "direction": drct,
+                "lng": currLonlat[0],
+                "lat": currLonlat[1],
+                "address": "",
+                "fenceName": currFenceName,
+                "dbid":dbid,
+                "fileIdList": []
+            }
+        }, function(ret, err) {
+            if (ret.code == '200'){
+                getOnCurrPunchClockData();
+            }
+        });
+    }
+
+    //停止定时器
+    function cancleClockTimer(){
+        clearInterval(dataTimer);
+        clearInterval(position10Timer);
+        dataTimer = null;
+        position10Timer = null;
+    }
+
+    //当前时间
+    function getCurrTime(){
+        var time = new Date().Format("HH:mm:ss");
+        currTimeV = time;
+        if($("#onWorkTime").attr("statusC") == "0"){
+            $("#onWorkTime").show();
+            $("#onWorkTime").html(time);
+        }
+        if($("#offWorkTime").attr("statusC") == "0"){
+            $("#offWorkTime").show();
+            $("#offWorkTime").html(time);
+        }
+    }
+
+    //开始周期时间
+    function loadIntervalCurrTime(){
+        if(!dataTimer){
+            getCurrTime();
+            dataTimer = setInterval(()=>{
+                getCurrTime();
+            },1000)
+        }
+    }
+
+    function time(time) {
+        var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+        return date.toJSON().substr(0, 10).replace('T', ' ');
+
+    }
+
+    function openSetting(direct) {
+        directionTemp = direct;
+        isSettingOpen = true;
+        api.openFrame({
+            name : 'takepic_clock',
+            url : './takepic_clock.html',
+            bgColor : 'rgba(0,0,0,0.6)',
+            bounces : false,
+            rect : {
+                x : 0,
+                y : 0,
+                w : 'auto',
+                h : 'auto'
+            },
+            pageParam : {
+                winName : 'punch_clock_frm'
+            }
+        });
+    };
+
+    //设置编辑图片
+    var setPicInfo = function(path) {
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        $api.byId("img_container"+directionTemp).innerHTML += img_tpl({
+            img_url : path,
+            isNet : false
+        });
+
+        api.closeFrame({
+            name : 'takepic_clock'
+        });
+
+    };
+
+    //查看图片
+    function showImg(src, isNet) {
+        var photoBrowser = api.require('photoBrowser');
+        if (!isNet) {
+            var img_path = new Array();
+            img_path = src.split('/');
+            var fs = api.require('fs');
+            fs.copyTo({
+                oldPath: src,
+                newPath: 'fs://res'
+            },function(ret,err){
+                if (ret.status) {
+                    var fs_path= 'fs://res/'+img_path[img_path.length-1];
+                    photoBrowser.open({
+                        images : [fs_path],
+                        placeholderImg : 'widget://res/img/apicloud.png',
+                        bgColor : '#000'
+                    }, function(ret, err) {
+                        if (ret) {
+                            if (ret.eventType == 'click')
+                                photoBrowser.close();
+                        } else {
+                            alert(JSON.stringify(err));
+                        }
+                    });
+                }else {
+                    console.log(err.msg);
+                };
+            });
+
+		} else {
+            src = src.replace('thumb/thumb_', '/');
+            photoBrowser.open({
+                images : [src],
+                placeholderImg : 'widget://res/img/apicloud.png',
+                bgColor : '#000'
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.eventType == 'click')
+                        photoBrowser.close();
+                } else {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+	}
+
+    //删除图片
+    function removeImg(el, isNet, id) {
+        if (isNet) {
+            api.showProgress();
+            api.ajax({
+                url : $reiz.urls['file'].delete_fujian,
+                method : 'post',
+                timeout : 60,
+                dataType : 'json',
+                cache : true,
+                headers: {'Content-Type':'application/json','Authorization':token},
+                data : {
+                    body : {
+                        "id" : id
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.hideProgress();
+                    if (ret.code == '200') {
+                        el.parentNode.remove();
+                    } else {
+                        api.alert({
+                            msg : ret.msg
+                        });
+                        api.hideProgress();
+                    }
+                } else {
+                    api.toast({
+                        msg : $reiz.error.getErrorMsg(err)
+                    });
+                    api.hideProgress();
+                }
+            });
+        } else {
+            el.parentNode.remove();
+        }
+    }
+
+    //回显图片
+    function setPicNet(paths,domId) {
+        var img_tpl_show = doT.template($api.byId("img_tpl_show").text);
+        $("#"+domId).empty();
+        for (var i in paths) {
+            $api.byId(domId).innerHTML += img_tpl_show({
+                img_url: paths[i].path,
+                isNet: false,
+                id: paths[i].id,
+                lookImg:paths[i].path
+            });
+        }
+    };
+
+    //获取定位地址
+    function loadAddress() {
+        aMapLBS.singleAddress({
+            timeout: 10
+        }, function(ret2, err2) {
+            if (ret2.status) {
+                alert(JSON.stringify(ret2));//获取所属兴趣点名称
+                //var address = ret2.address.AOIName;
+                //$("#position").html(ret2.address.AOIName);
+            }
+        });
+    }
+
+    function getTest(){
+        judgeBoo = true;
+    }
+
+    function getTest2(){
+        judgeBoo = false;
+    }
+
+    
+</script>
+
+</html>

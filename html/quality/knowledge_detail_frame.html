@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <script src='../../script/rem.js'></script>
+    <link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+    <style>
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .wrap {
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        overflow: auto;
+    }
+
+    .list ul li {
+        width: 100%;
+        height:45px;
+        line-height: 45px;
+        font-size: 0.3rem;
+    }
+    .list ul li  span{
+      display: inline-block;
+    }
+    .spanName{
+      color:#666666;
+      margin:0 0.2rem;
+    }
+    .spanCont{
+        color:#333333;
+    }
+    .fjTit{
+      width: 100%;
+      height:45px;
+      line-height: 45px;
+      border-top:3px solid #E8F6FF;
+      color:#666666;
+      font-size: 0.3rem;
+      padding:0 0.2rem;
+    }
+    .fileList ul li{
+      width: 100%;
+      height:45px;
+      line-height: 45px;
+      font-size: 0.2rem;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      border-bottom: 1px solid #92d6ee;
+    }
+    .lText{
+      flex:1;
+      font-size: 0.27rem;
+      padding-left: 0.2rem;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+    }
+
+    .rIcon{
+      width: 50px;
+      font-size: 0.27rem;
+      text-align: center;
+      line-height:50px;
+      color:#02B0E9;
+    }
+    </style>
+</head>
+
+<body>
+  <div class="wrap">
+      <div class='list'>
+          <ul class='ulList'>
+            <li>
+              <span class='spanName'>编&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp码</span>
+              <span class='spanCont code'></span>
+            </li>
+            <li>
+              <span class='spanName'>制度名称</span>
+              <span class='spanCont name'></span>
+            </li>
+            <li>
+                <span class='spanName '>制度范围</span>
+                <span class='spanCont systemRange'></span>
+            </li>
+            <li>
+              <span class='spanName '>所属分类</span>
+              <span class='spanCont type'></span>
+            </li>
+          </ul>
+      </div>
+      <div class='fjTit'>附件列表</div>
+      <div class='fileList'>
+        <ul class='liList'>
+
+        </ul>
+      </div>
+  </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+    var fileList;
+    apiready = function() {
+        var element = api.pageParam.element;
+        $(".code").text(element.code);
+        $(".name").text(element.name);
+        var systemRange = element.systemRange;
+        switch (systemRange) {
+            case '01':
+                $(".systemRange").text("行业制度");
+                break;
+            case '02':
+                $(".systemRange").text("本公司制度");
+                break;
+            default:
+                $(".systemRange").text("行业制度");
+        }
+        var type = element.type;
+        switch (type) {
+            case '01':
+                $(".type").text("安全生产责任知识");
+                break;
+            case '02':
+                $(".type").text("安全生产投入知识");
+                break;
+            case '03':
+                $(".type").text("文件和档案管理知识");
+                break;
+            case '04':
+                $(".type").text("隐患管理知识");
+                break;
+            case '05':
+                $(".type").text("危险源管理知识");
+                break;
+            default:
+                $(".type").text("安全生产责任知识");
+        }
+        fileList = element.files;
+        $('.liList').empty();
+        if(fileList.length>0){
+           for(var i = 0; i < fileList.length;i++){
+     				var html =  "<li  onclick='download("+i+")'>" +
+     									 "<span class='lText'>"+fileList[i].fileName+"</span>" +
+     									 "<span class='rIcon'>" +
+     									 "<i class=' iconfont icon-xiazai-'></i>" +
+     									 "</span></li>"
+      				$('.liList').append(html);
+     			 }
+
+        }
+    };
+    function download(index){
+      var size = fileList[index].size;
+      api.confirm({
+         title: '下载附件',
+         msg: '是否下载',
+         buttons: ['确定', '取消']
+     }, function(ret, err) {
+         var button = ret.buttonIndex;
+         if (button == "1") {
+             var url;
+             url = fileList[index].path;
+             var downloadManager = api.require('downloadManager2');
+             api.showProgress({
+                 style: 'default',
+                 animationType: 'fade',
+                 title: '努力加载中...',
+                 text: '先喝杯茶...',
+                 modal: false
+             });
+             downloadManager.download({
+                 url: url,
+                 title: fileList[index].fileName
+             }, function(ret) {
+                 if(ret.code == 0){
+                   api.hideProgress();
+                   api.toast({
+                     msg: '下载成功'
+                   });
+                 }
+             });
+
+         }
+     });
+    }
+
+</script>
+
+</html>

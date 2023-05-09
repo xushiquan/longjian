@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>考勤信息</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <script src='../../script/rem.js'></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            overflow: auto;
+        }
+
+        .topNum {
+            width: 100%;
+            height: 1.09rem;
+            font-size: 0.29rem;
+            line-height: 1.09rem;
+            padding-left: 0.27rem;
+            color: #02B0E9;
+            border-bottom: 3px solid #EDF7FD;
+            font-weight: bold;
+        }
+
+        .num {
+            line-height: 1.09rem;
+        }
+
+        .list ul li {
+            border-bottom: 1px solid #EDF7FD;
+            padding: 0.266rem 0;
+        }
+
+        .listTit {
+            margin: 0.4rem 0 0.266rem 0;
+            font-size: 0.29rem;
+            padding-left: 0.266rem;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .listInfo {
+            width: 100%;
+        }
+
+        .listInfo .textWrap {
+            width: 100%;
+            font-size: 0.23rem;
+            float: left;
+        }
+
+        .t {
+            padding-left: 0.266rem;
+            color: #666666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class='list'>
+            <ul class='ulList'>
+                <!-- <li style='overflow:hidden'>
+                    <div class='listInfo'>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                    </div>
+                </li> -->
+            </ul>
+
+
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+    var loginInfo;
+    var projectCode;
+    var projectName;
+    var pageIndex = 1;
+    var pageSize = 10;
+    var dataLength;
+    var count;
+    var account;
+    var workerName;
+      var idCardNumber;
+      var  startDate ;
+      var  endDate;
+    apiready = function() {
+        //获取用户信息
+        api.getPrefs({
+						key: 'loginInfo'
+				}, function(ret, err) {
+						if (ret) {
+								loginInfo = JSON.parse(ret.value);
+								account = loginInfo.account;
+								projectCode = loginInfo.projects.projectCode;
+								projectName = loginInfo.projects.projectName;
+								startLat = loginInfo.projects.startLat;
+								startLng = loginInfo.projects.startLng;
+                getAttendanceList();
+						}
+				});
+
+}
+    function getAttendanceList() {
+      api.showProgress({
+          title: '加载中...',
+          modal: false
+      });
+    $reiz.request.post($reiz.urls['worker'].pageVehicle, {
+      body: {
+        "pageIndex": 1,
+        "total": 0,
+        "pageSize": 2000,
+        'account':account,
+        'projectCode':projectCode
+      }
+    }, function (ret, err) {
+         if(ret.code == 200){
+            api.hideProgress();
+            $('.ulList').empty();
+           var data1 = JSON.parse(ret.data);
+           var materialList = data1.records;
+           if(materialList.length>0){
+                arrayLength = materialList.length;
+                pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                moreData(materialList);
+              }else{
+                api.toast({
+                  msg: '没有更多数据了'
+                });
+              }
+         }else{
+             api.hideProgress();
+             api.toast({
+               msg: '没有更多数据了'
+             });
+           }
+    })
+
+    }
+    function moreData(data) {
+        var list = [];
+        $(data).each(function(index, val) {
+            var carNo = val.carNo || ' '; //车牌号
+            var driverName = val.driverName || ' '; //驾驶员
+            var driverMobile = val.driverMobile || ' '; //电话
+            var entryDate = timeFormatter(val.entryDate) || ' '; //时间
+
+            list.push("<li style='overflow:hidden'>");
+            list.push("<div class='listInfo'>");
+            list.push("<div class='textWrap'><span class='t'>车&nbsp&nbsp牌&nbsp&nbsp号</span><span class='t'>" + carNo + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>驾&nbsp&nbsp驶&nbsp&nbsp员</span><span class='t'>" + driverName + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>电&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp话</span><span class='t'>" + driverMobile + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>入场时间</span><span class='t'>" + entryDate + "</span></div>");
+            list.push("</div></li>");
+
+        })
+        $('.ulList').append(list.join(''));
+        var ulList=document.querySelectorAll("ul li");
+
+        for (var i = 0; i < ulList.length; i++) {
+             ulList[i].index = i;
+             ulList[i].onclick = function() {
+               var carNo = data[this.index].carNo;
+               var pLat = data[this.index].lat;
+               var pLng = data[this.index].lng;
+           
+               api.openWin({
+                 name: 'listMapPage',
+                 url: './listMapPage_win.html',
+                 rect: {
+                   x: 0,
+                   y: 0,
+                   w: 'auto',
+                   h: 'auto'
+                 },
+                 pageParam: {
+                   carNo: carNo
+                 }
+               })
+             }
+          }
+    }
+    //初始化时间戳
+    function timeFormatter(time) {
+        if (time) {
+            var date = new Date(time) //把定义的时间赋值进来进行下面的转换
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var day = date.getDate().toString().padStart(2, "0");
+            var hour = date.getHours().toString().padStart(2, "0");
+            var minute = date.getMinutes().toString().padStart(2, "0");
+            var second = date.getSeconds().toString().padStart(2, "0");
+            return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        } else {
+            return '';
+        }
+    }
+</script>
+
+</html>

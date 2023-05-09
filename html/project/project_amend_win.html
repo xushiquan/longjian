@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css"/>
+		<style>
+			.addbtn {
+				width: 60px;
+				height: 48px;
+				float: right;
+				font-size: 0.9rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				工程整改
+			</div>
+			<!-- <a class="icon iconfont addbtn" onclick="openAddProcedure();">&#xe726;</a> -->
+		</header>
+		<div class="aui-tab" id="tab">
+      <div class="aui-tab-item tapmode" id="a">
+        全部
+      </div>
+			<div class="aui-tab-item tapmode" id="b">
+				待整改
+			</div>
+			<div class="aui-tab-item tapmode" id="c">
+				待审批
+			</div>
+		</div>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/aui-tab.js" ></script>
+		<script type="text/javascript" src="../../script/reiz.js"></script>
+		<script type="text/javascript" src="../../script/zepto.js"></script>
+		<script type="text/javascript">
+			var userId;
+			var projectCode;
+			var token;
+			apiready = function() {
+				var header = $api.byId('header');
+				var tab = $api.byId('tab');
+				$api.fixIos7Bar(header);
+				var nav = $api.byId('wrapper');
+				var header_h = $api.offset(header).h + $api.offset(tab).h;
+
+
+        api.getPrefs({
+          key: 'loginInfo'
+        }, function (ret, err) {
+            if (ret) {
+            loginInfo = JSON.parse(ret.value);
+            api.openFrame({
+              name : 'project_amend_frm',
+              url : './project_amend_frm.html',
+              rect : {
+                x : 0,
+                y : header_h,
+                w : 'auto',
+                h : 'auto'
+              },
+              pageParam : {
+                loginInfo:loginInfo
+              },
+              reload : true,
+            });
+          } else {
+            api.hideProgress();
+            api.toast({
+              msg: '请重新登录获取权限'
+            });
+          }
+        });
+
+
+				var tab = new auiTab({
+					element : document.getElementById("tab"),
+					index : 1,
+					repeatClick : true
+				}, function(ret) {
+					//		 待整改传"00",待审批"01",
+					var index = '';
+					if (ret.index == 1) {
+						index = '';
+					} else if (ret.index == 2) {
+						index = '00';
+					}else if (ret.index == 3) {
+						index = '01';
+					}
+					api.execScript({
+						frameName : 'project_amend_frm',
+						script : "setParamer('" + index + "');"
+					});
+				})
+			}
+			function reset(index){
+				if(index=='00'||index=='01'){
+
+				}else{
+					$('#a').siblings().removeClass("aui-active");
+					$('#a').addClass("aui-active");
+				}
+			}
+
+		</script>
+</html>

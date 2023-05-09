@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/reiz.css" />
+		<link href="../../css/mobiscroll.core-2.5.2.css" rel="stylesheet" type="text/css" />
+		<style>
+			.input-wrap span {
+				line-height: 42px;
+			}
+			.input-wrap input {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0) !important;
+				line-height: 30px;
+				outline: none;
+				height: 42px;
+				border: 1px solid #20415f;
+			}
+			.input-wrap  textarea {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0);
+				border: 1px solid #ccc;
+				line-height: 24px;
+				outline: none;
+				height: 130px;
+				width: 80%;
+				font-size: 15px;
+				margin-left: 30px;
+			}
+			.input-wrap i {
+				position: absolute;
+				z-index: 0;
+			}
+			.input-wrap {
+				display: -webkit-box;
+				margin: 10px 10px 10px 15px;
+			}
+			.input-wrap select {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0);
+				outline: none;
+				height: 42px;
+			}
+			.input-wrap span {
+				line-height: 42px;
+			}
+			.input-wrap input {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0) !important;
+				line-height: 30px;
+				outline: none;
+				height: 42px;
+				border: 1px solid #20415f;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<header header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				人员信息
+			</div>
+		</header>
+		<!--<div class="input-wrap" id="wrapper">
+		<span>姓名：</span>
+		<input id="xingming" autocomplete="off" style="width:50px" maxlength="30" type="text" placeholder="请输入姓名" />
+		<i class="aui-iconfont aui-icon-search" onclick="search()"></i>
+		</div>-->
+		<div class="aui-searchbar" id="search">
+			<div class="aui-searchbar-input aui-border-radius">
+				<i class="aui-iconfont aui-icon-search"></i>
+				<input type="search" placeholder="请输入姓名" id="search-input">
+				<div class="aui-searchbar-clear-btn">
+					<i class="aui-iconfont aui-icon-close"></i>
+				</div>
+			</div>
+			<div class="aui-searchbar-btn" tapmode>
+				取消
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="../../script/bootstrap3-typeahead.js"></script>
+	<script type="text/javascript">
+		var token;
+		var projectCode;
+		var url_getgrxx = $reiz.urls['worker'].querygrxx;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			var nav = $api.byId('search');
+			var header_h = $api.offset(header).h;
+			var div_h = $api.offset(nav).h;
+			api.openFrame({
+				name : 'gongrenxx_list',
+				url : './gongrenxx_list.html',
+				rect : {
+					x : 0,
+					y : header_h + div_h + 10,
+					w : 'auto',
+					h : 'auto'
+				},
+				pageParam : api.pageParam
+			});
+		};
+		function search() {
+			var name = $("#xingming").val();
+			var jsfun = "search('" + name + "');";
+			api.execScript({
+				frameName : 'gongrenxx_list',
+				script : jsfun
+			});
+		}
+
+		var searchBar = document.querySelector(".aui-searchbar");
+		var searchBarInput = document.querySelector(".aui-searchbar input");
+		var searchBarBtn = document.querySelector(".aui-searchbar .aui-searchbar-btn");
+		var searchBarClearBtn = document.querySelector(".aui-searchbar .aui-searchbar-clear-btn");
+		if (searchBar) {
+			searchBarInput.onclick = function() {
+				searchBarBtn.style.marginRight = 0;
+			}
+			searchBarInput.oninput = function() {
+				if (this.value.length) {
+					searchBarClearBtn.style.display = 'block';
+					searchBarBtn.classList.add("aui-text-info");
+					searchBarBtn.textContent = "搜索";
+				} else {
+					searchBarClearBtn.style.display = 'none';
+					searchBarBtn.classList.remove("aui-text-info");
+					searchBarBtn.textContent = "取消";
+				}
+			}
+		}
+		searchBarClearBtn.onclick = function() {
+			this.style.display = 'none';
+			searchBarInput.value = '';
+			searchBarBtn.classList.remove("aui-text-info");
+			searchBarBtn.textContent = "取消";
+		}
+		searchBarBtn.onclick = function() {
+			/*var name = $("#xingming").val();
+			 var jsfun = "search('" + name + "');";
+			 api.execScript({
+			 frameName : 'gongrenxx_list',
+			 script : jsfun
+			 });*/
+			var name = searchBarInput.value;
+			if (name.length) {
+				searchBarInput.blur();
+				var jsfun = "search('" + name + "');";
+				api.execScript({
+					frameName : 'gongrenxx_list',
+					script : jsfun
+				});
+			} else {
+				this.style.marginRight = "-" + this.offsetWidth + "px";
+				searchBarInput.value = '';
+				searchBarInput.blur();
+			}
+		}
+	</script>
+</html>

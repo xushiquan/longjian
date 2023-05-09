@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <script type="text/javascript" src='../../script/rem.js'></script>
+		<style>
+    html,body{
+      width: 100%;
+      height: 100%;
+    }
+    .wrap{
+      width: 100%;
+      height: 100%;
+      background: url('../../image/safetyInspect/scoreBg.jpg') no-repeat;
+      background-size: 100% 100%;
+      box-sizing: border-box;
+      padding-top:1.44rem;
+    }
+    .scoreWrap{
+      width: 3.8rem;
+      height: 3.8rem;
+      border-radius: 50%;
+      text-align: center;
+      margin-left: 50%;
+      transform: translateX(-50%);
+      -webkit-transform:translateX(-50%);
+      background: url('../../image/safetyInspect/sbg.png') no-repeat;
+      background-size: 100% 100%;
+      position: relative;
+    }
+    .fsNum{
+      line-height: 2.8rem;
+      font-size: 1.2rem;
+
+    }
+    .fs{
+      position: absolute;;
+      bottom: 0.7rem;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-transform:translateX(-50%);
+      font-size: 0.4rem;
+      color:#03a7dd;
+    }
+		</style>
+	</head>
+	<body>
+    <div  class='wrap'>
+      <div class='scoreWrap'>
+        <span class='fsNum'></span>
+        <span  class='fs'>分数</span>
+      </div>
+    </div>
+
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+  	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript">
+		 apiready = function() {
+		   var scroe = api.pageParam.scroe;//得分
+       if(scroe){
+         $('.fsNum').html(scroe);
+       }
+		 };
+	</script>
+</html>

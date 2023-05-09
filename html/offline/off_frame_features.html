@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>features</title>
+		<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+		<style>
+			@import url("../../templates/dot/dashcard.css");
+			html, body {
+				background-color: #f5f5f5;
+			}
+			.dashcard-menu .menu-icon {
+				position: relative;
+				border-radius: 25%;
+				transform: rotate(45deg);
+				-webkit-transform: rotate(45deg);
+				background: linear-gradient(to bottom right, #138dc5, #23d2ff);
+				box-shadow: 0rem 0.02 rem 0.3rem 0.1rem #bbe9f5;
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(2) .menu-icon {
+				background: linear-gradient(to bottom right, #13c3c5, #18e1e3) !important;
+				box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(3) .menu-icon {
+				background: linear-gradient(to bottom right, #ee5489, #fd8db3) !important;
+				box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(4) .menu-icon {
+				background: linear-gradient(to bottom right, #2284d4, #39b4f7) !important;
+				box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+			}
+			.dashcard-menu .menu-icon::before {
+				content: '';
+				position: absolute;
+				top: 0%;
+				left: 0%;
+				bottom: 2%;
+				right: 5%;
+				border-radius: 25%;
+				background: linear-gradient(to bottom right, #23d2ff, #138dc5);
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(2) .menu-icon::before {
+				background: linear-gradient(to bottom right, #18e5e7, #10b2b4) !important;
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(3) .menu-icon::before {
+				background: linear-gradient(to bottom right, #fd91b6, #e9437b) !important;
+			}
+			.dashcard-menu .aui-col-xs-3:nth-child(4) .menu-icon::before {
+				background: linear-gradient(to bottom right, #3bb8fa, #1c78cb) !important;
+			}
+			.dashcard-menu .iconfont {
+				position: absolute;
+				top: -11%;
+				left: 6%;
+				margin-bottom: 5%;
+				transform: rotate(-45deg) scale(0.8);
+				-webkit-text-fill-color: white;
+			}
+			.dashcard-menu .icon-anquanxunshi {
+				font-size: 1rem;
+				margin-left: 0rem;
+				margin-top: 0.5rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<section class="aui-content-padded" id="dashcards"></section>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script>
+	var loginInfo;
+		apiready = function() {
+			var dotDef = {
+				debug : true,
+			}
+			loginInfo = api.pageParam.loginInfo;
+			
+			var offMenus = [
+				/*{
+					"clientType": "", 
+					"component": "/material/material_send_model_list_win", 
+					"description": "运单管理", 
+					"gmtCreate": null, 
+					"gmtModify": null, 
+					"icon": "iconfont icon-wuliaoyunshu", 
+					"id": 351, 
+					"name": "material_send_model", 
+					"num": 15, 
+					"path": "/app", 
+					"permission": "/", 
+					"pid": 201, 
+					"superpermission": "1", 
+					"title": "发料模板"
+				}, */
+				{
+					"clientType": "", 
+					"component": "/offMaterial/sync_cloud_data_win", 
+					"description": "运单管理", 
+					"gmtCreate": null, 
+					"gmtModify": null, 
+					"icon": "iconfont icon-wuliaoyunshu", 
+					"id": 351, 
+					"name": "sync_cloud_data_win", 
+					"num": 15, 
+					"path": "/app", 
+					"permission": "/", 
+					"pid": 201, 
+					"superpermission": "1", 
+					"title": "云数据下载"
+				},
+				{
+					"clientType": "", 
+					"component": "/offMaterial/off_material_list_win", 
+					"description": "运单管理", 
+					"gmtCreate": null, 
+					"gmtModify": null, 
+					"icon": "iconfont icon-wuliaoyunshu", 
+					"id": 263, 
+					"name": "off_material_list_win", 
+					"num": 16, 
+					"path": "/app", 
+					"permission": "/", 
+					"pid": 201, 
+					"superpermission": "1", 
+					"title": " 运单管理"
+				}
+			]
+			var menus=offMenus;//loginInfo.menus;
+			
+	 	    var dashCards=formatRoutes(menus);
+			var dotDef = {
+							debug: true,
+					}
+			var templFile = loadFile('../../templates/dot/dashcard.html');
+			var templDashcard = doT.template(templFile.toString(), undefined, dotDef);
+			// var templDashcard = doT.template($api.dom('#templDashcard').innerHTML);
+			for (var i in dashCards) {
+					$('#dashcards').append(templDashcard(dashCards[i]));
+			}
+			api.parseTapmode();
+			// var templDashcard = doT.template($api.dom('#templDashcard').innerHTML);
+
+			/*api.setPrefs({
+				key : 'dashCards',
+				value : dashCards,
+			})
+			api.getPrefs({
+				key : 'dashCards',
+			}, function(ret, err) {
+				var v = ret.value;
+				if (v === '') {
+					// 不存在该变量
+				} else {
+					var dashCards = JSON.parse(ret.value);
+					for (var i in dashCards) {
+						$('#dashcards').append(templDashcard(dashCards[i]));
+					}
+				}
+				api.parseTapmode();
+			});*/
+		}
+		function openWin(_name, _url) {
+			api.openWin({
+				name : _name,
+				url : _url,
+				slidBackEnabled : true,
+			});
+		}
+
+		function refresh() {
+		}
+
+		function loadFile(url) {
+			return api.readFile({
+				sync : true,
+				path : url || '',
+			}, function(ret, err) {
+				if (ret.status) {
+					api.alert({
+						msg : ret.data
+					});
+				} else {
+					api.alert({
+						msg : '错误码: ' + err.code + '错误信息' + err.msg
+					});
+				}
+			});
+		}
+
+		function formatRoutes(menus) {
+		    var fmMenus = [];
+		    var headerUrl='../../image/features/label_project_mgt_dashcard.png';
+		    for(var i=0;i<menus.length;i++){
+		        if(menus[i].description=='项目管理'){
+		           headerUrl='../../image/features/label_project_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='人员管理'){
+		           headerUrl='../../image/features/label_personnel_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='安全管理'){
+		           headerUrl='../../image/features/label_safety_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='质量管理'){
+		           headerUrl='../../image/features/label_quality_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='物料管理'){
+		           headerUrl='../../image/features/label_material_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='机械设备'){
+		           headerUrl='../../image/features/label_machine_mgt_dashcard.png';
+		        }
+		        if(menus[i].description=='物联监测'){
+		           headerUrl='../../image/features/label_iot_mon_dashcard.png';
+		        }
+		        if(menus[i].description=='BIM应用'){
+		           headerUrl='../../image/features/label_bim_applications_dashcard.png';
+		        }
+		        var flag=false;
+			    for(var j=0;j<fmMenus.length;j++){
+			       if(menus[i].description==fmMenus[j].header.title){
+			           flag=true;
+			           var menu={
+		                    label: menus[i].title,
+		                    winName:menus[i].name,
+		                    badgeCountField: 'projectDetailsMsgCount',
+		                    icon: '#'+menus[i].icon,
+		                    url: '..'+menus[i].component+'.html',
+	                   };
+			           fmMenus[j].body.menu.push(menu);
+			           break
+			       }
+			    }
+			    if(!flag){
+			    var fmMenu={
+		            header: {
+		                title: menus[i].description,
+		                icon: headerUrl,
+		            },
+		            body: {
+		                menu: [{
+		                    label: menus[i].title,
+		                    winName:menus[i].name,
+		                    badgeCountField: 'projectDetailsMsgCount',
+		                    icon: '#'+menus[i].icon,
+		                    url: '..'+menus[i].component+'.html',
+		                }]
+		            }
+	            };
+		       fmMenus.push(fmMenu);
+			 }
+		    }
+		    return fmMenus;
+
+		};
+	</script>
+</html>

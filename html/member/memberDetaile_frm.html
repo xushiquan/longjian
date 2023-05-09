@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+	 <script type="text/javascript" src='../../script/rem.js'></script>
+		<style>
+		html,body{
+			background-color: #ffffff;
+		}
+		.topImg{
+			width: 100%;
+			height: 100px;
+		}
+		.topImg img{
+			width: 100%;
+			height: 100%;
+		}
+		.blue{
+			color:#02B0E9;
+		}
+		.textColor{
+			color:#666666 !important;
+		}
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .wrap {
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        overflow: auto;
+    }
+
+    .topNum {
+        width: 100%;
+        height: 1.09rem;
+        font-size: 0.29rem;
+        line-height: 1.09rem;
+        padding-left: 0.27rem;
+        color: #02B0E9;
+        border-bottom: 3px solid #EDF7FD;
+        font-weight: bold;
+    }
+
+    .num {
+        line-height: 1.09rem;
+    }
+
+    .list ul li {
+        border-bottom: 1px solid #EDF7FD;
+        padding: 0.266rem 0;
+    }
+    .listTit {
+        margin: 0.4rem 0 0.266rem 0;
+        font-size: 0.29rem;
+        padding-left: 0.266rem;
+        color: #333333;
+        font-weight: bold;
+    }
+    .listInfo {
+        width: 100%;
+    }
+    .listInfo .textWrap {
+        width: 100%;
+        font-size: 0.23rem;
+        overflow: hidden;
+    }
+    .leftTit{
+      display: inline-block;
+      width: 30%;
+      float: left;
+    }
+    .rightInfo{
+      display: inline-block;
+      width: 70%;
+      float: left;
+      word-break: break-all;
+      white-space: normal;
+    }
+    .t {
+        padding-left: 0.266rem;
+        color: #666666;
+        box-sizing: border-box;
+    }
+
+		</style>
+	</head>
+	<body>
+		<div class='topImg'>
+			<img src="../../image/member/detailTop.png" alt="">
+		</div>
+    <div class='list'>
+        <ul class='ulList'>
+            <!-- <li style='overflow:hidden'>
+                <div class='listInfo'>
+                  <div class="textWrap">
+                      <span class='t leftTit'>部位</span>
+                      <span class='t rightInfo'>0-+0钻孔桩</span>
+                  </div>
+                  <div class="textWrap">
+                      <span class='t leftTit'>钢筋量</span>
+                      <span class='t rightInfo'>1456/kg</span>
+                  </div>
+                  <div class="textWrap">
+                      <span class='t leftTit'>混凝土量</span>
+                      <span class='t rightInfo'>水下C30:18.58/m3</span>
+                  </div>
+                  <div class="textWrap">
+                      <span class='t leftTit'>混凝土配合比</span>
+                      <span class='t rightInfo'>水泥:中砂:碎石:水:外加剂=400:789:1024:172:6(kg/m3)</span>
+                  </div>
+                </div>
+            </li> -->
+        </ul>
+
+    </div>
+
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript">
+	var pageIndex = 1;
+	var pageSize = 10;
+		 apiready = function() {
+ 				var componentId = api.pageParam.componentId;
+				if(componentId){
+					$reiz.request.post($reiz.urls['member'].queryComponent, {
+										 body:{
+												"componentId":componentId,
+												"pageIndex":pageIndex,
+												"pageSize":10,
+										 }
+									 },function(ret,error){
+											var lilist = [];
+											if(ret.code == 200){
+												var data = JSON.parse(ret.data);
+												if(data.length > 0){
+													for(var i=0;i<data.length;i++){
+														lilist.push('<li style="overflow:hidden">');
+														lilist.push('<div class="listInfo">');
+														lilist.push('	<div class="textWrap">');
+														lilist.push('	<span class="t leftTit">部位</span>');
+														lilist.push('<span class="t rightInfo">'+data[i].position+'</span>');
+														lilist.push('	</div>	<div class="textWrap">');
+														lilist.push('	<span class="t leftTit">钢筋量</span>');
+														lilist.push('	<span class="t rightInfo">'+data[i].rebar+'</span>');
+														lilist.push('	</div>	<div class="textWrap">');
+														lilist.push('	<span class="t leftTit">混凝土量</span>');
+														lilist.push('<span class="t rightInfo">'+data[i].concrete+'</span>');
+														lilist.push('</div><div class="textWrap">');
+														lilist.push('<span class="t leftTit">混凝土配合比</span>');
+														lilist.push('<span class="t rightInfo">'+data[i].mixProportion+'</span>');
+														lilist.push('</div></div></li>');
+													}
+													$(".ulList").append(lilist.join(''));
+												}else{
+														// $(".ulList").append('<div style="color:#666666;font-size:16px;text-align:center;line-height:16px;margin-top:35%;">暂无数据</div>');
+														api.toast({
+															msg: '暂无数据'
+														});
+												}
+
+											}
+									 })
+				}
+		 };
+
+	</script>
+</html>

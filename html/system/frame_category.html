@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>frame</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		body {
+			min-width: 320px;
+		}
+
+		.category {
+			width: 100%;
+			margin-top: 20px;
+		}
+
+		.category li {
+			display: inline-block;
+			width: 23.9%;
+			text-align: center;
+			padding: 30px 0 10px;
+			background-size: 40px;
+			background-repeat: no-repeat;
+			background-position: top;
+		}
+
+		.category li a {
+			margin: 15px 10px 0 10px;
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+		}
+
+		.imgs {
+			padding: 10px 0;
+			width: 100%;
+			background-color: #F0F0F0;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+		}
+
+		.imgs li {
+			-webkit-box-flex: 1;
+			-webkit-flex: 1;
+			flex: 1;
+			height: 55px;
+		}
+
+		.imgs li:not(:last-child) {
+			-webkit-box-flex: 1;
+			-webkit-flex: 1;
+			flex: 1;
+			border-right: 1px solid #EDEDEB;
+			height: 55px;
+		}
+
+		.img:first-of-type {
+			padding-top: 0;
+		}
+
+		.img {
+			height: 124px;
+			padding-top: 10px;
+			background-color: #F4F4F4;
+			position: relative;
+		}
+
+		.aui-badge1 {
+			display: inline-block;
+			width: auto;
+			text-align: center;
+			min-width: 0.8 rem;
+			height: 0.8 rem;
+			line-height: 0.8 rem;
+			padding: 0 0.2 rem;
+			font-size: 0.6 rem;
+			color: #ffffff;
+			background-color: #ff2600;
+			border-radius: 0.4 rem;
+			top: 0.2 rem;
+			z-index: 99;
+		}
+
+		.before_image:before {
+			content: " ";
+			display: block;
+			margin-left: 23px;
+			height: 45px;
+			width: 45px;
+			background: url(../../image/111.png) no-repeat;
+			background-position: right;
+			background-size: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="aui-card-list">
+		<div class="aui-card-list-header">
+			常用应用
+		</div>
+		<section class="aui-grid aui-margin-b-15">
+			<div id="main" class="aui-row"></div>
+		</section>
+	</div>
+	<div class="aui-card-list">
+		<div class="aui-card-list-header">
+			项目管理
+		</div>
+		<section class="aui-grid aui-margin-b-15">
+			<div id="project" class="aui-row"></div>
+		</section>
+	</div>
+	<div class="aui-card-list">
+		<div class="aui-card-list-header">
+			人员管理
+		</div>
+		<section class="aui-grid aui-margin-b-15">
+			<div id="worker" class="aui-row"></div>
+		</section>
+	</div>
+	<div class="aui-card-list">
+		<div class="aui-card-list-header">
+			监控监测
+		</div>
+		<section class="aui-grid aui-margin-b-15">
+			<div id="video" class="aui-row"></div>
+		</section>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script>
+	var grids;
+	apiready = function () {
+		init();
+	};
+
+	function init() {
+		api.getPrefs({
+			key: 'category'
+		}, function (ret, err) {
+			console.log(JSON.stringify(ret));
+			if (ret) {
+				grids = JSON.parse(ret.value);
+				var infohtml = '';
+				var projectHtml = '';
+				var workerHtml = '';
+				var videoHtml = '';
+				for (var x in grids) {
+					var id = grids[x].name.trim();
+					if (grids[x].isShow) {
+						infohtml += '<div id="' + id +
+							'" class="aui-col-xs-3 badge1"><div class="aui-badge" style="display:none">-</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+							grids[x].title + '</div></div>';
+					} else {
+						if ($reiz.func_url[id]) {
+							if ($reiz.func_url[id].category == "project") {
+								projectHtml += '<div id="' + id +
+									'" class="aui-col-xs-3 badge2"><div class="aui-badge" style="display:none">+</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+									grids[x].title + '</div></div>';
+							} else if ($reiz.func_url[id].category == "worker") {
+								workerHtml += '<div id="' + id +
+									'" class="aui-col-xs-3 badge2"><div class="aui-badge" style="display:none">+</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+									grids[x].title + '</div></div>';
+							} else if ($reiz.func_url[id].category == "video") {
+								videoHtml += '<div id="' + id +
+									'" class="aui-col-xs-3 badge2"><div class="aui-badge" style="display:none">+</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+									grids[x].title + '</div></div>';
+							} else {}
+						}
+					}
+				}
+				$('#main').append(infohtml);
+				$('#project').append(projectHtml);
+				$('#worker').append(workerHtml);
+				$('#video').append(videoHtml);
+			} else {
+				return;
+			}
+		});
+	};
+	//设置按钮
+	function setting() {
+		var badge = document.getElementsByClassName("aui-badge");
+		var badge1 = document.getElementsByClassName("badge1");
+		var badge2 = document.getElementsByClassName("badge2");
+		for (var i = 0; i < badge.length; i++) {
+			badge[i].style.display = "";
+		}
+		for (var i = 0; i < badge1.length; i++) {
+			badge1[i].onclick = sub(badge1[i].id);
+		}
+		for (var i = 0; i < badge2.length; i++) {
+			badge2[i].onclick = add(badge2[i].id);
+		}
+	}
+
+	//完成按钮
+	function save() {
+		var badge = document.getElementsByClassName("aui-badge");
+		var badge1 = document.getElementsByClassName("badge1");
+		var badge2 = document.getElementsByClassName("badge2");
+		for (var i = 0; i < badge.length; i++) {
+			badge[i].style.display = 'none';
+		}
+		console.log("aaaa" + badge1.length);
+		for (var i = 0; i < badge1.length; i++) {
+			badge1[i].onclick = openWin(badge1[i].id);
+			for (var x in grids) {
+				if (grids[x].name == badge1[i].id) {
+					grids[x].isShow = true;
+				}
+			}
+		}
+		for (var i = 0; i < badge2.length; i++) {
+			badge2[i].onclick = openWin(badge2[i].id);
+			for (var x in grids) {
+				if (grids[x].name == badge2[i].id) {
+					grids[x].isShow = false;
+				}
+			}
+		}
+		api.setPrefs({
+			key: 'category',
+			value: JSON.stringify(grids)
+		});
+		api.execScript({
+			name: 'main',
+			frameName: 'work',
+			script: 'init();'
+		});
+	}
+
+	//减少一个功能
+	function sub(id) {
+		return function () {
+			var old = document.getElementById(id);
+			old.parentNode.removeChild(old);
+			if ($reiz.func_url[id]) {
+				var type = $reiz.func_url[id].category;
+				var title;
+				for (var x in grids) {
+					if (grids[x].name == id) {
+						title = grids[x].title;
+					}
+				}
+				var addHtml = '<div id="' + id +
+					'" class="aui-col-xs-3 badge2"><div class="aui-badge" style="display:""">+</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+					title + '</div></div>';
+				$('#' + type).append(addHtml);
+				//绑定点击事件
+				var newe = document.getElementById(id);
+				newe.onclick = add(id);
+			}
+		}
+	}
+
+	//增加一个功能
+	function add(id) {
+		return function () {
+			var old = document.getElementById(id);
+			old.parentNode.removeChild(old);
+			var title;
+			for (var x in grids) {
+				if (grids[x].name == id) {
+					title = grids[x].title;
+				}
+			}
+			var addHtml = '<div id="' + id +
+				'" class="aui-col-xs-3 badge1"><div class="aui-badge" style="display:""">-</div><i class="aui-iconfont before_image"></i><div class="aui-grid-label">' +
+				title + '</div></div>';
+			$('#main').append(addHtml);
+			//绑定点击事件
+			var newe = document.getElementById(id);
+			newe.onclick = sub(id);
+		}
+	}
+
+	//跳转到功能页面
+	function openWin(id) {
+		return function () {
+			console.log(id);
+		}
+	}
+</script>
+
+</html>

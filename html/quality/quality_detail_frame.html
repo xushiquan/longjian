@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    </style>
+</head>
+
+<body>
+    <ul class="aui-list aui-media-list" id="message_list">
+        <ul class="aui-list aui-list-in">
+            <li class="aui-list-item aui-list-item-middle">
+                <div class="aui-list-item-inner">
+                    <span>是否合格：</span><span id="ispass"></span>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <span>检查人：</span><span id="checkUserName"></span>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <span>检查日期：</span><span id="checkDate"></span>
+                </div>
+            </li>
+            <li class="aui-list-item amend">
+                <div class="aui-list-item-inner">
+                    <span>整改人：</span><span id="amendUserName"></span>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <span>检查内容：</span><span id="checkContent"></span>
+                </div>
+            </li>
+            <li class="aui-list-item amend">
+                <div class="aui-list-item-inner">
+                    <span>不合格理由：</span><span id="reasonNopass"></span>
+                </div>
+            </li>
+            <li class="aui-list-item">
+    					<div class="aui-list-item-inner">
+    						<div class="aui-list-item-label-icon">
+    							<i class="aui-iconfont aui-icon-camera"></i>
+    						</div>
+    						<div class="aui-list-item-input" style="padding-bottom:5px; ">
+    							<div id="img_container"></div>
+    							</div>
+    						</div>
+    					</li>
+        </ul>
+    </ul>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/x-dot-template" id="img_tpl">
+  <div class="img-container" style='margin:5px 0 '>
+  <img style='width:100%;height:150px;' class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg(this.src,{{=it.isNet}});"/>
+  </div>
+</script>
+<!-- 小视频 -->
+<script type="text/x-dot-template" id="video_tpl">
+    <div class="img-container" style='margin:5px 0 '>
+        <img style='width:100%;height:150px;' class="img-item" src="{{=it.img_url}}" data-video="{{=it.video_url}}" id='{{=it.id}}'   onclick="showVideo('{{=it.video_url}}');" />
+    </div>
+</script>
+<script type="text/javascript">
+    apiready = function() {
+        var element = api.pageParam.element;
+        var ispass = element.isPass;
+        if(ispass == '0'){
+          $("#ispass").text("不合格");
+        }else{
+          $("#ispass").text("合格");
+        }
+        $("#checkUserName").text(element.checkUserName);
+        $("#checkDate").text(time(element.checkDate));
+        $("#amendUserName").text(element.amendUserName);
+        $("#checkContent").text(element.checkContent);
+        $("#reasonNopass").text(element.reasonNopass);
+        setPicNet(element.files);
+    };
+    function showVideo(videoUrl){
+        api.openWin({
+          name: 'videoplay',
+          url: './videoplay_win.html',
+          pageParam: {
+            "videoUrl":videoUrl
+          }
+        })
+    }
+
+
+    function time(time) {
+  		var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+  		return date.toJSON().substr(0, 10).replace('T', ' ');
+  	}
+    var setPicNet = function(paths) {
+      for (var i in paths) {
+        if(paths[i].type == 'mp4'){
+          var video_tpl = doT.template($api.byId("video_tpl").text);
+          $api.byId("img_container").innerHTML += video_tpl({
+            img_url :'../../image/10.png' ,
+            isNet : true,
+            video_url:paths[i].path,
+            id : paths[i].id
+          });
+        }else{
+          var img_tpl = doT.template($api.byId("img_tpl").text);
+          $api.byId("img_container").innerHTML += img_tpl({
+            img_url : paths[i].path,
+            isNet : true,
+            id : paths[i].id
+          });
+        }
+
+      }
+    };
+    function showImg(src, isNet) {
+			var photoBrowser = api.require('photoBrowser');
+			if (!isNet) {
+        var img_path = new Array();
+        img_path = src.split('/');
+        var fs = api.require('fs');
+        fs.copyTo({
+            oldPath: src,
+            newPath: 'fs://res'
+        },function(ret,err){
+            if (ret.status) {
+                var fs_path= 'fs://res/'+img_path[img_path.length-1];
+                photoBrowser.open({
+                  images : [fs_path],
+                  placeholderImg : 'widget://res/img/apicloud.png',
+                  bgColor : '#000'
+                }, function(ret, err) {
+                  if (ret) {
+                    if (ret.eventType == 'click')
+                      photoBrowser.close();
+                  } else {
+                    alert(JSON.stringify(err));
+                  }
+                });
+            }else {
+                console.log(err.msg);
+            };
+        });
+			} else {
+				src = src.replace('thumb/thumb_', '/');
+				photoBrowser.open({
+					images : [src],
+					placeholderImg : 'widget://res/img/apicloud.png',
+					bgColor : '#000'
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.eventType == 'click')
+							photoBrowser.close();
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+		}
+</script>
+
+</html>

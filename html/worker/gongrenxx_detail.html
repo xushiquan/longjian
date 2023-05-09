@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	</head>
+	<style>
+	body{
+		background-color: #ffffff;
+	}
+		.aui-list-view-cell {
+			position: relative;
+			padding: 0px 15px;
+			overflow: hidden;
+			height: 50px;
+			line-height: 50px;
+		}
+		.aui-user-view-cell:active {
+			background-color: rgba(255, 255, 255, 255);
+		}
+		#aui-list-view .aui-list-view-cell:after {
+			border: 1px solid #FFFFFF;
+		}
+		.aui-content-padded {
+			margin-top: 10px;
+		}
+		.aui-tab {
+			margin-bottom: 0px;
+		}
+		.aui-input-row {
+			position: relative;
+			display: table;
+			padding: 6px 0;
+		}
+		.aui-input-row:after {
+			border-bottom: 1px solid #59b5e2;
+			display: block;
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			-webkit-transform-origin: 0 0;
+			-webkit-transform: scale(1);
+			pointer-events: none;
+		}
+		.aui-input-row:first-child:after {
+			border-top: 1px solid #c8c7cc;
+			display: block;
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			-webkit-transform-origin: 0 0;
+			-webkit-transform: scale(1);
+			pointer-events: none;
+		}
+		.aui-input-row:last-child:after {
+			border-bottom: 1px solid #59b5e2;
+		}
+		.aui-input-row .aui-input-addon {
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 1;
+			color: #333;
+			text-align: center;
+			display: table-cell;
+			width: 1%;
+			white-space: nowrap;
+			vertical-align: middle;
+			padding: 5px;
+		}
+		.aui-input-row .aui-input-addon.aui-iconfont {
+			font-size: 18px;
+		}
+		.aui-input-row .aui-input {
+			font-size: 14px;
+			margin: 0;
+			display: table-cell;
+			position: relative;
+			float: left;
+			width: 100%;
+			border: none;
+			border-radius: 0;
+		}
+		.aui-input-addone {
+			font-size: 16px;
+			font-weight: 400;
+			line-height: 1;
+			text-align: center;
+			display: table-cell;
+			width: 1%;
+			white-space: nowrap;
+			vertical-align: middle;
+			padding: 5px;
+		}
+		.aui-img-object {
+			margin-top: 15px;
+			max-width: 130px !important;
+			height: 160px !important;
+			line-height: 160px !important;
+			border-radius: 10%;
+		}
+		.aui-img-object2 {
+			margin-top: 3px;
+			max-width: 60px !important;
+			height: 60px !important;
+			line-height: 60px !important;
+		}
+		.aui-user-view-cell {
+			position: relative;
+			padding: 3px 15px;
+			overflow: hidden;
+		}
+		.aui-padded-10 {
+			overflow: hidden;
+			padding: 5px 10px 2px 10px;
+			font-size: 16px;
+		}
+		.content {
+			text-align: center;
+		}
+		.content img {
+			width: 110px;
+			margin-top: 150px;
+		}
+		.content.info {
+			margin-top: 30px;
+		}
+	</style>
+	<body>
+		<header header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				详细信息
+			</div>
+		</header>
+		<div class="aui-tab" id="tab">
+			<div class="aui-tab-item aui-active" id="grtab1">
+				基本信息
+			</div>
+			<div class="aui-tab-item" id="grtab2">
+				考勤信息
+			</div>
+			<!--<div class="aui-tab-item" id="grtab3">
+				人员轨迹
+			</div>-->
+		</div>
+		<div id="basic"></div>
+		<div id="attendance"></div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+		var url_getjbxx = $reiz.urls['worker'].queryjbxx;
+		var url_getwgxx = $reiz.urls['worker'].querywgxx;
+		var url_getkaxx = $reiz.urls['worker'].querykaxx;
+		var jbdata = [];
+		var kqdata = [];
+	var imagePath = $reiz.imagePath;
+		var gongdidm;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			var pageParam = api.pageParam;
+			jbdata = pageParam.ryid;
+
+			api.parseTapmode();
+			$("#attendance").hide();
+			showjbxx(jbdata);
+			//
+			var grtab1 = $api.dom("#grtab1");
+			var grtab2 = $api.dom("#grtab2");
+			var grtab3 = $api.dom("#grtab3");
+			$api.addEvt(grtab1, 'click', function() {
+				$api.removeCls($api.dom("#grtab2"), 'aui-active');
+				//$api.removeCls($api.dom("#grtab3"), 'aui-active');
+				$api.addCls(this, 'aui-active');
+				$("#attendance").hide();
+				$("#basic").show();
+				$("#basic").html("");
+				console.log(jbdata);
+				showjbxx(jbdata);
+			});
+			$api.addEvt(grtab2, 'click', function() {
+				$api.removeCls($api.dom("#grtab1"), 'aui-active');
+				//$api.removeCls($api.dom("#grtab3"), 'aui-active');
+				$api.addCls(this, 'aui-active');
+				$("#basic").hide();
+				$("#attendance").show();
+				$("#attendance").html("");
+				selectKQ();
+			});
+			/*$api.addEvt(grtab3, 'click', function() {
+				$("#main").html("");
+				showkaxx();
+				kaxx(pageParam.ryid);
+				$api.removeCls($api.dom("#grtab1"), 'aui-active');
+				$api.removeCls($api.dom("#grtab2"), 'aui-active');
+				$api.addCls(this, 'aui-active');
+			});*/
+		};
+		// function jbxx(ryid) {
+		// 	$reiz.request.post($reiz.urls['worker'].queryjbxx, {
+		// 		body: {
+		// 			values : {
+		// 				"id" : ryid
+		// 			}
+		// 		}
+		// 	}, function (ret, err) {
+		// 		if (ret.status == '1' && ret.resp_data.length > 0) {
+		// 			api.hideProgress();
+		// 			jbdata = ret.resp_data[0];
+		// 			showjbxx();
+		// 		} else {
+		// 			api.hideProgress();
+		// 			api.toast({
+		// 				msg : '未查询到数据'
+		// 			});
+		// 		}
+		// 	})
+		// }
+
+
+
+		function showjbxx() {
+			var lilist = [];
+			var name = jbdata.workerName;
+			var xingbie = jbdata.gender == "0" ? "男" : "女";
+			if (xingbie == null || xingbie == "") {
+				xingbie = '未知的性别';
+			}
+			var gongzhong = jbdata.workerTypeName;
+			if (gongzhong == null || gongzhong == "") {
+				gongzhong = '其他';
+			}
+			var bumen = jbdata.cellPhone;
+			var shenfenzh = jbdata.idCardNumber;
+			var jiguan = jbdata.jiguan;
+			if (jiguan == null || jiguan == "") {
+				jiguan = '未知';
+			}
+			var zhuangtaimc = jbdata.address;
+			var pic = "../../image/common/person_nophoto.gif";
+			var idCardNumber = jbdata.idCardNumber;
+			pic = imagePath + jbdata.projectCode + "/" + jbdata.idCardNumber+"_card.bmp";
+
+			lilist.push("<div class='aui-content-padded'><div class='aui-form'><img onerror='this.src=\"../../image/common/person_nophoto.gif\"' class='aui-img-object aui-pull-right' src='" + pic + "' alt='照片'/>");
+			lilist.push("<div class='aui-input-row'><span class='aui-input-addone'>姓名：</span><li class='aui-list-view-cell'>");
+			lilist.push(name);
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>性别：</span><li class='aui-list-view-cell'>");
+			lilist.push(xingbie);
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>工种：</span><li class='aui-list-view-cell'>");
+			lilist.push(gongzhong);
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>联系电话：</span><li class='aui-list-view-cell'>");
+			lilist.push(bumen);
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>身份证号号码：</span><li class='aui-list-view-cell'>");
+			lilist.push(shenfenzh);
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>籍贯：</span><li class='aui-list-view-cell'>");
+			lilist.push(jiguan)
+			lilist.push("</li></div><div class='aui-input-row'><span class='aui-input-addone'>地址：</span><li class='aui-list-view-cell'>");
+			lilist.push(zhuangtaimc)
+			lilist.push("</li></div></div></div>");
+			$("#basic").append(lilist.join(''));
+		}
+
+		function selectKQ(ryid) {
+			var idCardNumber = jbdata.idCardNumber;
+
+			$reiz.request.post($reiz.urls['attendance'].selectAttByIdCard, {
+				body: {
+					"idCardNumber" : idCardNumber,
+				}
+			}, function (ret, err) {
+				if (ret.code == '200' && ret.data.length > 0) {
+					var data = ret.data;
+				showkqxx( JSON.parse(data));
+				}
+			})
+		}
+
+		function showkqxx(data) {
+
+			$("#attendance").html("");
+			if (data.length > 0) {
+
+				var infohtml = [];
+				infohtml.push('<ul class="aui-list aui-list-in">');
+
+				$(data).each(function(index, element) {
+					var lng = element.lng;
+					var swipeTime = element.swipeTime;
+					var lat = element.lat;
+					infohtml.push('<li class="aui-list-item">');
+					infohtml.push('<div class="aui-list-item-inner">');
+					infohtml.push('<div class="aui-list-item-title">'+swipeTime+'</div>');
+					infohtml.push('<div class="aui-list-item-right">'+lng+'，'+lat+'</div>');
+				});
+				infohtml.push('</div></li></ul>')
+				$("#attendance").html(infohtml.join(''));
+			} else {
+				divNothing1();
+			}
+		}
+
+
+
+		function showkaxx() {
+			$("#main").html("");
+			if (kadata.length > 0) {
+				var infohtml = [];
+				$(kadata).each(function(index, element) {
+					var kahao = element.baozhangkah;
+					var leixing;
+					var zhuangtai;
+					if (element.leixing != null && element.leixing != "") {
+						leixing = element.leixing.leixingmc;
+					} else {
+						leixing = '未知类型';
+					}
+					//var kayue = element.kayue;
+					var number = index + 1;
+					if (element.kazt != null && element.kazt != "") {
+						zhuangtai = element.kazt.zhuangtaimc;
+					} else {
+						zhuangtai = '未知状态';
+					}
+					infohtml.push("<p class='aui-padded-10 aui-text-center'>卡" + number + "</p>");
+					infohtml.push('<div class="aui-card"><div class="aui-form"><div class="aui-input-row"><span class="aui-input-addon">');
+					infohtml.push("卡&nbsp&nbsp&nbsp&nbsp号</span><li class='aui-list-view-cell'>" + kahao + "</li></div>");
+					infohtml.push("<div class='aui-input-row'><span class='aui-input-addon'>卡类型</span>");
+					infohtml.push("<li class='aui-list-view-cell'>" + leixing + "</li></div>");
+					//infohtml.push('<div class="aui-input-row"><span class="aui-input-addon">卡余额</span>');
+					//infohtml.push("<input type='text' class='aui-input' readonly = 'readonly' value='" + kayue + "'/></div>");
+					infohtml.push('<div class="aui-input-row"><span class="aui-input-addon">卡状态</span>');
+					infohtml.push("<li class='aui-list-view-cell'>" + zhuangtai + "</li></div></div></div>");
+				});
+				$("#main").html(infohtml.join(''));
+			} else {
+				divNothing2();
+			}
+		}
+
+		function divNothing1() {
+			var divlist = [];
+			divlist.push('<div class="content" align="center"><img><div class="info">未查询到当前人员的考勤记录</div></div>');
+			$("#attendance").append(divlist.join(''));
+		}
+
+		function divNothing2() {
+			var divlist = [];
+			divlist.push('<div class="content" align="center"><img><div class="info">未查询到当前人员的轨迹记录</div></div>');
+			$("#attendance").append(divlist.join(''));
+		}
+	</script>
+</html>

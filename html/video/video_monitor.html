@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body, header, section, footer, nav, div, ul, ol, li, img, a, span, em, del, center, strong, var, fieldset, form, label, dt, dd, cite, input, hr, time, mark, code, figcaption, figure, textarea {
+				margin: 0;
+				border: 0;
+				padding: 0;
+				font-family: Tahoma, Geneva, sans-serif;
+				font-style: normal;
+			}
+			html, body {
+				-webkit-touch-callout: none;
+				-webkit-text-size-adjust: none;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-user-select: none;
+			}
+			header, footer, section, nav, img, a, button, em, del, strong, var, fieldset, label, cite, small, time, mark, code, figcaption, figure, textarea {
+				display: block;
+			}
+			header, section, footer, nav {
+				position: relative;
+				overflow: hidden;
+			}
+			#nav {
+				display: -webkit-box;
+				height: 44px;
+			}
+			#left {
+				width: 80px;
+				color: #fff;
+				background: url(../../image/kq/navbtn_back.png) no-repeat 14px 12px;
+				-webkit-background-size: 12px 20px;
+			}
+			#left > span {
+				margin-top: 13px;
+				margin-left: 36px;
+				font-size: 18px;
+				height: 18px;
+				line-height: 45px;
+			}
+			#middle {
+				-webkit-box-flex: 1;
+				width: 100%;
+				display: -webkit-box;
+				-webkit-box-pack: center;
+				-webkit-box-align: center;
+			}
+			#title {
+				font-size: 18px;
+				text-align: center;
+				color: #fff;
+			}
+			#right {
+				width: 80px;
+				color: #fff;
+			}
+			#right > span {
+				margin-top: 13px;
+				margin-right: 36px;
+				font-size: 18px;
+				height: 18px;
+				line-height: 45px;
+			}
+			section {
+				-webkit-box-flex: 1;
+			}
+			body {
+				-webkit-user-select: none;
+			}
+			#main {
+				background-color: #fff;
+			}
+			video {
+				width: 48%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="aui-bar aui-bar-nav" id="header">
+				<nav id="nav">
+					<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+					<div id="middle">
+						<strong id="title">视频监控</strong>
+					</div>
+					<a id="right" onclick="openapp()"><span></span> </a>
+				</nav>
+			</div>
+			<div id="main"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script>
+		//	var refresh_url = $reiz.urls["video"].refresh;
+		var getVideo_url = $reiz.urls["video"].getVideo;
+		var token;
+		var header_h;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			header_h = $api.offset(header).h;
+			api.getPrefs({
+				key : 'loginInfo'
+			}, function(ret, err) {
+				var bumenxx = JSON.parse(ret.value);
+				if (bumenxx) {
+					gongdidm = bumenxx.projects.projectCode;
+					getData(gongdidm);
+				} else {
+					api.toast({
+						msg : '请重新登录，获取权限'
+					});
+				}
+			})
+		}
+		function openapp() {
+			if (api.systemType == "ios") {
+				api.appInstalled({
+					appBundle : 'com.hikvision.ivms5060://'
+				}, function(ret, err) {
+					if (ret.installed) {
+						api.openApp({
+							iosUrl : 'com.hikvision.ivms5060://'
+						}, function(ret, err) {
+						});
+					} else {
+						api.appInstalled({
+							appBundle : 'alisdkdemo://'
+						}, function(ret, err) {
+							if (ret.installed) {
+								api.openApp({
+									iosUrl : 'alisdkdemo://',
+									androidPkg : 'com.videogo'
+								}, function(ret, err) {
+								});
+							} else {
+								api.openWin({
+									name : $reiz.func_url[id].name,
+									url : $reiz.func_url[id].url,
+									reload : true
+								})
+							}
+						});
+					}
+				});
+			} else {
+				api.appInstalled({
+					appBundle : 'com.ivms'
+				}, function(ret, err) {
+					if (ret.installed) {
+						api.openApp({
+							androidPkg : 'com.ivms'
+						}, function(ret, err) {
+						});
+					} else {
+						api.appInstalled({
+							appBundle : 'com.videogo'
+						}, function(ret, err) {
+							if (ret.installed) {
+								api.openApp({
+									androidPkg : 'com.videogo'
+								}, function(ret, err) {
+								});
+							} else {
+								api.alert({
+									msg : '请先安装萤石云视频app'
+								})
+							}
+						});
+					}
+				});
+			}
+		}
+
+		function getData(gongdidm) {
+			$reiz.request.post($reiz.urls['video'].getVideo, {
+				body : {
+					"deptCode" : gongdidm
+				}
+			}, function(ret, err) {
+				var data = ret.data;
+				var objectdata = JSON.parse(data);
+				if (data) {
+					if (!$.isEmptyObject(data)) {
+						openFrame(data);
+					} else {
+						api.toast({
+							msg : '查询无返回数据'
+						});
+					}
+				} else {
+					api.toast({
+						msg : $reiz.error.getErrorMsg(err)
+					});
+				}
+			});
+		}
+
+		function openFrame(param) {
+			api.openFrame({
+				name : 'video_android',
+				url : './video_monitor_android.html',
+				rect : {
+					x : 0,
+					y : header_h,
+					w : 'auto',
+					h : 'auto'
+				},
+				pageParam : param,
+				reload : true,
+				bgColor : '#FFFFFF'
+			});
+		}
+
+		function openxieyi() {
+			api.openFrame({
+				name : 'video_xieyiall',
+				url : './video_xieyiall.html',
+				rect : {
+					x : 0,
+					y : 0,
+					w : api.winWidth,
+					h : api.winHeight
+				}
+			});
+		}
+	</script>
+</html>

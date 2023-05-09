@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-1.1.7.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+			html, body, header, section, footer, nav, div, ul, ol, li, img, a, span, em, del, center, strong, var, fieldset, form, label, dt, dd, cite, input, hr, time, mark, code, figcaption, figure, textarea {
+				margin: 0;
+				border: 0;
+				padding: 0;
+				font-family: Tahoma, Geneva, sans-serif;
+				font-style: normal;
+			}
+			html, body {
+				-webkit-touch-callout: none;
+				-webkit-text-size-adjust: none;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-user-select: none;
+			}
+			header, footer, section, nav, img, a, button, em, del, strong, var, fieldset, label, cite, small, time, mark, code, figcaption, figure, textarea {
+				display: block;
+			}
+			header, section, footer, nav {
+				position: relative;
+				overflow: hidden;
+			}
+			ol, ul {
+				list-style: none;
+			}
+			input, button, textarea {
+				border: 0;
+				margin: 0;
+				padding: 0;
+				font-size: 1em;
+				line-height: 1em;
+				background-color: rgba(0, 0, 0, 0);
+			}
+			span {
+				display: inline-block;
+			}
+			a, a:visited {
+				text-decoration: none;
+			}
+			#nav {
+				display: -webkit-box;
+				height: 44px;
+			}
+			#left {
+				width: 80px;
+				color: #fff;
+				background: url(../../image/myImage/navbtn_back.png) no-repeat 14px 12px;
+				-webkit-background-size: 12px 20px;
+			}
+			#left > span {
+				margin-top: 13px;
+				margin-left: 36px;
+				font-size: 18px;
+				color: #fff;
+				height: 18px;
+				line-height: 18px;
+			}
+			#middle {
+				-webkit-box-flex: 1;
+				width: 100%;
+				display: -webkit-box;
+				-webkit-box-pack: center;
+				-webkit-box-align: center;
+			}
+			#title {
+				font-size: 18px;
+				text-align: center;
+				color: #fff;
+			}
+			#right {
+				width: 80px;
+			}
+			#wrap {
+				height: 100%;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-webkit-flex-flow: column;
+				flex-flow: column;
+			}
+			#main {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+			}
+			.menu > a:last-child {
+				border-width: 1px 0 0 0;
+			}
+			.last {
+				border-bottom-width: 1px;
+			}
+			.menu {
+				background: rgba(33,46,65,0.65);
+			}
+			.hidden {
+				display: none !important;
+			}
+			.clearSpace {
+				text-align: center;
+				margin: 10px 40px;
+    			background-color: #3498db;
+    			border-radius: 2px;
+
+			}
+			.clearSpace-hov {
+
+			}
+			.menu > .clearSpace > span {
+				margin-top: 16px;
+				margin-left: 0.1px;
+				margin-bottom: 16px;
+				font-size: 18px;
+				line-height: 20px;
+				color: #fff;
+			}
+			#wrap > #main {
+				position: absolute;
+				width: 100%;
+				top: 44px;
+				bottom: 0px;
+				overflow-y: auto;
+				background-color: transparent;
+			}
+			.aui-arrow-down:after {
+				font-family: 'auiicon';
+				font-size: inherit;
+				line-height: 1;
+				color: #fff;
+				text-decoration: none;
+				position: absolute;
+				top: 50%;
+				font-size:30px;
+				display: inline-block;
+				-webkit-transform: translateY(-50%);
+				      transform: translateY(-50%);
+				-webkit-font-smoothing: antialiased;
+			}
+			.aui-arrow-down:after {
+				font-family:"auiicon" !important;
+				right: 30px;
+				content: '\e661';
+			}
+			.aui-arrow-up:after {
+				font-family: 'auiicon';
+				font-size: inherit;
+				line-height: 1;
+				color: #bbbbbb;
+				text-decoration: none;
+				position: absolute;
+				top: 50%;
+				font-size:30px;
+				display: inline-block;
+				-webkit-transform: translateY(-50%);
+				      transform: translateY(-50%);
+				-webkit-font-smoothing: antialiased;
+			}
+			.aui-arrow-up:after {
+				-webkit-transform:rotate(180deg);
+				font-family:"auiicon" !important;
+				bottom:5px;
+				right: 15px;
+				content: '\e661';
+			}
+			.myfont{
+				height:20px;
+				line-height: 40px;
+			}
+		</style>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/zepto.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="main">
+				<ul class="aui-list-view">
+					<li class="aui-list-view-cell" tapmode="aActive" onclick="openMenu(this)">
+						<div class="aui-arrow-down"><span>清理存储空间</span></div>
+					</li>
+					<ul class="menu hidden aui-list-view">
+						<li class="aui-list-view-cell aui-switch-body" tapmode="">
+							<div class="aui-pull-left">
+								<input type="checkbox" class="aui-checkbox" id="ck_2" />
+							</div>
+							<span class="aui-pull-right myfont">清除业务数据</span>
+						</li>
+						<li class="aui-list-view-cell aui-switch-body" tapmode="">
+							<div class="aui-pull-left">
+								<input type="checkbox" class="aui-checkbox" id="ck_3" />
+							</div>
+							<span class="aui-pull-right myfont">初始化系统设置</span>
+						</li>
+						<li class="clearSpace" tapmode="clearSpace-hov" onclick="clearSpace()">
+							<span>清理</span>
+						</li>
+					</ul>
+					<li tapmode="" class="aui-list-view-cell aui-switch-body last">
+						<span class="aui-switch-title">是否接收推送</span>
+						<input type="checkbox" id="control" class="aui-switch aui-pull-right" checked onchange="receiveInfo()">
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			apiready = function() {
+				//取得缓存中的设置信息
+				var chkbox = $api.byId("control");
+				//				var ck1 = $api.byId("ck_1");
+				var ck2 = $api.byId("ck_2");
+				var ck3 = $api.byId("ck_3");
+				$api.attr(chkbox, "checked", "checked");
+				//				$api.attr(ck1, "checked", "checked");
+				$api.attr(ck2, "checked", "checked");
+				$api.attr(ck3, "checked", "checked");
+				api.getPrefs({
+					key : 'chk_status'
+				}, function(ret, err) {
+					status = ret.value;
+					if (status === "0") {
+						$api.removeAttr(chkbox, "checked");
+					} else {
+						$api.attr(chkbox, "checked", "checked");
+					}
+				});
+			}
+			function receiveInfo() {
+				var chkbox = $api.byId("control");
+				var chk_status = chkbox.checked;
+				if (chk_status) {
+					api.setPrefs({
+						key : 'chk_status',
+						value : 1
+					});
+					//接收推送
+					var ajpush = api.require('ajpush');
+					if (ajpush) {
+						ajpush.resumePush(function(ret) {
+							if (ret && ret.status) {
+								//success
+							}
+						});
+					}
+				} else {
+					api.setPrefs({
+						key : 'chk_status',
+						value : 0
+					});
+					//停止推送
+					var ajpush = api.require('ajpush');
+					if (ajpush) {
+						ajpush.stopPush(function(ret) {
+							if (ret && ret.status) {
+								//success
+							}
+						});
+					}
+				}
+			}
+
+			function openMenu(obj) {
+				$(obj).next().toggleClass('hidden');
+				$(obj).find('div').toggleClass('aui-arrow-up');
+			}
+
+			function checkMenu(itemNum) {
+				var item = "#ck_" + itemNum;
+				if ($(item).attr("checked")) {
+					$(item).removeAttr("checked");
+				} else {
+					$(item).attr("checked", true);
+				}
+			}
+
+			function clearSpace() {
+				//清除登录信息
+				//				if ($("#ck_1").attr("checked")) {
+				//					api.removePrefs({
+				//						key : 'loginInfo'
+				//					});
+				//				}
+				//清除业务数据 在删表的回调方法里加入toast提示清理完毕
+				if ($("#ck_2").attr("checked")) {
+					var fs = api.require('fs');
+					fs.remove({
+						path : 'fs://reiz_db.db'
+					}, function(ret, err) {
+						//						var status = ret.status;
+						//						if (!status) {
+						//							api.alert({
+						//								msg : err.msg
+						//							});
+						//						};
+					});
+				}
+				//初始化系统设置
+				if ($("#ck_3").attr("checked")) {
+					api.removePrefs({
+						key : 'chk_status'
+					});
+				}
+				api.toast({
+					msg : '清理完毕'
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>详情</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+	.twoNum {
+			letter-spacing: 15px
+		
+	}
+	.delmb{
+			width:80%;
+			margin:20px auto;
+	}
+	.aui-input:disabled{
+		color: #C0C4CC;
+	}
+	.aui-list-item-inner span{
+		color: #C0C4CC;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="aui-content aui-margin-b-15">
+		<ul class="aui-list aui-list-in">
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					运&nbsp&nbsp&nbsp&nbsp单&nbsp&nbsp&nbsp&nbsp号
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="waybillNo"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					司&nbsp机&nbsp姓&nbsp名
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="driverName"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					车&nbsp&nbsp&nbsp&nbsp牌&nbsp&nbsp&nbsp&nbsp号
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="carNo"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					车&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp况
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="carParams"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					标&nbsp准&nbsp体&nbsp积
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="standardVolume"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					材&nbsp料&nbsp名&nbsp称
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="name"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					规&nbsp格&nbsp型&nbsp号
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="materialStandard"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					供&nbsp&nbsp&nbsp应&nbsp&nbsp&nbsp&nbsp商
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="supplierName"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发&nbsp&nbsp&nbsp料&nbsp&nbsp&nbsp&nbsp地
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="origin"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					支&nbsp线&nbsp距&nbsp离
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="distance"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					上&nbsp路&nbsp桩&nbsp号
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="loadStakeNumVl"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发&nbsp料&nbsp时&nbsp间
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="deliveryTime"></span>
+				</div>
+			</li>			
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发料员姓名
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="consignorName"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发料员电话
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="consignorMobike"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发&nbsp料&nbsp备&nbsp注
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="deliveryRemark"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					发&nbsp料&nbsp数&nbsp量
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="quantity"></span>
+				</div>
+			</li>
+			<div style="border-bottom: 1px solid #0f0f0ffa;"></div>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					分&nbsp项&nbsp工&nbsp程
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="subwork"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving">
+				<div class="aui-list-item-media" style="width: 100px;">
+					运&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp距
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="distanceResult"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving">
+				<div class="aui-list-item-media" style="width: 100px;">
+					收&nbsp&nbsp&nbsp料&nbsp&nbsp&nbsp地
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="receiving"></span>
+				</div>
+			</li>
+			<li class="aui-list-item">
+				<div class="aui-list-item-media" style="width: 100px;">
+					收&nbsp料&nbsp数&nbsp量
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="adjustQuantity"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving" >
+				<div class="aui-list-item-media" style="width: 100px;">
+					收&nbsp料&nbsp时&nbsp间
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="receiptTime"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving">
+				<div class="aui-list-item-media" style="width: 100px;">
+					收料员姓名
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="consigneeName"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving">
+				<div class="aui-list-item-media" style="width: 100px;">
+					收料员电话
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="consigneeMobike"></span>
+				</div>
+			</li>
+			<li class="aui-list-item noReceiving">
+				<div class="aui-list-item-media" style="width: 100px;">
+					收&nbsp料&nbsp备&nbsp注
+				</div>
+				<div class="aui-list-item-inner">
+					<span id="receiptRemark"></span>
+				</div>
+			</li>
+			<li class="aui-list-item" style="display: none;">
+				<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+						状&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp态
+					</div>
+					<div class="aui-list-item-input">
+							<input disabled="disabled" type="text" name='status' id="status">
+					</div>
+				</div>
+			</li>
+			<li class="aui-list-item" id="driverOpinionLi">
+				<div class="aui-list-item-inner">
+						<div class="aui-list-item-label">
+							司机意见
+						</div>
+						<div class="aui-list-item-input" >
+							<select  class='driverOpinion aui-input' name='driverOpinion' id="driverOpinion">
+								<option value="请选择">请选择</option>
+								<option value="无异议">无异议</option>
+								<option value="有异议">有异议</option>
+							</select>
+						</div>
+						<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+				</div>
+			</li>
+			<li class="aui-list-item" id="driverHdOpinionLi">
+				<div class="aui-list-item-inner">
+						<div class="aui-list-item-label">
+							队长意见
+						</div>
+						<div class="aui-list-item-input" >
+							<select  class='driverHdOpinion aui-input' name='driverHdOpinion' id="driverHdOpinion">
+								<option value="请选择">请选择</option>
+								<option value="无异议">无异议</option>
+								<option value="有异议">有异议</option>
+							</select>
+						</div>
+							<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+				</div>
+			</li>
+			<li class="aui-list-item" id="driverBtnLi">
+				<div class="aui-btn aui-btn-info aui-btn-block aui-btn-outlined aui-btn-sm delmb drSubmit">保存</div>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+	var id;
+	var loginInfo;
+	var paramsId;//提交需要的id参数
+	var status;
+	var projectCode;
+	apiready = function() {
+		api.getPrefs({
+			key: 'loginInfo'
+		}, function(ret, err) {
+			if (ret) {
+				loginInfo = JSON.parse(ret.value);
+				account = loginInfo.account;
+				username = loginInfo.name;
+				roleCode = loginInfo.roleCode;
+				projectCode = loginInfo.projects.projectCode;
+				id = api.pageParam.id;
+				$("#driverBtnLi").hide();
+				$("#driverHdOpinionLi").hide();
+				$("#driverOpinionLi").hide();
+				//$(".noReceiving").hide();
+				if(roleCode.indexOf('ReceivingOperator')>-1){
+					$(".noReceiving").show();
+				}
+				initDetail();
+			} else {
+				alert("请重新登录");
+			}
+		});
+
+		$('.drSubmit').click(function(){
+			submit();
+		})
+	};
+
+	function initDetail(){
+		$reiz.request.post($reiz.urls['material'].wayBillDetail, {
+			body: {
+				//"projectCode":projectCode,
+				"id": id + ''
+			}
+		}, function(ret, err) {
+			var waybill = ret.waybill;
+			var material = ret.material;
+			var vehicle = ret.vehicle;
+			paramsId = 	waybill.id;
+			status = waybill.status;
+			$("#status").val(waybill.status)
+			$("#carNo").text(waybill.carNo);
+			var carParams = "长:"+vehicle.carLength+",宽:"+vehicle.carWidth+",高:"+vehicle.carHeight+",加高:"+(vehicle.addHeight==null?'0':vehicle.addHeight);
+			$("#carParams").text(carParams);
+			$("#waybillNo").text(waybill.waybillNo);
+			$("#materialStandard").text(material.materialStandard);
+			$("#supplierName").text(ret.supplierName);
+			$("#origin").text( "k"+waybill.originStakeNum+"+"+waybill.originStakeNumMeter);
+			$("#loadStakeNumVl").text( "k"+waybill.loadStakeNum+"+"+waybill.loadStakeNumMeter);
+			if(waybill.receivingStakeNum){
+				$("#receiving").text("k"+waybill.receivingStakeNum+"+"+waybill.receivingStakeNumMeter);
+				var distanceResult= calculateDistance(waybill,waybill.adjustDistance);
+				$("#distanceResult").text(distanceResult+"公里");
+			}
+			$("#name").text(material.name);
+			$("#quantity").text(waybill.quantity);
+			$("#subwork").text(waybill.subWork);
+			$("#standardVolume").text(vehicle.standardVolume);
+			$("#deliveryRemark").text(waybill.deliveryRemark);
+			$("#receiptRemark").text(waybill.receiptRemark);
+			$("#deliveryTime").text(waybill.deliveryTime);
+			$("#receiptTime").text(waybill.receiptTime);
+			$("#projectName").text(ret.projectName);
+			$("#driverName").text(ret.driverName);
+			$("#driverMobile").text(ret.vehicle.driverMobile);
+			$("#consignorName").text(ret.consignorName);
+			$("#consignorMobike").text(ret.consignorMobike);
+			$("#consigneeName").text(ret.consigneeName);
+			$("#consigneeMobike").text(ret.consigneeMobike);
+			$("#distance").text((waybill.distance|| 0)+"公里");
+			$("#adjustQuantity").text(waybill.adjustQuantity);
+			if(waybill.driverOpinion== "undefined"){
+				$("#driverOpinion").val("请选择");
+			}else{
+				$("#driverOpinion").val(waybill.driverOpinion);
+			}
+			if(waybill.driverHdOpinion== "undefined"){
+				$("#driverHdOpinion").val("请选择");
+			}else{
+				$("#driverHdOpinion").val(waybill.driverHdOpinion);
+			}
+			// 	msg: roleCode +",status:"+status +"ddd"+waybill.driverOpinion,
+			if(roleCode.indexOf('carDriver')>-1){
+				if(status == '1'){
+					$("#driverOpinionLi").show();
+					$("#driverHdOpinionLi").show();
+					$("#driverOpinion").attr("disabled","disabled");
+					$("#driverHdOpinion").attr("disabled","disabled");
+				}else{
+					$("#driverBtnLi").hide();
+					$("#driverOpinion").attr("disabled","disabled");
+					$("#driverHdOpinion").attr("disabled","disabled");
+				}
+				if(waybill.driverOpinion){
+					$("#driverBtnLi").hide();
+				}else{
+					$("#driverBtnLi").show();
+					$("#driverOpinion").removeAttr("disabled");
+				}
+				if(status == '0'){
+					$("#driverBtnLi").hide();
+				}
+			}
+			if(roleCode.indexOf('carOwner')>-1){
+				if(status == '1'){
+					$("#driverOpinionLi").show();
+					$("#driverHdOpinionLi").show();
+					$("#driverOpinion").attr("disabled","disabled");
+					$("#driverHdOpinion").attr("disabled","disabled");
+				}else{
+					$("#driverBtnLi").hide();
+					$("#driverOpinion").attr("disabled","disabled");
+					$("#driverHdOpinion").attr("disabled","disabled");
+				}
+				if(waybill.driverHdOpinion){
+					$("#driverBtnLi").hide();
+				}else{
+					$("#driverBtnLi").show();
+					$("#driverHdOpinion").removeAttr("disabled");
+				}
+				if(status == '0'){
+					$("#driverBtnLi").hide();
+				}
+			}
+			if(roleCode.indexOf('carDriver')==-1 && roleCode.indexOf('carOwner')==-1 ){
+				$("#driverOpinion").attr("disabled","disabled");
+				$("#driverHdOpinion").attr("disabled","disabled");
+				$("#driverBtnLi").hide();
+			}
+		});
+	}
+
+	function calculateDistance(waybill,adjustDistance){
+			var loadStakeNum =waybill.loadStakeNum;
+			var loadStakeNumMeter = waybill.loadStakeNumMeter;
+			var receivingStakeNum = waybill.receivingStakeNum;
+			var receivingStakeNumMeter = waybill.receivingStakeNumMeter;
+			var distance = waybill.distance;
+			var distanceResult = 
+				(Number(receivingStakeNum)*1000+Number(receivingStakeNumMeter))-
+				(Number(loadStakeNum)*1000+Number(loadStakeNumMeter))
+				+Number(distance)*1000;
+			distanceResult = Number(distanceResult)/1000;
+			if(adjustDistance && Number(adjustDistance)!=0){
+				distanceResult = Number(distanceResult) + Number(adjustDistance);
+			}
+			return distanceResult;
+		}
+
+	function submit(){
+		var driverOpinion = $('#driverOpinion').val();
+		var driverHdOpinion = $('#driverHdOpinion').val();
+		
+		$reiz.request.post($reiz.urls['material'].driverConfirmWaybill, {
+				body:{
+					account:account,
+					id:paramsId,
+					driverOpinion:driverOpinion,
+					driverHdOpinion:driverHdOpinion
+				}
+		},function(ret,error){
+
+				if(ret.code == 200){
+					api.alert({
+								title: '提示消息',
+								msg: ret.msg,
+						}, function(ret, err) {
+							api.execScript({
+								name: 'material',
+								frameName: 'material_list_frame',
+								script:  'getMaterialList(1);'
+							});
+							api.closeWin();
+						});
+
+				}else{
+					api.toast({
+							msg: ret.msg,
+							duration: 2000,
+							location: 'middle'
+					});
+				}
+
+		})
+	}
+
+	function time(time) {
+		var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+		console.log("date:"+date);
+		return date.toJSON().substr(0, 19).replace('T', ' ');
+
+	}
+</script>
+
+</html>

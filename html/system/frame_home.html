@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>homepage</title>
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+	<style>
+		@import url("../../templates/dot/dashcard.css");
+
+		html,
+		body {
+			background-image: url('../../image/homepage/bg_head_homepage.png');
+			background-size: 100%;
+			background-repeat: no-repeat;
+			background-position: center top;
+		}
+
+		#weather-card .weather-card-content {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			text-align: center;
+			align-items: center;
+			color: #ffffff;
+		}
+
+		#weather-card .weather-card-content .wrap-weather {
+			display: inline-block;
+			justify-content: flex-start;
+		}
+
+		#weather-card .weather-card-content .weather-condition {
+			font-size: 0.8rem;
+		}
+
+		#weather-card .weather-card-content .wrap-date-environment {
+			display: inline-block;
+			width: 8rem;
+			align-content: center;
+			text-align: center;
+		}
+
+		#weather-card .weather-card-content .wrap-weather .weather-icon {
+			display: inline-block;
+			vertical-align: middle;
+			font-size: 2.5rem;
+		}
+
+		#weather-card .weather-card-content .wrap-weather .weather-info {
+			display: inline-block;
+			vertical-align: middle;
+			font-size: 0.6rem;
+		}
+
+		#weather-card .weather-card-content .wrap-weather .weather-info .value-temperature,.unit-temperature {
+			font-size: 1rem;
+		}
+
+		#weather-card .date-bar {
+			font-size: 0.6rem;
+			/* margin-bottom: 0.4rem; */
+			padding-right: 0.8rem;
+			text-align: right;
+		}
+
+		#weather-card .environment-condition {
+			display: flex;
+			font-size: 0.5rem;
+			width: 100%;
+			text-align: left;
+			justify-content: space-between;
+		}
+
+		#weather-card .environment-condition .environment-col {
+			display: inline-block;
+			width: 50%;
+		}
+
+		#weather-card .environment-condition .environment-row {
+			line-height: 0.8rem;
+		}
+
+		#weather-card .environment-condition .icon-environment {
+			font-size: 0.5rem;
+		}
+
+		#project-status-card .dashcard.aui-card-list {
+			text-align: center;
+		}
+
+		.dashcard-data .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 20%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+
+		.dashcard-menu .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 10%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+
+		#project-status-card {
+			opacity: 0.8;
+		}
+
+		#project-status-card .project-status-content {
+			width: 100%;
+			display: flex;
+			justify-content: space-evenly;
+			text-align: center;
+			align-items: center;
+			margin-top: 0.2rem;
+		}
+
+		#proj-start-date {
+			display: inline-block;
+		}
+
+		#proj-progress {
+			display: inline-block;
+		}
+
+		#proj-end-date {
+			display: inline-block;
+		}
+
+		#project-status-card .project-status-content .proj-status-icon {
+			width: 100%;
+			font-size: 1.6rem;
+			background: linear-gradient(#23d2ff, #138dc5);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		#project-status-card .project-status-content .proj-status-icon::after {
+			position: absolute;
+			left: 0.5rem;
+			top: 0.5rem;
+			z-index: -1;
+		}
+
+		#project-status-card .project-status-content .proj-status-label {
+			width: 100%;
+			font-size: 0.9rem;
+		}
+
+		#project-status-card .project-status-content .proj-status-date {
+			width: 100%;
+			font-size: 0.7rem;
+			color: #09a2d4;
+		}
+
+		#proj-progress-chart {
+			width: 6rem;
+			height: 6rem;
+		}
+
+		#proj-status-foot {
+			margin-top: 0.5rem;
+			width: 100%;
+			text-align: center;
+			font-size: 0.7rem;
+		}
+
+		#days-no-accident {
+			color: #09a2d4;
+			font-weight: 600;
+			font-size: 0.8rem;
+		}
+
+		#proj-status-bottom-bar {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 0;
+			width: 40vw;
+			height: 0.1rem;
+			bottom: 0;
+			background-color: #138dc5;
+		}
+	</style>
+</head>
+
+<body>
+	<script type="text/x-dot-template" id="templDashcard">
+		<!-- dashcard卡片窗体模板 -->
+
+		<section class="aui-card-list">
+			{{#def.templDashcardHeader || ''}}
+			<div class="aui-card-list-content-padded">
+				{{? it.body }}
+				{{? it.body.data && it.body.data.length > 0 }}
+				{{#def.templDashcardData || ''}}
+				{{?}}
+				{{? it.body.menu && it.body.menu.length > 0 }}
+				{{#def.templDashcardMenu || ''}}
+				{{?}}
+				{{?}}
+			</div>
+		</section>
+
+		{{##def.templDashcardHeader:
+				<div class="aui-card-list-header">
+				{{? it.header.icon }}
+		<img class="header-icon" src="{{=it.header.icon}}" />
+		{{??}}
+		<span class="header-icon-default"></span>
+		{{?}}
+		<label class="header-title">{{=it.header.title}}</label>
+		{{? it.header.url }}
+		<a class="header-right-btn aui-btn" onclick="{{=it.header.url}}">
+			<span class="iconfont icon-gengduo"></span>
+		</a>
+		{{?}}
+		</div>
+		#}}
+
+		{{##def.templDashcardData:
+				<div class="dashcard-data">
+					<section class="aui-grid aui-margin-b-15">
+						{{~ it.body.data :p:i }}
+		{{? i%4 === 0 }}
+		<div class="aui-row aui-padded">
+			{{?}}
+			<div class="aui-col-xs-3">
+				{{? p.url && p.url != ''}}
+				<a href="{{=p.url}}">
+					{{#def.dataCardDataField}}
+				</a>
+				{{??}}
+				{{#def.dataCardDataField}}
+				{{?}}
+			</div>
+			{{? i%4 === 3 || i === it.body.data.length - 1 }}
+		</div>
+		{{?}}
+		{{~}}
+		</section>
+		</div>
+		#}}
+
+		{{##def.templDashcardMenu:
+				<div class="dashcard-menu">
+					<section class="aui-grid aui-margin-b-15">
+						{{~ it.body.menu :p:i }}
+		{{? i%4 === 0 }}
+		<div class="aui-row aui-padded">
+			{{?}}
+			<div class="aui-col-xs-3">
+				{{? p.badegCountField}}
+				<div class="aui-badge aui-hide" id="{{=p.badegCountField}}"></div>
+				{{?}}
+				{{? p.url && p.url != ''}}
+				<a onclick="openWin('{{=p.label}}', '{{=p.url}}')">
+					{{#def.menuCardMenuIcon || ''}}
+				</a>
+				{{??}}
+				<a onclick="alert('功能暂未上线，敬请期待')">
+					{{#def.menuCardMenuIcon || ''}}
+				</a>
+				{{?}}
+				<div class="aui-grid-label">{{=p.label}}</div>
+			</div>
+			{{? i%4 === 3 || i === it.length - 1 }}
+		</div>
+		{{?}}
+		{{~}}
+		</section>
+		</div>
+		#}}
+
+		{{##def.templDashcardFooter:
+				<div class="dashcard-footer">
+				</div>
+			#}}
+
+
+		<!-- Components -->
+
+		{{##def.dataCardDataField:
+				<div class="data-field">
+						{{? p.style && p.style != ''}}
+		<div class="data-value {{=p.style.substr(1)}}" id="{{=p.field}}">0</div>
+		{{??}}
+		<div class="data-value" id="{{=p.field}}">0</div>
+		{{?}}
+		{{? p.unit && p.unit != ''}}
+		<div class="data-unit">{{=p.unit}}</div>
+		{{?}}
+		</div>
+		<div class="aui-grid-label">{{=p.label}}</div>
+		#}}
+
+
+		{{##def.menuCardMenuIcon:
+				{{? p.icon && p.icon != ''}}
+		{{? p.icon.match("#.+")}}
+		<div class="menu-icon">
+			<i class="{{=p.icon.substr(1)}}"></i>
+		</div>
+		{{??}}
+		<div class="aui-iconfont menu-icon" src="{{=p.icon}}"></div>
+		{{?}}
+		{{??}}
+		<i class="aui-iconfont menu-icon default-icon"></i>
+		{{?}}
+		#}}
+
+	</script>
+	<div id="main">
+		<section class="aui-content-padded" id="weather-card">
+			<div class="weather-card-content">
+				<div class="wrap-weather">
+					<i class="weather-icon iconfont icon-wu1" id="weather-condition-icon"></i>
+					<div class="weather-info">
+						<div class="weather-temperature">
+							<span class="value-temperature" id="weather-temperature-value">--</span>
+							<span class="unit-temperature">℃</span>
+						</div>
+						<span class="weather-condition" id="weather-condition-text">--</span>
+					</div>
+				</div>
+				<div class="wrap-date-environment">
+					<div class="date-bar">
+						<span class="current-date" id="date-today" type="date"></span>
+						<span class="day-of-week" id="weekday-today"></span>
+					</div>
+					<div class="environment-condition">
+						<div class="environment-col">
+							<div class="environment-row">
+								<i class="icon-environment iconfont icon-fengsu"></i>
+								<span class="label-environment">风力</span>
+								<span class="value-environment" id="weather-windpower-value">--</span>
+								<span class="unit-environment"></span>
+							</div>
+							<div class="environment-row">
+								<i class="icon-environment iconfont "></i>
+								<span class="label-environment">噪音</span>
+								<span class="value-environment" id="env_noiselevel_value">--</span>
+								<span class="unit-environment">dB</span>
+							</div>
+						</div>
+						<div class="environment-col">
+							<div class="environment-row">
+								<i class="icon-environment"></i>
+								<span class="label-environment">PM2.5</span>
+								<span class="value-environment" id="env_pm25_value">--</span>
+								<span class="unit-environment">μm³</span>
+							</div>
+							<div class="environment-row">
+								<i class="icon-environment"></i>
+								<span class="label-environment">PM10</span>
+								<span class="value-environment" id="env_pm10_value">--</span>
+								<span class="unit-environment">μm³</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="aui-content-padded" id="project-status-card">
+			<div class="dashcard aui-card-list">
+				<div class="aui-card-list-content-padded">
+					<div class="project-status-content">
+						<div id="proj-start-date">
+							<i class="proj-status-icon iconfont icon-jianshe-2"></i>
+							<span class="proj-status-label">开工</span>
+							<span class="proj-status-date" id="proj-startdate-value">--</span>
+						</div>
+						<div id="proj-progress">
+							<i id="proj-progress-chart-bg"></i>
+							<div id="proj-progress-chart"></div>
+							<div id="proj-progress-delay">
+								<div class="proj-progress-delay-container aui-hide" id="proj-daysdelayed-container">
+									<span class="proj-progress-delay-label">延期</span>
+									<span class="proj-progress-delay-label" id="proj-daysdelayed-value">0</span>
+									<span class="proj-progress-delay-label">天</span>
+								</div>
+							</div>
+						</div>
+						<div id="proj-end-date">
+							<i class="proj-status-icon iconfont icon-jianshe-1"></i>
+							<span class="proj-status-label">竣工</span>
+							<span class="proj-status-date" id="proj-enddate-value">--</span>
+						</div>
+					</div>
+					<div id="proj-status-foot">
+						<span>安全施工</span>
+						<span id="proj-dayssafe-value">--</span>
+						<span>天</span>
+					</div>
+				</div>
+				<div id="proj-status-bottom-bar"></div>
+			</div>
+		</section>
+		<section class="aui-content-padded" id="dashcards">
+		</section>
+	</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/echarts.min.js"></script>
+<script type="text/javascript" src="../../script/echartsLiquidfill.min.js"></script>
+<script>
+ var dotDef, templFile, templDashcard, dashcards,loginInfo, currentProject, datetime;
+	apiready = function () {
+  fnInitDashcards();
+	api.getPrefs({
+			key: 'loginInfo'
+	}, function(ret, err) {
+			if (ret) {
+					loginInfo = JSON.parse(ret.value);
+          currentProject = loginInfo.projects;
+					fnLoadData();
+			} else {
+					alert("请退出重新登录");
+			}
+	});
+	fnSetRefreshHeader();
+	};
+
+ function	fnLoadData(){
+	 api.refreshHeaderLoadDone();
+	 api.parseTapmode();
+	 getDate();
+	 getWeatherAndEnvData();
+	 getProjectProcessData();
+	 fnInitProjProgressChart();
+	 getSafetyMgtStats();
+	 getQualityMgtStats();
+	 getAttendanceCount();
+ }
+
+ function fnInitDashcards(){
+	 dashCards = [{
+		 header: {
+			 title: '人员信息',
+			 icon: '../../image/homepage/label_personnel_info_homepage_dashcard.png',
+			 url: '',
+		 },
+		 body: {
+			 data: [{
+				 field: 'projectCount',
+				 label: '标段/工区数',
+				 unit: '个',
+				 url: '',
+			 }, {
+				 field: 'todayWorkerCount',
+				 label: '出勤人数',
+				 unit: '人',
+				 url: '',
+
+			 }, {
+				 field: 'persent',
+				 label: '出勤率',
+				 unit: '',
+				 url: '',
+			 }, {
+				 field: 'workerCount',
+				 label: '花名册人数',
+				 unit: '人',
+				 url: '',
+			 }]
+		 }
+	 }, {
+		 header: {
+			 title: '质量信息',
+			 icon: '../../image/homepage/label_quality_info_homepage_dashcard.png',
+			 url: '',
+		 },
+		 body: {
+			 data: [{
+				 field: 'quality_amend',
+				 label: '待整改',
+				 unit: '',
+				 style: '#red',
+				 url: '',
+			 }, {
+				 field: 'quality_approval',
+				 label: '待审批',
+				 unit: '',
+				 style: '#red',
+				 url: '',
+			 }, {
+				 field: 'quality_nopass',
+				 label: '审批拒绝',
+				 unit: '',
+				 url: '',
+			 }, {
+				 field: 'quality_ispass',
+				 label: '整改合格',
+				 unit: '',
+				 url: '',
+			 }]
+		 }
+	 }, {
+		 header: {
+			 title: '安全信息',
+			 icon: '../../image/homepage/label_security_info_homepage_dashcard.png',
+			 url: '',
+		 },
+		 body: {
+			 data: [{
+				 field: 'safe_amend',
+				 label: '待整改',
+				 unit: '',
+				 style: '#red',
+				 url: '',
+			 }, {
+				 field: 'safe_approval',
+				 label: '待审批',
+				 style: '#red',
+				 unit: '',
+				 url: '',
+			 }, {
+				 field: 'safe_nopass',
+				 label: '审批拒绝',
+				 unit: '',
+				 url: '',
+			 }, {
+				 field: 'safe_ispass',
+				 label: '整改合格',
+				 unit: '',
+				 url: '',
+			 }]
+		 }
+	 }, /*{
+		 header: {
+			 title: '设备信息',
+			 icon: '../../image/homepage/label_device_info_homepage_dashcard.png',
+			 url: '',
+		 },
+		 body: {
+			 menu: [{
+				 label: '塔机',
+				 badegCountField: 'craneMsgCount',
+				 icon: '#iconfont icon-jianshe-3',
+				 url: '',
+			 }, {
+				 label: '施工电梯',
+				 badegCountField: 'elevatorMsgCount',
+				 icon: '#iconfont icon-diantiguanli',
+				 url: '',
+			 }, {
+				 label: '卸料平台',
+				 badegCountField: 'unloadPlatformMsgCount',
+				 icon: '#iconfont icon-guancai',
+				 url: '',
+			 }, {
+				 label: '智能水表',
+				 badegCountField: 'waterMeterMsgCount',
+				 icon: '#iconfont icon-shuibiao_o',
+				 url: '',
+			 }, {
+				 label: '环境监测',
+				 badegCountField: 'environMonMsgCount',
+				 icon: '#iconfont icon-huanjing',
+				 url: '../environment/dust_search_win.html',
+			 },
+			 {
+					 label: '视频监控',
+					 badgeCountField: 'videoSurveillanceMsgCount',
+					 icon: '#iconfont icon-shipinjiankong',
+					 url: '../video/video_monitor.html',
+			 },{
+				 label: '雾炮喷淋',
+				 badegCountField: 'dustReductionMsgCount',
+				 icon: '#iconfont icon-zhinengpenlin',
+				 url: '',
+			 }]
+		 }
+	 }*/];
+	 dotDef = {
+		 debug: true,
+	 }
+	 templFile = loadFile('../../templates/dot/dashcard.html');
+	 templDashcard = doT.template(templFile.toString(), undefined, dotDef);
+	 for (var i in dashCards) {
+		 $('#dashcards').append(templDashcard(dashCards[i]));
+	 }
+	 api.parseTapmode();
+ }
+
+	function openWin(_name, _url) {
+		api.openWin({
+			name: _name,
+			url: _url,
+			slidBackEnabled: true,
+		});
+	}
+
+	function loadFile(url) {
+		return api.readFile({
+			sync: true,
+			path: url || '',
+		}, function (ret, err) {
+			if (ret.status) {
+				api.alert({
+					msg: ret.data
+				});
+			} else {
+				api.alert({
+					msg: '错误码: ' + err.code + '错误信息' + err.msg
+				});
+			}
+		});
+	}
+	function getDate() {
+		datetime = $reiz.getCurrentDate();
+		var myDate = new Date();
+		var year=myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+		var month=myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
+		var date=myDate.getDate();        //获取当前日(1-31)
+		var time=year+'年'+month+'月'+date+'日'
+		$('#date-today').html(time + '&nbsp;&nbsp;&nbsp;' + datetime.chsWeekDay);
+	};
+	function getWeatherAndEnvData() {
+		var weatherData, temperature, weatherContition, windPower, weatherTypesAndIcons, weatherIconsStr, envData, noiseLevel, pm25, pm10, projectCode;
+		if (currentProject) {
+			projectCode = currentProject.projectCode;
+			$reiz.request.post($reiz.urls['weather'].querySimpleDataNow, {
+				body : {
+					'projectCode' : projectCode
+				}
+			}, function(ret, err) {
+				if (ret && ret.code == 200 && ret.data && ret.data != 'null') {
+					weatherData = JSON.parse(ret.data);
+					temperature = weatherData.temp;
+					weatherContition = weatherData.weather;
+					windPower = weatherData.windPower;
+					noiseLevel = weatherData.noise;
+					pm25 = weatherData.pm25;
+					pm10 = weatherData.pm10;
+					weatherTypesAndIcons = {
+						'晴' : 'icon-qing',
+						'多云' : 'icon-duoyun',
+						'阴' : 'icon-yin',
+						'阵雨' : 'icon-zhenyu',
+						'雷阵雨' : 'icon-leizhenyu',
+						'雷阵雨伴有冰雹' : 'icon-leizhenyubanyoubingbao',
+						'雨夹雪' : 'icon-yujiaxue',
+						'小雨' : 'icon-xiaoyu',
+						'中雨' : 'icon-zhongyu',
+						'大雨' : 'icon-dayu',
+						'暴雨' : 'icon-baoyu',
+						'大暴雨' : 'icon-dabaoyu',
+						'特大暴雨' : 'icon-tedabaoyu',
+						'阵雪' : 'icon-zhenxue',
+						'小雪' : 'icon-xiaoxue',
+						'中雪' : 'icon-zhongxue',
+						'大雪' : 'icon-daxue',
+						'暴雪' : 'icon-baoxue',
+						'雾' : 'icon-wu',
+						'冻雨' : 'icon-dongyu',
+						'沙尘暴' : 'icon-shachenbao',
+						'小到中雨' : 'icon-xiaodaozhongyu',
+						'中到大雨' : 'icon-zhongdaodayu',
+						'大到暴雨' : 'icon-dadaobaoyu',
+						'暴雨到大暴雨' : 'icon-baoyudaodabaoyu',
+						'大暴雨到特大暴雨' : 'icon-dabaoyudaotedabaoyu',
+						'小到中雪' : 'icon-xiaodaozhongxue',
+						'中到大雪' : 'icon-zhongdaodaxue',
+						'大到暴雪' : 'icon-dadaobaoxue',
+						'浮尘' : 'icon-fuchen',
+						'扬沙' : 'icon-yangsha',
+						'强沙尘暴' : 'icon-qiangshachenbao',
+						'霾' : 'icon-mai',
+						'无' : 'icon-wu1',
+						'雨' : 'icon-yu',
+						'雪' : 'icon-xue1',
+					}
+					weatherIconsStr = Object.values(weatherTypesAndIcons).join(' ');
+					$('#weather-temperature-value').text(temperature);
+					$('#weather-condition-text').text(weatherContition);
+					$('#weather-windpower-value').text(windPower);
+					$('#weather-condition-icon').removeClass(weatherIconsStr);
+					$('#env_noiselevel_value').text(noiseLevel);
+					$('#env_pm25_value').text(pm25);
+					$('#env_pm10_value').text(pm10);
+					if (weatherContition && weatherTypesAndIcons[weatherContition]) {
+						$('#weather-condition-icon').addClass(weatherTypesAndIcons[weatherContition]);
+					} else {
+						$('#weather-condition-icon').addClass('#icon-wu1');
+					}
+				};
+			})
+		};
+	};
+
+	function loadData() {
+		api.refreshHeaderLoadDone();
+		api.parseTapmode();
+		console.log('test');
+	}
+
+	function refresh(params) {
+		currentProject = params;
+    fnLoadData();
+	}
+
+	function fnSetRefreshHeader() {
+		api.setRefreshHeaderInfo({
+			visible: true,
+			// loadingImg: 'widget://image/refresh.png',
+			bgColor: '#ccc',
+			textColor: '#fff',
+			textDown: '下拉刷新...',
+			textUp: '松开刷新...',
+			showTime: true,
+		}, function(ret, err){
+			//从服务器加载数据，完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+			loadData();
+		});
+	}
+
+	function getProjectProcessData() {
+		var startDate, endDate, currentDate, startDateStr, endDateStr, dateSinceStart;
+		if (currentProject) {
+			startDate = (new Date(currentProject.startTime));
+			endDate = (new Date(currentProject.endTime));
+			currentDate = new Date();
+			startDateStr = startDate.toLocaleDateString().replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3');
+			endDateStr = endDate.toLocaleDateString().replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3');
+			dateSinceStart = (currentDate > endDate) ? endDate : currentDate;
+			dateDuration = dateSinceStart - startDate;
+			progressPercent = parseInt(100 * dateDuration / (endDate - startDate));
+			$('#proj-startdate-value').text(startDateStr);
+			$('#proj-enddate-value').text(endDateStr);
+			$('#proj-dayssafe-value').text(parseInt(dateDuration / 86400000));
+		}
+	}
+
+	function fnInitProjProgressChart() {
+		var projStatusChart, projStatusChartOpt, data, params, name, count, color;
+		params = {
+			name : '施工进度',
+			value : progressPercent,
+			unit : '%',
+		}
+		name = params.name;
+		value = params.value;
+		unit = params.unit;
+		data = [];
+		data.push(params.value/100);
+		data.push(params.value/100);
+		data.push(params.value/100);
+		borderColor = '#00ACFE';
+		projStatusChartOpt = {
+			series : [{
+				type : 'liquidFill',
+				data : data,
+				direction : 'right',
+				radius : '90%',
+				center : ['50%', '50%'],
+				itemStyle : {
+					shadowBlur : 0,
+					opacity : 100
+				},
+				outline : {
+					// show: false
+					borderDistance : '3%', //内环padding值
+					itemStyle : {
+						borderWidth : 3, //圆边线宽度
+						borderColor : borderColor,
+					},
+				},
+				label : {
+					normal : {
+						formatter : function() {
+							return name + '\n' + value + unit;
+						}, //重置百分比字体为空
+						// textStyle: {
+						// color: '#fff',
+						color : '#00ACFE',
+						insideColor : '#fff',
+						fontSize : 17
+						// }
+					}
+				},
+				// 内图 背景色 边
+				backgroundStyle : {
+					color : '#fff',
+					borderWidth : 2,
+					borderColor : '#40cdf4',
+				}
+			}]
+		}
+		projStatusChart = echarts.init($('#proj-progress-chart')[0]);
+		projStatusChart.setOption(projStatusChartOpt);
+	}
+
+	function getSafetyMgtStats(){
+		projectCode = currentProject.projectCode;
+		$reiz.request.post($reiz.urls['safe'].getSafeAmend, {
+			body : {
+				'projectCode' : projectCode,
+				"checkType": "1"
+			}
+		}, function(ret, err) {
+			var data = ret.data;
+			var statusNum = JSON.parse(data).statusNum;
+			for(var item in statusNum){
+				if(statusNum[item].status == "00"){
+				  $('#safe_amend').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "01"){
+					$('#safe_approval').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "02"){
+					$('#safe_nopass').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "03"){
+					$('#safe_ispass').text(statusNum[item].num);
+				}
+			}
+		});
+	}
+
+	function getQualityMgtStats(){
+		projectCode = currentProject.projectCode;
+		$reiz.request.post($reiz.urls['safe'].getSafeAmend, {
+			body : {
+				'projectCode' : projectCode,
+				"checkType": "2"
+			}
+		}, function(ret, err) {
+			var data = ret.data;
+			var statusNum = JSON.parse(data).statusNum;
+			for(var item in statusNum){
+				if(statusNum[item].status == "00"){
+					$('#quality_amend').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "01"){
+					$('#quality_approval').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "02"){
+					$('#quality_nopass').text(statusNum[item].num);
+				}
+				if(statusNum[item].status == "03"){
+					$('#quality_ispass').text(statusNum[item].num);
+				}
+			}
+		});
+	}
+
+	function getAttendanceCount(){
+		projectCode = currentProject.projectCode;
+		$reiz.request.post($reiz.urls['attendance'].getAttendanceCount, {
+			body : {
+				'projectCode' : projectCode
+			}
+		}, function(ret, err) {
+			var data = JSON.parse(ret.data);
+			$('#projectCount').text(data.projectCount);
+			$('#workerCount').text(data.workerCount);
+			$('#todayWorkerCount').text(data.todayWorkerCount);
+			$('#persent').text(data.persent);
+		});
+	}
+
+	function fnSetRefreshHeader() {
+		api.setRefreshHeaderInfo({
+			visible : true,
+			// loadingImg: 'widget://image/refresh.png',
+			bgColor : '#ccc',
+			textColor : '#fff',
+			textDown : '下拉刷新...',
+			textUp : '松开刷新...',
+			showTime : true,
+		}, function(ret, err) {
+			//从服务器加载数据，完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+			fnLoadData();
+		});
+	};
+</script>
+
+</html>

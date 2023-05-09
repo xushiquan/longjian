@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/reiz.css" />
+		<style>
+			body {
+				/*background: #fff;*/
+			}
+			.input-wrap span {
+				line-height: 42px;
+			}
+			/*.aui-searchbar{
+			 background: #fbfbfb;
+			 }*/
+			.input-wrap input {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0) !important;
+				line-height: 30px;
+				outline: none;
+				height: 42px;
+				border: 1px solid #20415f;
+			}
+			.input-wrap textarea {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0);
+				border: 1px solid #ccc;
+				line-height: 24px;
+				outline: none;
+				height: 130px;
+				width: 80%;
+				font-size: 15px;
+				margin-left: 30px;
+			}
+			.input-wrap i {
+				position: absolute;
+				z-index: 0;
+			}
+			.input-wrap {
+				display: -webkit-box;
+				margin: 10px 10px 10px 15px;
+			}
+			.input-wrap select {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0);
+				outline: none;
+				height: 42px;
+			}
+			.input-wrap span {
+				line-height: 42px;
+			}
+			.input-wrap input {
+				display: block;
+				-webkit-box-flex: 1;
+				background-color: rgba(255, 255, 255, 0) !important;
+				line-height: 30px;
+				outline: none;
+				height: 42px;
+				border: 1px solid #20415f;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<header header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				人员轨迹
+			</div>
+			<div id="map" style="position:absolute;left:0px;right:0px;width:800px;height:500px;"></div>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			var header_h = $api.offset(header).h;
+			var browser = api.require('webBrowser');
+			browser.openView({
+				url : 'http://116.182.15.249:8032/#/carPosition?',
+				rect : {
+					x : 0,
+					y : 64,
+					w : 'auto',
+					h : 'auto'
+				}
+			}, function(ret, err) {
+				switch (ret.state) {
+					case 0:
+						break;
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					case 4:
+						break;
+					default:
+						break;
+				}
+			});
+			//			api.openFrame({
+			//				name : 'gongrenxx_guiji_frm',
+			//				url : './gongrenxx_guiji_frm.html',
+			//				userWKWebView:true,
+			//				rect : {
+			//					x : 0,
+			//					y : header_h,
+			//					w : 'auto',
+			//					h : 'auto'
+			//				}
+			//			});
+		}
+	</script>
+</html>

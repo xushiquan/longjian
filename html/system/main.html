@@ -1,0 +1,692 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../icon/iconfont.css" />
+		<style>
+			.aui-bar-tab {
+				position: fixed;
+				top: auto;
+				bottom: 0;
+				table-layout: fixed;
+				/*background-color: #ffffff;*/
+				border-top: 1px solid rgba(7, 149, 230, 0.2);
+				color: #757575;
+			}
+			.none{
+				display: none;
+			}
+			.block{
+					display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" id='titleLeft'>
+				  <span onclick="projectList();" id="title">默认工程项目</span>
+					<span id='titleIcon' class="icon iconfont icon-web-icon-"></span>
+			</a>
+			<div class="aui-title" id="aui-title">
+				
+			</div>
+			<a class="aui-pull-right aui-btn aui-hide" id="saoyisao" onclick="scanGj()">
+				<span class="aui-btn icon iconfont icon-saoyisao"></span>
+			</a>
+		</header>
+
+		<footer class="aui-bar aui-bar-tab" id="footer">
+			<div class="aui-bar-tab-item aui-active" tapmode>
+				<i id="shouye" class="icon iconfont icon-changyongicon- icon-shouyehover"></i>
+				<div class="aui-bar-tab-label">
+					首页
+				</div>
+			</div>
+			<div class="aui-bar-tab-item" tapmode>
+				<i id="gongneng" class="icon iconfont icon-gongneng"></i>
+				<div class="aui-bar-tab-label">
+					功能
+				</div>
+			</div>
+			<div class="aui-bar-tab-item" tapmode>
+				<!--		<div class="aui-badge">
+				99
+				</div>-->
+				<i id="dongtai" class="icon iconfont icon-duihuakuang"></i>
+				<div class="aui-bar-tab-label">
+					动态
+				</div>
+			</div>
+			<div class="aui-bar-tab-item" tapmode>
+				<!--<div class="aui-dot"></div>-->
+				<i id="wode" class="icon iconfont icon-wode"></i>
+				<div class="aui-bar-tab-label">
+					我的
+				</div>
+			</div>
+		</footer>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<!--<script type="text/javascript" src="../../script/aui-popup.js"></script>-->
+		<script type="text/javascript" src="../../script/aui-tab.js" ></script>
+	<script type="text/javascript">
+		var framesOpened = false, frameIndex = 0, loginInfo, homeHeader, headerPos, headerH, bodyH;
+//		var auipopup = new auiPopup();
+		var jpush;
+		var username;
+		apiready = function() {
+			// 解析元素 tapmode 属性，优化点击事件处理
+			api.parseTapmode();
+			var header = $api.byId('header');
+			// 沉浸式状态栏效果
+			$api.fixStatusBar(header);
+			// 计算元素的位置
+			headerPos = $api.offset(header);
+			headerH = headerPos.h;
+			var footer = $api.byId('footer');
+			// 计算元素的位置
+			footerPos = $api.offset(footer);
+			footerH = footerPos.h;
+			// 显示标题为当前选中工程项目的项目名称
+			loginInfo = api.pageParam.loginInfo;
+			username = loginInfo.name;
+			projectCode = loginInfo.projects.projectCode;
+			changeTitle(loginInfo.projects.projectName);
+			//开启消息推送
+			jpush = api.require('ajpush');
+			//jpush.resumePush();
+			var param = {
+				alias : loginInfo.account,
+				tags : [loginInfo.orgId]
+			};
+			if (api.systemType == "ios") {
+				jpush.bindAliasAndTags(param, function(ret) {
+				});
+			}
+			jpush.init(function(ret, err) {
+				if (ret && ret.status) {
+					//success
+					jpush.bindAliasAndTags(param, function(ret) {
+					});
+				}
+			});
+			jpush.setListener(function(ret) {
+				api.execScript({
+					name : 'main',
+					frameName : 'updates',
+					script : 'fresh();'
+				});
+			});
+			// 添加事件监听器
+			fnInitListener();
+			// 打开导航标签栏
+			//openNVTabBar()
+			// 打开首页的所有Frames
+			openFrames();
+		};
+		function projectList() {
+			api.openWin({
+				name : 'projectlist',
+				url : './projectlist_win.html',
+				slidBackEnabled : false
+			});
+		}
+
+		//获取项目列表选择页面的 projectName 和projectCode
+		//获取登录时候存的loginInfo替换projects在重新缓存loginInfo
+		function getProjectInfo(val) {
+			changeTitle(val.projectName);
+			loginInfo.projects = val;
+			api.setPrefs({
+				key : 'loginInfo',
+				value : loginInfo
+			});
+		}
+
+		var tab = new auiTab({
+			element : document.getElementById("footer")
+		}, function(ret) {
+			if (ret) {
+				//				document.getElementById("demo").textContent = ret.index;
+				switch (ret.index) {
+					case 1:
+					$('#aui-title').html("");
+					$('#title').addClass('block');
+					$('#titleIcon').addClass('block');
+					$('#title').removeClass('none');
+					$('#titleIcon').removeClass('none');
+						$('#saoyisao').addClass('aui-hide');
+					frameIndex = 0;
+						break;
+					case 2:
+						$('#aui-title').html("");
+						//$('#aui-title').html("功能");
+						$('#shouye').removeClass('icon-shouyehover');
+						$('#dongtai').removeClass('icon-dongtaihover');
+						$('#wode').removeClass('icon-wodehover');
+						$('#gongneng').addClass('icon-gongnenghover');
+						$('#title').addClass('block');
+						$('#titleIcon').addClass('block');
+						$('#title').removeClass('none');
+						$('#titleIcon').removeClass('none');
+						$('#icon-switch-proj').addClass('aui-hide');
+						$('#btn-set-features').removeClass('aui-hide');
+						$('#saoyisao').removeClass('aui-hide');
+						$("#right").attr('onclick', 'setFeatures();');
+						frameIndex = 1;
+						break;
+					//					case 2:
+					//						//alert(2)
+					//						api.openFrame({
+					//							name : 'popup-menu',
+					//							url : './framePopupMenu.html',
+					//							rect : popupMenuRact,
+					//						});
+					//						break;
+					case 3:
+						//alert(3)
+						$('#aui-title').html("动态");
+						$('#shouye').removeClass('icon-shouyehover');
+						$('#gongneng').removeClass('icon-gongnenghover');
+						$('#wode').removeClass('icon-wodehover');
+						$('#dongtai').addClass('icon-dongtaihover');
+						$('#title').addClass('none');
+						$('#titleIcon').addClass('none');
+						$('#title').removeClass('block');
+						$('#titleIcon').removeClass('block');
+						$('#btn-set-features').addClass('aui-hide');
+						$('#saoyisao').addClass('aui-hide');
+						frameIndex = 2;
+						break;
+					case 4:
+						//alert(4)
+						$('#aui-title').html("我的");
+						$('#shouye').removeClass('icon-shouyehover');
+						$('#dongtai').removeClass('icon-dongtaihover');
+						$('#gongneng').removeClass('icon-gongnenghover');
+						$('#wode').addClass('icon-wodehover');
+						$('#title').removeClass('block');
+						$('#titleIcon').removeClass('block');
+						$('#title').addClass('none');
+						$('#titleIcon').addClass('none');
+						$('#btn-set-features').addClass('aui-hide');
+						$('#saoyisao').addClass('aui-hide');
+						frameIndex = 3;
+						break;
+					default:
+						$('#aui-title').html("");
+						$('#wode').removeClass('icon-wodehover');
+						$('#dongtai').removeClass('icon-dongtaihover');
+						$('#gongneng').removeClass('icon-gongnenghover');
+						$('#shouye').addClass('icon-shouyehover');
+						//								setTitle(loginInfo.currentProject.projectName);
+						$('#icon-switch-proj').removeClass('aui-hide');
+						$('#btn-switch-proj').removeClass('aui-hide');
+						$('#btn-set-features').addClass('aui-hide');
+						$('#saoyisao').addClass('aui-hide');
+						$("#right").attr('onclick', 'switchProjects();');
+						frameIndex = 0;
+						break;
+				}
+				api.setFrameGroupIndex({
+					name : 'mainFrameGroup',
+					index : frameIndex,
+					scroll : false,
+				})
+			}
+		});
+		// 打开首页所有Frames：homepage
+		function openFrames() {
+			if (framesOpened) {
+				return;
+			}
+			var frames = [];
+			frames.push({
+				name : 'homepage',
+				url : './frame_home.html',
+				bounces : false,
+				pageParam : {}
+			}, {
+				name : 'features',
+				url : './frame_features.html',
+				bounces : false,
+				pageParam : {"loginInfo":loginInfo}
+			}, {
+				name : 'updates',
+				url : './frame_updates.html',
+				bounces : false,
+				pageParam : {
+					loginInfo : loginInfo
+				}
+			}, {
+				name : 'account',
+				url : './frame_account.html',
+				bounces : false,
+				pageParam : {}
+			})
+			api.openFrameGroup({
+				name : 'mainFrameGroup',
+				scrollEnabled : false, // 支持手势滑动切换
+				rect : {
+					x : 0,
+					y : headerH,
+					w : 'auto',
+					h : api.winHeight - headerH - footerH
+				},
+				index : 0,
+				frames : frames,
+				preload : frames.length // 预加载所有Frame
+			}, function(ret, err) {
+				if (ret) {
+				} else {
+					alert(JSON.stringify(err));
+				}
+			});
+			framesOpened = true;
+		}
+
+		// 更新导航菜单的选中状态
+		// 打开状态标签栏
+		//		function openNVTabBar() {
+		//			if (!NVTabBar) {
+		//				var NVTabBar = api.require('NVTabBar');
+		//			}
+		//			// alert(NVTabBar)
+		//			navBarH = 65;
+		//			var menuIconRact = {
+		//				w : 20.0,
+		//				h : 20.0,
+		//			};
+		//			var plusBtnIconRact = {
+		//				w : 65,
+		//				h : 65,
+		//			};
+		//			var mainFrameRact = {
+		//				x : 0,
+		//				y : headerH,
+		//				w : 'auto',
+		//				h : api.winHeight - headerH - navBarH,
+		//			};
+		//			var popupMenuRact = {
+		//				x : 0,
+		//				y : 0,
+		//				w : 'auto',
+		//				h : api.winHeight,
+		//			}
+		//			NVTabBar.open({
+		//				styles : {
+		//					bg : '#fff',
+		//					h : navBarH,
+		//					dividingLine : {
+		//						width : 1,
+		//						color : 'rgba(7, 149, 230, 0.2)'
+		//					},
+		//					badge : {
+		//						bgColor : '#f00',
+		//						numColor : '#000',
+		//						size : 6.0,
+		//						centerY : 2
+		//					}
+		//				},
+		//				items : [{
+		//					w : api.winWidth / 5.0,
+		//					bg : {
+		//						marginB : 0
+		//					},
+		//					iconRect : menuIconRact,
+		//					icon : {
+		//						normal : 'widget://image/nvtabbar/home.png',
+		//						highlight : 'widget://image/nvtabbar/home-hover.png',
+		//						selected : 'widget://image/nvtabbar/home-hover.png'
+		//					},
+		//					title : {
+		//						text : '首页',
+		//						size : 12.0,
+		//						normal : '#696969',
+		//						selected : '#02b0e9',
+		//						marginB : 6.0
+		//					}
+		//				}, {
+		//					w : api.winWidth / 5.0,
+		//					iconRect : menuIconRact,
+		//					icon : {
+		//						normal : 'widget://image/nvtabbar/function.png',
+		//						highlight : 'widget://image/nvtabbar/function-hover.png',
+		//						selected : 'widget://image/nvtabbar/function-hover.png'
+		//					},
+		//					title : {
+		//						text : '功能',
+		//						size : 12.0,
+		//						normal : '#696969',
+		//						selected : '#02b0e9',
+		//						marginB : 6.0
+		//					}
+		//				}, {
+		//					w : api.winWidth / 5.0,
+		//					bg : {
+		//						marginB : 0,
+		//						image : 'rgba(200,200,200,0)'
+		//					},
+		//					iconRect : plusBtnIconRact,
+		//					icon : {
+		//						normal : 'widget://image/nvtabbar/plus.png',
+		//						highlight : 'widget://image/nvtabbar/plus.png',
+		//						selected : 'widget://image/nvtabbar/plus.png'
+		//					}
+		//				}, {
+		//					w : api.winWidth / 5.0,
+		//					iconRect : menuIconRact,
+		//					icon : {
+		//						normal : 'widget://image/nvtabbar/status.png',
+		//						highlight : 'widget://image/nvtabbar/status-hover.png',
+		//						selected : 'widget://image/nvtabbar/status-hover.png'
+		//					},
+		//					title : {
+		//						text : '动态',
+		//						size : 12.0,
+		//						normal : '#696969',
+		//						selected : '#02b0e9',
+		//						marginB : 6.0
+		//					}
+		//				}, {
+		//					w : api.winWidth / 5.0,
+		//					iconRect : menuIconRact,
+		//					icon : {
+		//						normal : 'widget://image/nvtabbar/my.png',
+		//						highlight : 'widget://image/nvtabbar/my-hover.png',
+		//						selected : 'widget://image/nvtabbar/my-hover.png'
+		//					},
+		//					title : {
+		//						text : '我的',
+		//						size : 12.0,
+		//						normal : '#696969',
+		//						selected : '#02b0e9',
+		//						marginB : 6.0
+		//					}
+		//				}],
+		//				selectedIndex : 0
+		//			}, function(ret, err) {
+		//				if (ret) {
+		//					if (ret.eventType == 'click') {
+		//						switch (ret.index) {
+		//							case 1:
+		//								$('#aui-title').html("功能");
+		//								$('#icon-switch-proj').addClass('aui-hide');
+		//								//								$('#btn-switch-proj').addClass('aui-hide');
+		//								$('#btn-set-features').removeClass('aui-hide');
+		//								$("#right").attr('onclick', 'setFeatures();');
+		//								frameIndex = 1;
+		//								break;
+		//							case 2:
+		//								api.openFrame({
+		//									name : 'popup-menu',
+		//									url : './frame_popup_menu.html',
+		//									rect : popupMenuRact,
+		//								});
+		//								break;
+		//							case 3:
+		//								$('#aui-title').html("动态");
+		//								$('#icon-switch-proj').addClass('aui-hide');
+		//								//								$('#btn-switch-proj').addClass('aui-hide');
+		//								$('#btn-set-features').addClass('aui-hide');
+		//								frameIndex = 2;
+		//								break;
+		//							case 4:
+		//								$('#aui-title').html("我的");
+		//								$('#icon-switch-proj').addClass('aui-hide');
+		//								//								$('#btn-switch-proj').addClass('aui-hide');
+		//								$('#btn-set-features').addClass('aui-hide');
+		//								frameIndex = 3;
+		//								break;
+		//							default:
+		//								$('#aui-title').html("");
+		//								changeTitle(loginInfo.projects.projectName);
+		//								$('#icon-switch-proj').removeClass('aui-hide');
+		//								//								$('#btn-switch-proj').removeClass('aui-hide');
+		//								$('#btn-set-features').addClass('aui-hide');
+		//								$("#right").attr('onclick', 'switchProjects();');
+		//								frameIndex = 0;
+		//								break;
+		//						}
+		//					}
+		//					var NVTabBar = api.require('NVTabBar');
+		//					NVTabBar.setSelect({
+		//						index : frameIndex > 1 ? frameIndex + 1 : frameIndex,
+		//						selected : true,
+		//					})
+		//					api.setFrameGroupIndex({
+		//						name : 'mainFrameGroup',
+		//						index : frameIndex,
+		//						scroll : false,
+		//					})
+		//					//NVTabBar.setBadge({
+		//					// index: 4,
+		//					// badge: ''
+		//					//});
+		//				}
+		//			});
+		//		}
+		function randomSwitchBtn(index, isbutton) {
+			$(".aui-active").removeClass("aui-active");
+			$(".btn" + index).addClass("aui-active");
+			if (index == 0) {
+				//$("#title").html("首页");
+				$("#right span").html("切换");
+				$("#right").attr('onclick', 'switchProjects();');
+			} else if (index == 1) {
+				//$("#title").html("工作台");
+				$("#right span").html("全部");
+				$("#right").attr('onclick', 'switchWorks();');
+			} else if (index == 2) {
+				//$("#title").html("消息");
+				$("#right span").html("");
+				$("#right").attr('onclick', '');
+			} else {
+				//$("#title").html("我的");
+				$("#right span").html("设置");
+				$("#right").attr('onclick', 'switchSetting();');
+			}
+			if (isbutton) {
+				api.setFrameGroupIndex({
+					name : 'main',
+					index : index,
+					scroll : true,
+				});
+			}
+		}
+
+		function fnInitListener() {
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				if (api.frames().length === 4) {
+					api.confirm({
+						title : '退出提示',
+						msg : '确定要退出程序吗？',
+						buttons : ['确定', '取消']
+					}, function(ret, err) {
+						var index = ret.buttonIndex;
+						if (index == 1) {
+							api.closeWidget({
+								silent : true
+							});
+						} else {
+							console.log('点击了取消按钮');
+						}
+					});
+				} else if (api.frames()[0].name === 'popup-menu') {
+					api.closeFrame({
+						name : 'popup-menu'
+					});
+				}
+			});
+		}
+
+		function switchProjects() {
+			api.openWin({
+				name : 'projects',
+				url : './projects_win.html',
+				slidBackEnabled : false
+			});
+		}
+
+		function switchSetting() {
+			api.openWin({
+				name : 'setting',
+				url : './setting_win.html',
+				slidBackEnabled : false
+			});
+		}
+
+		function changeTitle(title) {
+			$("#title").html(title);
+		}
+
+		function closeWin() {
+			api.closeWin({
+			});
+		}
+
+
+		//扫面构件
+      function scanGj(){
+        var FNScanner = api.require('FNScanner');
+        FNScanner.open({
+          autorotation: true
+        }, function(ret, err) {
+
+          if(ret){
+            if (ret.content) {
+                var str = ret.content;
+								console.log(str);
+                var index = str.indexOf(':');
+                var key = str.substr(0,index);
+                var value = str.substr(index + 1,str.length);
+                 switch(key){
+                   case "bridge"://桥梁
+                        // memberList_win
+                        api.openWin({
+                          name: 'memberList_win',
+                          url: '../member/memberList_win.html',
+                          pageParam: { //页面传参 api.pageParam获取
+                            bridgeId: value
+                          }
+                        });
+                        break;
+                  case "component"://岛位
+                        api.openWin({
+                          name: 'componentDetaile_win',
+                          url: '../member/componentDetaile_win.html',
+                          pageParam: { //页面传参 api.pageParam获取
+                            componentId: value
+                          }
+                        });
+                        break;
+				  default:
+						carNo = ret.content.trim();
+						if(!carNo ||  carNo.indexOf("materialType")>-1){
+							api.toast({
+								msg: "车辆二维码不正确！",
+								duration: 3000,
+								location: 'middle'
+							});
+							return;
+						}
+						$reiz.request.post($reiz.urls['material'].selectWaybillStatus, {
+							body: {
+								"projectCode": projectCode,
+								"carNo": ret.content.trim()
+							}
+						}, function(ret, err) {
+							var type = ret.pageType;
+							toDeliverMaterial(type,carNo);
+						});
+						break;
+                 }
+
+            }
+          }
+
+        })
+      };
+
+			//扫描
+			/*function toDeliverMaterial(type,carNo) {
+				if (type == 'ShippingOperator') {
+					//发料页面
+					api.openWin({
+						name: 'deliver_materials_win',
+						url: '../material/deliver_materials_win.html',
+						pageParam: { //页面传参 api.pageParam获取
+							name: username,
+							projectCode:projectCode,
+							carNo: carNo
+						}
+					});
+				}
+				if (type == 'ReceivingOperator') {
+					//收料页面
+					api.openWin({
+						name: 'collect_materuals_win',
+						url: '../material/collect_materuals_win.html',
+						pageParam: { //页面传参 api.pageParam获取
+							name: username,
+							carNo: carNo
+						}
+					});
+				}
+			}*/
+			//扫描
+			function toDeliverMaterial(type,carNo) {
+				roleCode = loginInfo.roleCode;//角色
+				if(roleCode.indexOf("ReceivingOperator")>-1){//收料料员
+					if("ReceivingOperator" == type){
+						//收料页面
+						api.openWin({
+							name: 'collect_materuals_win',
+							url: '../material/collect_materuals_win.html',
+							pageParam: { //页面传参 api.pageParam获取
+								name: username,
+								carNo: carNo
+							}
+						});
+					}else{
+						api.alert({
+							title: '提示消息',
+							msg: "暂无收料信息！",
+						})
+					}
+				}else if(roleCode.indexOf("ShippingOperator")>-1){//发料员
+					if("ShippingOperator" == type){
+						//发料页面
+						api.openWin({
+							name: 'deliver_materials_win',
+							url: '../material/deliver_materials_win.html',
+							pageParam: { //页面传参 api.pageParam获取
+								name: username,
+								projectCode:projectCode,
+								carNo: carNo
+							}
+						});
+					}else{
+						api.alert({
+							title: '提示消息',
+							msg: "还未收料，暂时无法发料！",
+						})
+					}
+				}else{
+					api.toast({
+						msg: "暂无收发料权限！",
+						duration: 3000,
+						location: 'middle'
+					});
+				}
+			}
+	</script>
+</html>

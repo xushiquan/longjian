@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+		<style>
+		html,body{
+			background-color: #ffffff;
+		}
+		.topImg{
+			width: 100%;
+			height: 100px;
+		}
+		.topImg img{
+			width: 100%;
+			height: 100%;
+		}
+		.blue{
+			color:#02B0E9;
+		}
+		.textColor{
+			color:#666666 !important;
+		}
+		.bottomBorder{
+			border-bottom: 1px solid #EDF8FE !important;
+		}
+		</style>
+	</head>
+	<body>
+		<div class='topImg'>
+			<img class='tImg'  alt="">
+		</div>
+		<section class="aui-content">
+        <ul class="aui-list aui-list-in aui-margin-b-15 ulList">
+            <!-- <li class="aui-list-item bottomBorder" onclick="detaileInfo()">
+                <div class="aui-list-item-label-icon">
+                    <i class="icon iconfont blue icon-daowei"></i>
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="textColor aui-list-item-title">0#岛位</div>
+                </div>
+            </li> -->
+        </ul>
+    </section>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript">
+		 apiready = function() {
+				var bridgeId = api.pageParam.bridgeId;
+				if(bridgeId){
+					$reiz.request.post($reiz.urls['member'].queryBridgeComponent, {
+										 body:{
+											"bridgeId":bridgeId
+										 }
+									 },function(ret,error){
+
+											if(ret.code == 200){
+													$('.ulList').empty();
+												var data = JSON.parse(ret.data).components;
+												var file = JSON.parse(ret.data).fileList;
+												if(file.length>0){
+													$('.tImg').attr('src',file[0].path);
+												}else{
+													$('.tImg').attr('src','../../image/member/detailTop.png');
+												}
+												if(data.length>0){
+													for(var i=0;i<data.length;i++){
+														var html =  '  <li class="aui-list-item bottomBorder">' +
+				                    '    <div class="aui-list-item-label-icon">' +
+				                    '        <i class="icon iconfont blue icon-daowei"></i>' +
+				                    '    </div>' +
+				                    '    <div class="aui-list-item-inner aui-list-item-arrow">' +
+				                    '        <div class="textColor aui-list-item-title">'+data[i].name+'</div>' +
+				                    '    </div>' +
+				                    ' </li>'
+														$('.ulList').append(html);
+													}
+												  var ulList = document.querySelectorAll(".ulList li");
+													for(var k=0;k<ulList.length;k++){
+															ulList[k].index = k;
+															ulList[k].onclick = function() {
+
+																detaileInfo(data[this.index].id,data[this.index].name)
+															}
+													}
+												}else{
+													api.toast({
+							              msg: '暂无数据'
+							            });
+												}
+
+											}
+									 })
+				}
+		 };
+		 function detaileInfo(id,name){
+			 api.openWin({
+			 	name: 'memberDetaile_win',
+			 	url: './memberDetaile_win.html',
+			 	pageParam: {
+					"componentId":id,
+					"componentName":name
+			 	}
+			 });
+		 }
+	</script>
+</html>

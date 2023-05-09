@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/api.css">
+    <link rel="stylesheet" type="text/css" href="../../css/reiz.css" />
+    <title></title>
+    <style>
+body, html {
+	-webkit-touch-callout: none;
+	-webkit-text-size-adjust: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-user-select: none;
+	background-color: rgba(0,0,0,0);
+}
+#panel{
+	position: absolute;
+	width:100%;
+	bottom:0;
+	height:200px;
+	background-color: #fff;
+}
+.block{
+	display:inline-block;
+	height:34px;
+	width:34px;
+	border-radius: 5px;
+	margin: 5px;
+	text-align: center;
+	line-height: 34px;
+	background-color: #FFFFFF;
+	opacity: 0.6;
+}
+.orient{
+	position:absolute;
+	display:block;
+	height:154px;
+	width:154px;
+	bottom:0px;
+	margin-bottom: 23px;
+	margin-left:23px;
+}
+.p_up{
+	display:block;
+	margin:0 auto;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #000;
+    margin-top:8px;
+}
+.p_left{
+	display:block;
+	margin:0 auto;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 20px solid #000;
+    margin-top:8px;
+}
+.p_right{
+	display:block;
+	margin:0 auto;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 20px solid #000;
+    margin-top:8px;
+}
+.p_down{
+	display:block;
+	margin:0 auto;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 20px solid #000;
+    margin-top:8px;
+}
+.rotate{
+	transform:rotate(45deg);
+    -webkit-transform:rotate(45deg);
+}
+.nonborder{
+	border:1px solid #fff;
+}
+.zoom{
+	position:absolute;
+	display:block;
+	height:154px;
+	width:154px;
+	right:0;
+	bottom:0px;
+	margin-bottom: 23px;
+	margin-right:23px;
+	font-size:20px;
+	text-align: center;
+	line-height:34px;
+	font-family: "黑体";
+	font-weight: bold;
+}
+#close{
+	position:absolute;
+	display:block;
+	width:50px;
+	height:50px;
+	border-radius: 100px;
+	margin:20px;
+	background-color: #FFFFFF;
+	text-align: center;
+	line-height:50px;
+	font-size: 50px;
+	opacity: 0.6;
+}
+.hidden{
+	display: none;
+}
+#camera{
+	position:absolute;
+	top:55px;
+	font-size:32px;
+	display:block;
+	margin:0 auto;
+	padding:0 1px;
+}
+.circle{
+	display:inline-block;
+	margin:0 10px;
+	margin-top:52px;
+	width:50px;
+	height:50px;
+	border-radius: 100px;
+	background-color: #FFFFFF;
+	text-align: center;
+	line-height:50px;
+	font-size: 50px;
+	opacity: 0.6;
+}
+.in{
+	opacity:1 !important;
+}
+    </style>
+</head>
+<body>
+	<div id="close" tapmode="in" onclick="stop();">
+	x
+	</div>
+</body>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script>
+	apiready=function(){
+		data = api.pageParam;
+	}
+	function stop(){
+		api.execScript({
+			name:'vplayer_diaogou',
+	        script: 'closeWin();'
+        });
+	}
+</script>
+</html>

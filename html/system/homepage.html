@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>frame</title>
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" href="../../icon/iconfont.css" />
+	<style>
+		.aui-card-list {
+			width: 100%;
+			background-color: #ffffff;
+			box-shadow: 0rem 0rem 0.5rem 0rem rgba(7, 149, 230, 0.2);
+			border-radius: 0.4rem;
+		}
+
+		.aui-card-list-header {
+			height: 2rem;
+			min-height: 2rem;
+			width: 100%;
+			padding: 0rem 0rem;
+			-webkit-justify-content: flex-start;
+			justify-content: flex-start;
+			-webkit-box-align: start;
+			-webkit-align-items: flex-start;
+			align-items: flex-start;
+		}
+
+		.aui-card-list-header .header-icon {
+			height: 2rem;
+			padding: 0rem 0rem;
+			margin: 0rem;
+			position: relative;
+		}
+
+		.aui-card-list-header .header-icon-default {
+			box-sizing: border-box;
+			content: '';
+			width: 0.2rem;
+			height: 1rem;
+			margin: 0.5rem 0.2rem 0.5rem 1rem;
+			background-color: rgba(142, 142, 221, 0.856);
+		}
+
+		.aui-card-list-header .header-title {
+			font-size: 0.85rem;
+			margin-left: 0.2rem;
+			margin-top: 0.4rem;
+			position: relative;
+		}
+
+		.aui-card-list-header .header-right-btn {
+			position: absolute;
+			right: 0.25rem;
+			top: 0.25rem;
+		}
+
+		.aui-card-list-header .aui-btn {
+			background: #ffffff;
+			padding: 0rem 0.2rem 0rem 0.4rem;
+			font-weight: 600;
+		}
+
+		.aui-card-list-header .aui-btn:active {
+			background: #bdbdbd;
+		}
+
+		.dashcard-data .aui-col-xs-3 {
+			padding: 0.2rem 0rem 0.2rem 0rem;
+		}
+
+		.dashcard-data .aui-row .aui-grid-label {
+			padding: 0rem 0.1rem 0rem 0.1rem;
+			font-size: 0.6rem;
+		}
+
+		.dashcard-menu .aui-row .aui-grid-label {
+			padding: 0rem 0.1rem 0rem 0.1rem;
+			font-size: 0.6rem;
+		}
+
+		.dashcard-data .data-field {
+			padding: 0rem 0.1rem 0rem 0.1rem;
+			height: 1.2rem;
+			/* -webkit-justify-content: flex-start;
+			justify-content: flex-start;
+			-webkit-box-align: start;
+			-webkit-align-items: flex-start;
+			align-items: flex-start; */
+		}
+
+		.dashcard-data .data-field .data-value {
+			font-size: 1rem;
+			font: bold;
+			display: inline;
+		}
+
+		.dashcard-data .data-field .data-unit {
+			font-size: 0.5rem;
+			padding-left: 0.1rem;
+			display: inline;
+		}
+
+		.dashcard-data .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 20%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+
+		.dashcard-menu .aui-col-xs-3 {
+			padding: 0.4rem 0rem 0.4rem 0rem;
+		}
+
+		.dashcard-menu .aui-grid .aui-row .aui-col-xs-3:not(:last-child):after {
+			box-sizing: border-box;
+			position: absolute;
+			right: 0rem;
+			top: 10%;
+			content: '';
+			width: 0.05rem;
+			height: 70%;
+			background-image: linear-gradient(#ffffff, #c6c6c6, #c6c6c6, #ffffff)
+		}
+
+		.dashcard-menu .menu-icon {
+			content: '';
+			display: inline-block;
+			height: 1.8rem;
+			width: 1.8rem;
+			background-size: 100%;
+		}
+
+		.dashcard-menu .aui-badge {
+			padding: 0.05rem 0.2rem;
+			left: 55%;
+			top: 5%;
+		}
+
+		.sample-icon {
+			background: url(../../image/111.png) no-repeat;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="main">
+		<script id="templ-dashcard" type="text/x-dot-template">
+			<section class="aui-card-list">
+				{{#doTDef.header || ''}}
+				<div class="aui-card-list-content-padded">
+					{{? it.body.data && it.body.data.length > 0 }}
+					{{#doTDef.body.data || ''}}
+					{{?}}
+					{{? it.body.menu && it.body.data.length > 0 }}
+					{{#doTDef.body.menu || ''}}
+					{{?}}
+				</div>
+			</section>
+		</script>
+		<script id="templ-test" type="text/x-dot-template">
+			<div class="dashcard-data">
+				<section class="aui-grid aui-margin-b-15">
+					<p>{{=it.body.data[0].field}}</p>
+					<p>{{=it.body.data[0].label}}</p>
+					<p>{{=it.body.data.length}}</p>
+					{{~ it.body.data :p:i }}
+					{{? i%4 === 0 }}
+					<p>Voilà</p>
+					<div class="aui-row aui-padded">
+					{{?}}
+						<p>{{=i + '. ' + p.label + ': ' + p.field}}</p>
+					{{? i%4 === 3 || i === it.body.data.length - 1 }}
+					</div>
+					<p>jackpot</p>
+					{{?}}
+					{{~}}
+				</section>
+			</div>
+		</script>
+		<script id="templ-dashcard-header" type="text/x-dot-template">
+			<div class="aui-card-list-header">
+			{{? it.header.icon }}
+				<img class="header-icon" src="{{=it.header.icon}}"/>
+			{{??}}
+				<span class="header-icon-default"></span>
+			{{?}}
+			<label class="header-title">{{=it.header.title}}</label>
+			{{? it.header.url }}
+				<a class="header-right-btn aui-btn"
+					onclick="{{=it.header.url}}">
+					<span class="aui-iconfont aui-icon-right">
+					</span>
+				</a>
+			{{?}}
+			</div>
+		</script>
+		<script id="templ-dashcard-data" type="text/x-dot-template">
+			<div class="dashcard-data">
+				<section class="aui-grid aui-margin-b-15">
+					{{~ it.body.data :p:i }}
+					{{? i%4 === 0 }}
+					<div class="aui-row aui-padded">
+					{{?}}
+						<div class="aui-col-xs-3">
+							<div class="data-field">
+								<div class="data-value" id={{=p.field}}>N/A</div>
+								{{? p.unit && p.unit != ''}}
+								<div class="data-unit">{{=p.unit}}</div>
+								{{?}}
+							</div>
+							<div class="aui-grid-label">{{=p.label}}</div>
+						</div>
+					{{? i%4 === 3 || i === it.body.data.length - 1 }}
+					</div>
+					{{?}}
+					{{~}}
+				</section>
+			</div>
+		</script>
+		<script id="templ-dashcard-menu" type="text/x-dot-template">
+			<div class="dashcard-menu">
+				<section class="aui-grid aui-margin-b-15">
+					{{~ it.body.menu :p:i }}
+					{{? i%4 === 0 }}
+					<div class="aui-row aui-padded">
+					{{?}}
+						<div class="aui-badge aui-hide">{{=p.badegCount}}</div>
+						<i class="aui-iconfont menu-icon" src="{{=p.icon}}"></i>
+						<div class="aui-grid-label">{{=p.label}}</div>
+					{{? i%4 === 3 || i === it.length - 1 }}
+					</div>
+					{{?}}
+					{{~}}
+				</section>
+            </div>
+		</script>
+		<section class="aui-content-padded" id="dashcards"></section>
+		<!-- <section class="aui-content-padded" id="dashcards">
+			<div class="aui-card-list">
+				<div class="aui-card-list-header">
+					<img class="header-icon" src="../../image/homepage/label_personnel_info_homepage_dashcard.png" />
+					<label class="header-title">人员信息</label>
+					<a class="header-right-btn aui-btn" onclick=""><span class="aui-iconfont aui-icon-right"></span></a>
+				</div>
+				<div class="aui-card-list-content-padded">
+					<div class="dashcard-data">
+						<section class="aui-grid aui-margin-b-15">
+							<div class="aui-row aui-row-padded">
+								<div class="aui-col-xs-3">
+									<div class="data-field">
+										<div class="data-value">66</div>
+										<div class="data-unit">人</div>
+									</div>
+									<div class="aui-grid-label">现场人数</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">150</div>
+									<div class="aui-grid-label">出勤人数</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">43%</div>
+									<div class="aui-grid-label">出勤率</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">216</div>
+									<div class="aui-grid-label">花名册人数</div>
+								</div>
+							</div>
+							<div class="aui-row aui-row-padded">
+								<div class="aui-col-xs-3">
+									<div class="data-value">66</div>
+									<div class="aui-grid-label">现场人数</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">150</div>
+									<div class="aui-grid-label">出勤人数</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">43%</div>
+									<div class="aui-grid-label">出勤率</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="data-value">216</div>
+									<div class="aui-grid-label">花名册人数</div>
+								</div>
+							</div>
+						</section>
+					</div>
+					<div class="dashcard-menu">
+						<section class="aui-grid aui-margin-b-15">
+							<div class="aui-row aui-row-padded">
+								<div class="aui-col-xs-3">
+									<div class="aui-badge aui-hide"></div>
+									<i class="aui-iconfont menu-icon sample-icon"></i>
+									<div class="aui-grid-label">塔机</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="aui-badge aui-hide"></div>
+									<i class="aui-iconfont menu-icon sample-icon"></i>
+									<div class="aui-grid-label">施工电梯</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="aui-badge aui-hide"></div>
+									<i class="aui-iconfont menu-icon sample-icon"></i>
+									<div class="aui-grid-label">卸料平台</div>
+								</div>
+								<div class="aui-col-xs-3">
+									<div class="aui-badge aui-hide"></div>
+									<i class="aui-iconfont menu-icon sample-icon"></i>
+									<div class="aui-grid-label">智能水表</div>
+								</div>
+							</div>
+						</section> -->
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script>
+	var doTDef = {
+		header: $('#templ-dashcard-header').text(),
+		body: {
+			data: $('#templ-dashcard-data').text(),
+			menu: $('#templ-dashcard-menu').text()
+		}
+	}
+
+	apiready = function () {
+
+		templ_dashcard = doT.template($('#templ-dashcard').text(), undefined, doTDef);
+		// templ_dashcard_header = dot.template($('#templ_dashcard_header').html());
+		// templ_dashcard_data = dot.template($('#templ_dashcard_data').html());
+		// templ_dashcard_menu = dot.template($('#templ_dashboard_menu').html());
+		var dashCards = [{
+			header: {
+				title: '人员信息',
+				icon: '../../image/homepage/label_personnel_info_homepage_dashcard.png',
+				url: '../../worker/test.html',
+			},
+			body: {
+				data: [{
+					field: 'currentHeadCount',
+					label: '在场人数',
+					unit: '人'
+				}, {
+					field: 'attendenceHeadCount',
+					label: '出勤人数',
+					unit: '人'
+				}, {
+					field: 'attendenceRate',
+					label: '出勤率',
+					unit: '%'
+				}, {
+					field: 'RegisteredHeadCount',
+					label: '花名册人数',
+					unit: '人'
+				}],
+				menu: [],
+				text: ''
+			},
+			footer: {}
+		}, {
+			header: {
+				title: '质量信息',
+				icon: '../../image/homepage/label_quality_info_homepage_dashcard.png',
+				url: '',
+			},
+			body: {
+				data: [{
+					field: '',
+					label: '未销项问题',
+					unit: '',
+				}, {
+					field: '',
+					label: '超期',
+					unit: '',
+				}, {
+					field: '',
+					label: '验收申请',
+					unit: '',
+				}, {
+					field: '',
+					label: '今日验收',
+					unit: '',
+				}]
+			}
+		}, {
+			header: {
+				title: '安全信息',
+				icon: '../../image/homepage/label_security_info_homepage_dashcard.png',
+				url: '',
+			},
+			body: {
+				data: [{
+					field: '',
+					label: '未销项问题',
+					unit: '',
+				}, {
+					field: '',
+					label:
+				}]
+			}
+		}]
+		api.setPrefs({
+			key: 'dashCards',
+			value: dashCards
+		})
+		api.getPrefs({
+			key: 'dashCards'
+		}, function (ret, err) {
+			if (ret.value) {
+				var dashCards = JSON.parse(ret.value);
+				for (var i in dashCards) {
+					console.log(dashCards[i]);
+					$('#dashcards').append(templ_dashcard(dashCards[i]));
+				}
+			}
+		});
+		// api.showProgress({
+		// 	style: 'default',
+		// 	animationType: 'fade',
+		// 	title: '努力加载中...',
+		// 	text: '先喝杯茶...',
+		// 	modal: true
+		// });
+		// UIScrollPicture = api.require('UIScrollPicture');
+		// fnOpen();
+		// var e = document.getElementById("main");
+		// var width = api.winHeight / 3 + 20;
+		// e.style.marginTop = width + "px";
+	};
+
+
+
+	// var UIScrollPicture;
+
+	// function fnOpen() {
+	// 	UIScrollPicture.open({
+	// 		rect: {
+	// 			x: 0,
+	// 			y: 0,
+	// 			w: api.winWidth,
+	// 			h: api.winHeight / 3
+	// 		},
+	// 		data: {
+	// 			paths: ['../../image/l1.png', '../../image/l2.png', '../../image/l3.png']
+	// 		},
+	// 		styles: {
+	// 			caption: {
+	// 				height: 35,
+	// 				color: '#E0FFFF',
+	// 				size: 13,
+	// 				bgColor: '#696969',
+	// 				position: 'bottom'
+	// 			},
+	// 			indicator: {
+	// 				align: 'center',
+	// 				color: '#FFFFFF',
+	// 				activeColor: '#DA70D6'
+	// 			}
+	// 		},
+	// 		placeholderImg: '../../image/l1.png',
+	// 		contentMode: 'scaleToFill',
+	// 		interval: 3,
+	// 		loop: true,
+	// 		fixedOn: 'homepage',
+	// 		fixed: false
+	// 	}, function (ret, err) {
+	// 		if (ret) {} else {}
+	// 	});
+	// };
+
+	function refresh() {
+
+	}
+</script>
+
+</html>

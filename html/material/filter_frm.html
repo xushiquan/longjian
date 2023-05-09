@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>发料页面</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css"/>
+		<style>
+     html,body{
+       width: 100%;
+       height: 100%;
+     }
+     .wrap{
+       width: 100%;
+       height: 100%;
+     }
+     .k{
+       min-height: 2.2rem;
+       line-height:45px;
+       padding:0 5px;
+
+     }
+     .kInp{
+       flex:1;
+       min-height: 2.2rem;
+       line-height:45px;
+       padding: 0 3px;
+     }
+     select{
+          text-indent: 5px;
+    }
+    .btn_{
+        width: 6rem;
+				text-align: center;
+				margin-right: 0.4rem;
+				border-radius: 3px;
+				height: 35px;
+				line-height: 35px;
+    }
+		.btn1{
+			border:1px solid #1598CE;
+			background-color: #ffffff;
+			color:#666666;
+		}
+		.btn2{
+			color:#ffffff;
+			background:linear-gradient(to right,#23d2ff,#138dc5);
+		}
+		</style>
+	</head>
+	<body>
+  <div class="wrap">
+  <div class="aui-content aui-margin-b-15">
+		<form class='from_'>
+			<ul class="aui-list aui-form-list">
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                车&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp牌
+	            </div>
+	            <div class="aui-list-item-input">
+	                <input type="text" id='carNo' placeholder="请输入车牌">
+	            </div>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                发车时间
+	            </div>
+	            <div class="aui-list-item-input">
+	                <input name='dispatchCarTime' id='dispatchCar' type="text" readonly="" placeholder="请选择发车时间">
+	            </div>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                收车时间
+	            </div>
+	            <div class="aui-list-item-input">
+	                <input name='collectCarTime' id='collectCar' type="text"  readonly="" placeholder="请选择收车时间">
+	            </div>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                物料名称
+	            </div>
+	            <div class="aui-list-item-input">
+	              <select  class='materiel' id="materialNo">
+	              	<option value="">请选择物料</option>
+	              </select>
+	            </div>
+	              <i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-right"></i>
+	        </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                 桩&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp号
+	            </div>
+	            <div class="aui-list-item-input" style='display:flex;'>
+	               <span class='kInp'>
+	                 <input type="text" id="originStakeNum">
+	               </span>
+	               <span class='k'>至</span>
+	               <span class='kInp'>
+	               	  <input type="text" id="loadStakeNum">
+	               </span>
+	            </div>
+	        </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                车&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp队
+	            </div>
+	            <div class="aui-list-item-input">
+	              <select id="motorcadeId">
+	                  <option value="">请选择车队</option>
+	              </select>
+	            </div>
+	              <i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+	        </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                发&nbsp&nbsp料&nbsp&nbsp地
+	            </div>
+	            <div class="aui-list-item-input">
+	                <input type="text" name='' placeholder="请输入发料地" id="origin">
+	            </div>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                收&nbsp&nbsp料&nbsp&nbsp地
+	            </div>
+	            <div class="aui-list-item-input">
+	                <input type="text" name='' placeholder="请输入收料地" id="receiving">
+	            </div>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	        <div class="aui-list-item-inner">
+	            <div class="aui-list-item-label">
+	                  分&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp项
+	            </div>
+	            <div class="aui-list-item-input">
+	              <select id="projectCode">
+
+	              </select>
+	            </div>
+	            <i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+	          </div>
+	      </li>
+	      <li class="aui-list-item">
+	                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+	                    <div class="btn_ btn1" onclick="cancle()">重置</div>
+	                    <div class="btn_ btn2 search">搜索</div>
+	                </div>
+	            </li>
+	    </ul>
+		</form>
+
+  </div>
+  </div>
+
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script src="../../script/LCalendar/js/LCalendar.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+	   var account;
+		 var projectCode;
+		 apiready = function(){
+			        account= api.pageParam.account;
+							projectCode = api.pageParam.projectCode;
+							materialSelect();//物料下拉
+							projectSelect();//项目下拉
+							motorcadeSelect();//车队下拉
+			        var calendar = new LCalendar();
+							var calendar1 = new LCalendar();
+							calendar.init({
+								'trigger' : '#dispatchCar', //标签ID
+								'type' : 'date', //date 调出日期选择
+								'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+								'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+							});
+							calendar1.init({
+								'trigger' : '#collectCar', //标签ID
+								'type' : 'date', //date 调出日期选择
+								'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+								'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+							});
+
+						$('.search').click(function(){
+							var formParams = {
+								"carNo":$("#carNo").val(),
+								"dispatchCar":$("#dispatchCar").val(),
+								"collectCar":$("#collectCar").val(),
+								"materialNo":$("#materialNo").val(),
+								"originStakeNum":$("#originStakeNum").val(),
+								"loadStakeNum":$("#loadStakeNum").val(),
+								"motorcadeId":$("#motorcadeId").val(),
+								"origin":$("#origin").val(),
+								"receiving":$("#receiving").val(),
+								"projectCode":$("#projectCode").val()
+							};
+							var aaa = JSON.stringify(formParams);
+							console.log("formParams:"+aaa);
+							api.execScript({
+								  name:'material',
+							    frameName: 'material_list_frame',//frame窗口
+							    script: 'fngetFormParams('+aaa+');'
+							});
+							api.closeWin();
+						});
+		 };
+
+		 function cancle(){
+			 $("#carNo").val(""),
+			 $("#dispatchCar").val(""),
+			 $("#collectCar").val(""),
+			 $("#materialNo").val(""),
+			 $("#originStakeNum").val(""),
+			 $("#loadStakeNum").val(""),
+			 $("#motorcadeId").val(""),
+			 $("#origin").val(""),
+			 $("#receiving").val("")
+		 }
+		 //物料下拉选择
+		function materialSelect(){
+				$reiz.request.get($reiz.urls['material'].getMaterialList, {
+					body: {
+						"account" : account,
+						"projectCode":projectCode
+
+					}
+				}, function (ret, err) {
+					if(ret.code == 200){
+						var data = JSON.parse(ret.data);
+						for(var i=0; i<data.length;i++){
+							  // <option>沙硕</option>
+							  $('.materiel').append('<option value='+data[i].materialNo+'>'+data[i].name+'</option>')
+						}
+					}
+				});
+		}
+		//分项下拉
+		function projectSelect(){
+			$reiz.request.get($reiz.urls['project'].querylist, {
+				body: {
+					"account" : account,
+					"projectCode":projectCode
+				}
+			}, function (ret, err) {
+				if(ret.code == 200){
+					var data = JSON.parse(ret.data);
+					for(var i=0; i<data.length;i++){
+							$('#projectCode').append('<option value='+data[i].projectCode+'>'+data[i].projectName+'</option>')
+					}
+				}
+			});
+		}
+    //车队下拉
+		function motorcadeSelect(){
+			$reiz.request.get($reiz.urls['material'].getMotorcadeList, {
+				body: {
+					"account" : account,
+					"projectCode":projectCode
+				}
+			}, function (ret, err) {
+				
+				if(ret.code == 200){
+					var data = JSON.parse(ret.data);
+					for(var i=0; i<data.length;i++){
+							$('#motorcadeId').append('<option value='+data[i].id+'>'+data[i].motorcadeName+'</option>')
+					}
+				}
+			});
+		}
+
+	</script>
+</html>

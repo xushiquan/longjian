@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body, header, section, footer, nav, div, ul, ol, li, img, a, span, em, del, center, strong, var, fieldset, form, label, dt, dd, cite, input, hr, time, mark, code, figcaption, figure, textarea {
+				margin: 0;
+				border: 0;
+				padding: 0;
+				font-family: Tahoma, Geneva, sans-serif;
+				font-style: normal;
+			}
+			html, body {
+				-webkit-touch-callout: none;
+				-webkit-text-size-adjust: none;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-user-select: none;
+			}
+			section {
+				-webkit-box-flex: 1;
+			}
+			body {
+				-webkit-user-select: none;
+				background-color: f5f5f5;
+			}
+			#wrap {
+				height: 100%;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-webkit-flex-flow: column;
+				flex-flow: column;
+			}
+			#main {
+				width: 100%;
+			  height: 100%;
+			}
+			.none_data {
+				color: #ffffff;
+				margin-top: 20px;
+				width: 100%;
+				text-align: center;
+				/*background-color: #FFFFFF;*/
+			}
+			.none_data > img {
+				display: block;
+				margin: 0 auto;
+			}
+			.aui-btn-row {
+				position: absolute;
+				bottom: 45px;
+				width: 100%;
+			}
+			.aui-btn-row:after {
+				border: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main"  class="aui-content aui-margin-b-15">
+			<ul id="mainul" class="aui-list aui-media-list"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/echo.js"></script>
+	<script type="text/javascript" src="../../script/toucher.js"></script>
+	<script type="text/javascript">
+		var projectCode;
+		var datas = [];
+		var preEnd = 0;
+		var end = 0;
+		var token;
+		var url;
+		var pageIndex = 1;
+		var pageSize = 10;
+		var arrayLength = 0;
+		var account;
+		apiready = function() {
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '努力加载中...',
+				text : '先喝杯茶...',
+				modal : false
+			});
+			api.getPrefs({
+				key : 'userJwtToken'
+			}, function(ret, err) {
+				if (ret) {
+					token = ret.value;
+					url = $reiz.urls['project'].queryWorkLog;
+					api.getPrefs({
+						key : 'loginInfo'
+					}, function(ret, err) {
+						if (ret) {
+							account = JSON.parse(ret.value).account;
+							projectCode = JSON.parse(ret.value).projects.projectCode;
+							query(true);
+						} else {
+							alert(JSON.stringify(err));
+						}
+					});
+				} else {
+					alert(JSON.stringify(err));
+				}
+			});
+			api.setRefreshHeaderInfo({
+				loadingImg : 'widget://image/refresh.png',
+				bgColor : '#fff',
+				textColor : '#666',
+				textDown : '下拉刷新...',
+				textUp : '松开刷新...'
+			}, function(ret, err) {
+				query(true);
+				api.refreshHeaderLoadDone();
+			});
+			api.addEventListener({
+				name : 'scrolltobottom',
+				extra : {
+					threshold : 0
+				}
+			}, function(ret, err) {
+				api.showProgress({
+					title : '加载中...',
+					modal : false
+				});
+				query(false);
+			});
+		};
+		var query = function(isFirst) {
+			if (isFirst) {
+				end = 0;
+				preEnd = 0;
+				$('#main').html('<ul id="mainul" class="aui-list aui-media-list"></ul>');
+				datas = [];
+				pageIndex = 1;
+			}
+			$reiz.request.post($reiz.urls['project'].query, {
+						body : {
+							"projectCode" : projectCode,
+							"account" : account,
+							"pageIndex" : pageIndex,
+							"pageSize" : pageSize
+						}
+			}, function (ret, err) {
+				api.hideProgress();
+				if (ret) {
+					if (ret.code == '200' && ret.data.length > 0) {
+						preEnd = end;
+						var data = ret.data;
+						var objectData = JSON.parse(data);
+						var records = objectData.records;
+						arrayLength = arrayLength + records.length;
+						pageIndex = arrayLength / pageSize + 1;
+						datas = datas.concat(records);
+						showResult();
+					} else {
+						console.log("ccccccc");
+						if (isFirst) {
+							$('#main').css({
+								"display" : "block"
+							});
+							$("#main").html(buildNothingDiv());
+						} else {
+							api.toast({
+								msg : '没有更多数据了'
+							});
+						}
+					}
+				} else if (err) {
+					api.toast({
+						msg : '没有更多数据了'
+					});
+				} else {
+					$("#main").html(buildNothingDiv($reiz.error.getErrorMsg(false)));
+				}
+			})
+		};
+		var showResult = function() {
+			var items = [];
+			for (var i = preEnd; i < datas.length; i++) {
+				var infohtml = [];
+				//style="margin-top:0px;padding-top:10px;padding-left:65px;background:url(../../image/common/file_128px.png) no-repeat;background-size:60px 60px;background-position:0%;"
+				infohtml.push('<div class="aui-media-list-item-inner">');
+				infohtml.push('<div class="aui-list-item-inner"><div class="aui-list-item-text"><div class="aui-list-item-title">');
+				if(datas[i].projectType == '1'){
+					infohtml.push(datas[i].projectName);
+				}else if(datas[i].projectType == '2'){
+					infohtml.push(datas[i].sectionName);
+				}else if(datas[i].projectType == '3'){
+					infohtml.push(datas[i].workAreaName);
+				}
+				//infohtml.push(datas[i].projectName);
+				infohtml.push('</div><div class="aui-list-item-right">');
+				infohtml.push(datas[i].gmtCreate);
+				infohtml.push('</div></div>');
+				infohtml.push('<div class="aui-list-item-text aui-ellipsis-1">');
+				infohtml.push(datas[i].content);
+				infohtml.push('</div></div>');
+				items.push("<li class='aui-list-item aui-list-item-arrow' onclick=\"openEdit('" + i + "')\">" + infohtml.join("") + "</li>");
+			}
+			$('#mainul').append(items.join(""));
+		};
+		var buildNothingDiv = function(msg) {
+			if (msg) {
+				var hint = msg;
+			} else {
+				var hint = "查询无返回数据！";
+			}
+			var tmp = [];
+			tmp.push('<div class="none_data">');
+			tmp.push('<img src="../../image/sjsb/empty_page_nothing2.png"><br><span>' + hint + '</span>');
+			tmp.push('</div>');
+			return tmp.join('');
+		};
+		var openEdit = function(index) {
+			api.openWin({
+				name : 'gzrz_edit',
+				url : './gzrz_edit.html',
+				pageParam : {
+					data : datas[index]
+				}
+			});
+		}
+	</script>
+</html>

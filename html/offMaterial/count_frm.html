@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <script src='../../script/rem.js'></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            overflow: auto;
+        }
+
+        .topNum {
+            width: 100%;
+            height: 1.09rem;
+            font-size: 0.29rem;
+            line-height: 1.09rem;
+            padding-left: 0.27rem;
+            color: #02B0E9;
+            border-bottom: 3px solid #EDF7FD;
+            font-weight: bold;
+        }
+
+        .num {
+            line-height: 1.09rem;
+        }
+
+        .list ul li {
+            border-bottom: 1px solid #EDF7FD;
+            padding-bottom: 0.266rem;
+        }
+
+        .listTit {
+            margin: 0.4rem 0 0.266rem 0;
+            font-size: 0.29rem;
+            padding-left: 0.266rem;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .listInfo {
+            width: 100%;
+        }
+
+        .listInfo .textWrap {
+            width: 33%;
+            font-size: 0.23rem;
+            float: left;
+        }
+
+        .t {
+            padding-left: 0.266rem;
+            color: #666666;
+        }
+
+        .li:hover {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class='topNum'>总车数 <span class='num'></span>辆</div>
+        <div class='list'>
+            <ul class='ulList'>
+                <!-- <li>
+                    <p class='listTit'>土方</p>
+                    <div class='listInfo'>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                    </div>
+
+                </li>   -->
+            </ul>
+
+
+        </div>
+
+
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+    var account;
+    apiready = function() {
+      account= api.pageParam.account;
+      $reiz.request.post($reiz.urls['material'].count, {
+        body: {
+          "account":account,
+          "userType":"ShippingOperator",//收料员 ReceivingOperator 发料员 ShippingOperator
+        }
+      }, function (ret, err) {
+        //  var data = JSON.stringify();
+         moreData(ret);
+      });
+      function moreData(data){
+        var list = [];
+        var carAllNum = 0;
+        $(data).each(function(index,val){
+      carAllNum += val.carCount;
+       var title = val.name;//物料名称
+       var carCount = val.carCount;//车辆数量
+       var unit = val.unit;//单位
+       var distanceSum = val.distanceSum;//运输距离
+       var quantitySum =val.quantitySum;//数量
+       list.push("<li style='overflow:hidden'>");
+       list.push("<p class='listTit'>"+ title +"</p>");
+       list.push("<div class='listInfo'>");
+       list.push("<div class='textWrap'><span class='t'>运距</span><span class='t'>"+ distanceSum +"km</span></div>");
+       list.push("<div class='textWrap'><span class='t'>车数</span><span class='t'>"+ carCount +"辆</span></div>");
+       list.push("<div class='textWrap'><span class='t'>数量</span><span class='t'>"+ quantitySum + unit +"</span></div>");
+       list.push("</div></li>");
+
+   })
+   $('.ulList').append(list.join(''));
+   $('.num').html(carAllNum);
+}
+
+
+    };
+</script>
+
+</html>

@@ -1,0 +1,123 @@
+<!-- dashcard卡片窗体模板 -->
+
+<section class="dashcard aui-card-list">
+    {{#def.templDashcardHeader || ''}}
+    <div class="aui-card-list-content-padded">
+        {{? it.body }}
+            {{? it.body.data && it.body.data.length > 0 }}
+            {{#def.templDashcardData || ''}}
+            {{?}}
+            {{? it.body.menu && it.body.menu.length > 0 }}
+            {{#def.templDashcardMenu || ''}}
+            {{?}}
+        {{?}}
+    </div>
+</section>
+
+{{##def.templDashcardHeader:
+    <div class="dashcard-header aui-card-list-header">
+    {{? it.header.icon }}
+        <img class="header-icon" src="{{=it.header.icon}}"/>
+    {{??}}
+        <span class="header-icon-default"></span>
+    {{?}}
+    <label class="header-title">{{=it.header.title}}</label>
+    {{? it.header.url }}
+        <a class="header-right-btn aui-btn" tapmode="" 
+            onclick="{{=it.header.url}}">
+            <span class="iconfont icon-gengduo"></span>
+        </a>
+    {{?}}
+    </div>
+#}}
+
+{{##def.templDashcardData:
+    <div class="dashcard-data">
+        <section class="aui-grid aui-margin-b-15">
+            {{~ it.body.data :p:i }}
+            {{? i%4 === 0 }}
+            <div class="aui-row aui-padded">
+            {{?}}
+                <div class="aui-col-xs-3">
+                    {{? p.url && p.url != ''}}
+                    <a href="{{=p.url}}">
+                        {{#def.dataCardDataField}}
+                    </a>
+                    {{??}}
+                        {{#def.dataCardDataField}}
+                    {{?}}
+                </div>
+            {{? i%4 === 3 || i === it.body.data.length - 1 }}
+            </div>
+            {{?}}
+            {{~}}
+        </section>
+    </div>
+#}}
+
+{{##def.templDashcardMenu:
+    <div class="dashcard-menu">
+        <section class="aui-grid aui-margin-b-15">
+            {{~ it.body.menu :p:i }}
+            {{? i%4 === 0 }}
+            <div class="aui-row aui-padded">
+            {{?}}
+                <div class="aui-col-xs-3">
+                    {{? p.badgeCountField && p.badgeCountField != '' && p.badgeCountField > 0 }}
+                    <div class="aui-badge" id="{{=p.badgeCountField}}"></div>
+                    {{?}}
+                    {{? p.url && p.url != ''}}
+                    <a tapmode onclick="openWin('{{=p.winName}}', '{{=p.url}}')">
+                        {{#def.menuCardMenuIcon || ''}}
+                    </a>
+                    {{??}}
+                    <a tapmode onclick="alert('功能暂未上线，敬请期待')">
+                        {{#def.menuCardMenuIcon || ''}}
+                    </a>
+                    {{?}}
+                    <div class="aui-grid-label">{{=p.label}}</div>
+                </div>
+            {{? i%4 === 3 || i === it.length - 1 }}
+            </div>
+            {{?}}
+            {{~}}
+        </section>
+    </div>
+#}}
+
+{{##def.templDashcardFooter:
+    <div class="dashcard-footer">
+    </div>
+#}}
+
+
+<!-- Components -->
+
+{{##def.dataCardDataField:
+    <div class="data-field">
+            {{? p.style && p.style != ''}}
+            <div class="data-value {{=p.style.substr(1)}}" id="{{=p.field}}">0</div>
+            {{??}}
+            <div class="data-value" id="{{=p.field}}">0</div>
+            {{?}}
+            {{? p.unit && p.unit != ''}}
+            <div class="data-unit">{{=p.unit}}</div>
+            {{?}}
+        </div>
+    <div class="aui-grid-label">{{=p.label}}</div>
+#}}
+
+
+{{##def.menuCardMenuIcon:
+    {{? p.icon && p.icon != ''}}
+        {{? p.icon.match("#.+")}}
+        <div class="menu-icon">
+            <i class="{{=p.icon.substr(1)}}"></i>
+        </div>
+        {{??}}
+        <div class="aui-iconfont menu-icon" src="{{=p.icon}}"></div>
+        {{?}}
+    {{??}}
+    <i class="aui-iconfont menu-icon default-icon"></i>
+    {{?}}
+#}}

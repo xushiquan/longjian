@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta
+		="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+    	body{
+					background-color: #cccccc;
+    	}
+    </style>
+</head>
+<body>
+
+</body>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+	var ijkplayer;
+	apiready = function(){
+		ijkplayer = api.require('ijkplayer');
+		data = api.pageParam;
+		// pushRtmpOrVideoPlay = api.require('pushRtmpOrVideoPlay');
+		// api.setScreenOrientation({
+		// 	orientation : 'auto_landscape'
+		// });
+		play();
+		api.addEventListener({
+	    	name:'keyback'
+        },function(ret,err){
+        	// pushRtmpOrVideoPlay.PlayStop();
+        	// api.setScreenOrientation({
+					// 	orientation : 'portrait_up'
+					// });
+					ijkplayer.cancelFullScreen();
+					ijkplayer.close();
+      		api.closeWin({
+      			name:"vplayer_diaogou",
+      			animation:{
+				    type:"push",                //动画类型（详见动画类型常量）
+				    subType:"from_right",       //动画子类型（详见动画子类型常量）
+				    duration:500                //动画过渡时间，默认300毫秒
+				}
+              });
+        });
+
+
+	};
+	function openVideo(videoSrc){
+		if(videoSrc == " ") {
+			 api.alert({msg: "摄像头已离线，请联系管理员！"})
+		} else {
+			ijkplayer.open({
+					texts: {
+							head: {
+									title: ''
+							}
+					},
+					styles: {
+							repeat:{
+								 repeatwidth: 0,  //（可选项）数字类型；重新播放按钮的宽；默认：40
+								 repeatheight: 0,  //（可选项）数字类型；重新播放按钮的高；默认：60
+								 repeatImg:'',
+							},
+							lock:{
+								 lockSize: 30,
+								 lockImg:'',
+							},
+							head: {
+									hide: true,
+							},
+							foot: {
+									hide: true,
+							}
+					},
+					path: videoSrc,//视频地址
+					autoPlay: true,
+					isLive:true,//是否直播视频源 直播:rtmp://开头|rtsp://开头|.m3u8结尾;
+					enableFull:true,//当为true时将直接全屏播放视频，x,y,w,h,fixedOn,fixed值不会生效。
+					isBackBtn:false,//小窗口是否显示返回按钮
+					movieScaling:'scaleAspectFit',
+					coverImg:'widget://image/beautiful.png',//播放器打开尚未播放时的封面图
+			});
+			ijkplayer.isFullScreen(function(ret) {
+				 //判断是否全屏
+					if (ret.status == false) {
+						ijkplayer.fullScreen();
+					}
+			});
+		}
+	};
+	function play(){
+		var videoSrc = data.play_url;
+		openVideo(videoSrc);
+	        // pushRtmpOrVideoPlay.showPlayer({
+	        //     x : 0,
+	        //     y : 0,
+	        //     url : data.play_url
+	        // });
+
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "play_progress",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "playbtnbox",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "btnBitrate",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "btnPlay",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "btnHWEncode",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+	        //     "btnid" : "btnBitrate",
+	        //     "show" : 0
+	        // });
+	        // pushRtmpOrVideoPlay.ClickPlayButtonForId({
+	        //     "btnid" : "btnRenderMode"
+	        // });
+	        // pushRtmpOrVideoPlay.PlayStart();
+	        setTimeout(function(){
+	        	api.openFrame({
+			        name: 'vplayer_frm_diaogou',
+			        url: './vplayer_frm_diaogou.html',
+			        rect: {
+				        x:0,
+				        y:10,
+				        w:200,
+				        h:200,
+				        w:api.winWidth,
+				        h:api.winHeight
+			        },
+			        bgColor:'rgba(255,255,255,0)',
+			        pageParam:data
+		        });
+	        },2000);
+	}
+	function closeWin(){
+			// api.setScreenOrientation({
+			// 	orientation : 'portrait_up'
+			// });
+					ijkplayer.cancelFullScreen();
+					ijkplayer.close();
+					api.setFullScreen({
+					    fullScreen: true
+					});
+      		api.closeWin({
+      			name:"vplayer_diaogou",
+      			animation:{
+				    type:"push",                //动画类型（详见动画类型常量）
+				    subType:"from_right",       //动画子类型（详见动画子类型常量）
+				    duration:500                //动画过渡时间，默认300毫秒
+				}
+              });
+	}
+</script>
+</html>

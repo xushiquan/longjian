@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>考勤信息</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <script src='../../script/rem.js'></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            overflow: auto;
+        }
+
+        .topNum {
+            width: 100%;
+            height: 1.09rem;
+            font-size: 0.29rem;
+            line-height: 1.09rem;
+            padding-left: 0.27rem;
+            color: #02B0E9;
+            border-bottom: 3px solid #EDF7FD;
+            font-weight: bold;
+        }
+
+        .num {
+            line-height: 1.09rem;
+        }
+
+        .list ul li {
+            border-bottom: 1px solid #EDF7FD;
+            padding: 0.266rem 0;
+        }
+
+        .listTit {
+            margin: 0.4rem 0 0.266rem 0;
+            font-size: 0.29rem;
+            padding-left: 0.266rem;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .listInfo {
+            width: 100%;
+        }
+
+        .listInfo .textWrap {
+            width: 100%;
+            font-size: 0.23rem;
+            float: left;
+        }
+
+        .t {
+            padding-left: 0.266rem;
+            color: #666666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class='list'>
+            <ul class='ulList'>
+                <!-- <li style='overflow:hidden'>
+                    <div class='listInfo'>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                        <div class="textWrap">
+                            <span class='t'>运距</span><span class='t'>1953km</span>
+                        </div>
+                    </div>
+                </li> -->
+            </ul>
+
+
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+    var loginInfo;
+    var projectCode;
+    var projectName;
+    var pageIndex = 1;
+    var pageSize = 10;
+    var dataLength;
+    var count;
+    var account;
+    var workerName;
+      var idCardNumber;
+      var  startDate ;
+      var  endDate;
+    apiready = function() {
+        //获取用户信息
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret) {
+                loginInfo = JSON.parse(ret.value);
+                account = loginInfo.account;
+                projectCode = loginInfo.projects.projectCode;
+                projectName = loginInfo.projects.projectName;
+                getAttendanceList(account, projectCode, projectName);
+            }
+        });
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            api.showProgress({
+                title: '加载中...',
+                modal: false
+            });
+            $reiz.request.post($reiz.urls['attendance'].pageWorkerAttendance, {
+                body: {
+                    "account": account,
+                    "projectName": projectName,
+                    "projectCode": projectCode,
+                    "pageIndex": pageIndex,
+                    "pageSize": pageSize,
+                    "workerName":workerName,
+                    "idCardNumber":idCardNumber,
+                     "startDate":startDate,
+                     "endDate":endDate
+                }
+            },function(ret, err){
+               if (ret.code == '200' && JSON.parse(ret.data).records.length > 0){
+                 var data1 = JSON.parse(ret.data);
+                 var attendamceList = data1.records;
+                 count = attendamceList.total;
+                 //算出下拉后最新数据的长度 计算分页
+                 arrayLength = arrayLength + attendamceList.length;
+                 pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                 api.hideProgress();
+                 moreData(attendamceList);
+               }else{
+                 api.hideProgress();
+                 api.toast({
+                   msg: '没有更多数据了'
+                 });
+               }
+            })
+        })
+    };
+
+    function getAttendanceList(account, projectCode, projectName) {
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        $reiz.request.post($reiz.urls['attendance'].pageWorkerAttendance, {
+            body: {
+                "account": account,
+                "projectName": projectName,
+                "projectCode": projectCode,
+                "pageIndex": 1,
+                "pageSize": pageSize,
+                "workerName":workerName,
+                "idCardNumber":idCardNumber,
+                 "startDate":startDate,
+                 "endDate":endDate
+            }
+        }, function(ret, err) {
+          if(ret.code == 200){
+            api.hideProgress();
+            $('.ulList').empty();
+             var data1 = JSON.parse(ret.data);
+               count = data1.total;
+               var materialList = data1.records;
+               if(materialList.length>0){
+                 arrayLength = materialList.length;
+                 pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                 moreData(materialList);
+               }else{
+                 api.toast({
+                   msg: '没有更多数据了'
+                 });
+               }
+          }else{
+            api.hideProgress();
+            api.toast({
+              msg: '没有更多数据了'
+            });
+          }
+
+        });
+    }
+    function moreData(data) {
+        var list = [];
+        $(data).each(function(index, val) {
+            var projectName = val.projectName || ' '; //项目名称
+            var sectionName = val.sectionName || ' '; //标段名称
+            var workAreaName = val.workAreaName || ' '; //工区名称
+            var workerName = val.workerName || ' '; //人名
+            var idCardNumber = val.idCardNumber || ' '; //身份证
+            var swipeTime = val.swipeTime || ' '; //打卡时间
+
+            list.push("<li style='overflow:hidden'>");
+            list.push("<div class='listInfo'>");
+            list.push("<div class='textWrap'><span class='t'>项目名称</span><span class='t'>" + projectName + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>标段名称</span><span class='t'>" + sectionName + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>工区名称</span><span class='t'>" + workAreaName + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名</span><span class='t'>" + workerName + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>身&nbsp&nbsp份&nbsp&nbsp证</span><span class='t'>" + idCardNumber + "</span></div>");
+            list.push("<div class='textWrap'><span class='t'>打卡时间</span><span class='t'>" + swipeTime + "</span></div>");
+            list.push("</div></li>");
+
+        })
+        $('.ulList').append(list.join(''));
+    }
+    	function getFormParams(formParams) {
+        workerName = formParams.workerName;
+        idCardNumber= formParams.idCardNumber;
+        startDate= formParams.startDate;
+        endDate= formParams.endDate;
+        getAttendanceList(account, projectCode, projectName);
+      }
+</script>
+
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+
+    <style>
+        html,
+        body {
+          width: 100%;
+          height: 100%;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        .questionNum {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            color: #666666;
+            font-size: 16px;
+            overflow: hidden;
+            padding-left: 10px;
+        }
+        .lrftTime{
+            float: left;
+        }
+        .rightNum{
+          float: right;
+          text-align: right;
+          padding-right: 10px;
+        }
+        .quiz-container {
+            position: relative;
+        }
+
+        .slide{
+           position: absolute;
+           left: 0px;
+           top: 0px;
+           width: 100%;
+           z-index: 1;
+           opacity: 0;
+           transition: opacity 0.5s;
+       }
+       .active-slide{
+           opacity: 1;
+           z-index: 2;
+       }
+        .questionButton {
+            width: 100%;
+            height: 35px;
+            font-size: 16px;
+            background-color: #edf7fd;
+            color: #03a7dd;
+            border: 1px solid #02b0e9;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 30px;
+            /*display: none;*/
+        }
+        .question{
+          padding-left: 15px;
+        }
+        .btnW{
+          display: inline-block;
+          width: 32%;
+        }
+
+        .img-container {
+            float: left;
+            width: 80px;
+            margin: 5px;
+            height: 100px;
+        }
+
+        .img-item {
+            line-height: 80px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .img-bottom-btn {
+            width: 78px;
+            height: 18px;
+            line-height: 18px;
+            font-size: 10px;
+            color: red;
+            border: 1px solid red;
+            border-radius: 1px;
+            display: inline;
+        }
+
+        .pic {
+            display: inline;
+        }
+
+        .pic img {
+            display: block;
+            margin: 9px;
+            width: 80px;
+            height: 80px;
+            float: left;
+        }
+
+        .aui-btn-row:after {
+            border: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        姓&nbsp&nbsp&nbsp&nbsp名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input type="text" id='username' placeholder="请输入姓名">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div  class="aui-list-item-label">
+                        身份证号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input  id='idCard'  type="text" placeholder="请输入身份证号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+              <div class="aui-list-item-inner">
+                  <div class="aui-list-item-label">
+                      答题自拍
+                  </div>
+                  <div class="aui-list-item-input" >
+                    <div id="img_container"></div>
+                    <div class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openSetting();"></img>
+                    </div>
+                  </div>
+            </li>
+        </ul>
+    </div>
+    <div class='questionNum'>
+        <div class='lrftTime'>
+          <div id="timer"></div>
+        </div>
+        <div class='rightNum'>
+          <span class='cur'></span>/<span class='len_'></span>
+        </div>
+    </div>
+    <div class="quiz-container" style='overflow:hidden'>
+        <div id="quiz"></div>
+    </div>
+
+    <div style='width:100%;position:absolute;bottom:10px'>
+      <span class='btnW' >
+        <button class='questionButton' id="previous">前一题</button>
+      </span>
+      <span class='btnW'>
+          <button class='questionButton' id="submit">提交</button>
+      </span>
+      <span class='btnW'>
+          <button class='questionButton' id="next">下一题</button>
+      </span>
+
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/x-dot-template" id="img_tpl">
+    <div class="img-container">
+        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg('{{=it.lookImg}}',{{=it.isNet}});" />
+        <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+    </div>
+</script>
+<script type="text/javascript">
+    var myQuestions; //试题数据
+    var currentSlide = 0;//当前显示的题目
+    //最外层dom元素
+    var quizContainer = document.getElementById("quiz");
+    var previousButton = document.getElementById("previous");
+    var submitButton = document.getElementById("submit");
+   var nextButton = document.getElementById("next");
+   var testPaperId;
+   var testPaperTit;
+   var questionLen;
+   var token;
+   var maxtime;
+   var timer;
+    apiready = function() {
+      api.getPrefs({
+          key: 'userJwtToken'
+      }, function(ret, err){
+          if( ret ){
+               token = ret.value;
+          }else{
+               alert( JSON.stringify( err ) );
+          }
+      });
+        var examId = api.pageParam.examId; //试题id
+        if (examId) {
+          $('.cur').html(currentSlide+1);
+          getQuestion(examId);
+        }
+
+    }
+    function getQuestion(examId){
+      api.ajax({
+          url: $reiz.urls['safetyInspect'].queryExamDetails,
+          method: 'post',
+          headers: {
+              'Content-Type': 'application/json',
+              'token':$reiz.appToken,
+          },
+          data: {
+              body: {
+                examId: examId
+              }
+          }
+      }, function(ret, err) {
+        maxtime = parseInt(ret.exam.examTime)*60;
+        timer = setInterval("CountDown()", 1000);
+        testPaperId = ret.exam.id;
+        testPaperTit =  ret.exam.examName;
+         var output = [];
+         var yw = ['A', 'B', 'C', 'D', 'E','f','g','h','i'];
+         myQuestions = ret.questions;
+         if(myQuestions){
+           $('.len_').html(myQuestions.length);
+           myQuestions.forEach(function(currentQuestion, questionNumber) {
+                   var answers = [];
+                   if (currentQuestion.type == '0' || currentQuestion.type == '2') {
+                       for (letter in currentQuestion.options) {
+                           answers.push(
+                             " <li class='aui-list-item'>" +
+                                  " <div class='aui-list-item-inner'>" +
+                                  " <label>" +
+                                  "<input  class='aui-radio' type='radio' data-parent='"+currentQuestion.options[letter].questionId+"' name='question"+questionNumber+"' value='"+currentQuestion.options[letter].id+"'>&nbsp&nbsp"+yw[letter]+":"+currentQuestion.options[letter].value +
+                                  "</label>" +
+                                  " </div>" +
+                                  " </li>"
+                           );
+                       }
+                   } else {
+                       for (letter in currentQuestion.options) {
+                           answers.push(
+                             " <li class='aui-list-item'>" +
+                                  " <div class='aui-list-item-inner'>" +
+                                  " <label>" +
+                                  "<input  class='aui-checkbox' type='checkbox' data-parent='"+currentQuestion.options[letter].questionId+"' name='question"+questionNumber+"' value='"+currentQuestion.options[letter].id+"'>&nbsp&nbsp"+yw[letter]+":"+currentQuestion.options[letter].value +
+                                  "</label>" +
+                                  " </div>" +
+                                  " </li>"
+                           );
+                       }
+                   }
+                   output.push(
+                     '<div class="slide">' +
+                     '<div class="question"> ' + currentQuestion.title + ' </div>' +
+                     '<div class="answers">' +
+                     '<ul class="aui-list aui-select-list"> ' + answers.join("") + ' </ul>' +
+                     '</div>' +
+                     '</div>'
+                   );
+               })
+               // 将所有选项和题目处理完添加dom元素到页面上
+           quizContainer.innerHTML = output.join("");
+           showSlide(0)
+         }else{
+           $('.len_').html('0');
+         }
+      })
+    }
+    function showSlide(n) {
+      $('.slide').eq(currentSlide).removeClass('active-slide');
+      $('.slide').eq(n).addClass('active-slide');
+
+      var slideH = $('.slide').eq(n).height();
+      document.querySelector(".quiz-container").style.height = slideH+'px';
+      currentSlide = n;
+      //  if (currentSlide === 0) {
+      //      previousButton.style.display = "none";
+      //  } else {
+      //      previousButton.style.display = "inline-block";
+      //  }
+      //
+       if (currentSlide === $('.slide').length - 1) {
+           //nextButton.style.display = "none";
+           submitButton.style.display = "inline-block";
+       } else {
+           ///nextButton.style.display = "inline-block";
+           submitButton.style.display = "none";
+       }
+    }
+    function showNextSlide() {
+        var answerContainers = quizContainer.querySelectorAll(".answers");
+        var answerContainer = answerContainers[currentSlide];
+        if (currentSlide != $('.slide').length - 1) {
+          var selector = 'input[name=question'+currentSlide+']:checked';
+
+          var userAnswer = (answerContainer.querySelector(selector) || {}).value;
+          var idCardNumber = $("#idCard").val();
+          var name  = $('#username').val();
+          if(name == ''){
+            api.alert({
+                msg: "请输入姓名"
+            });
+            return;
+          };
+           if(idCardNumber == ''){
+             api.alert({
+                 msg: "请输入身份证号"
+             });
+             return;
+           };
+           var img = [];
+           $('#img_container').find('img').each(function() {
+               if ($(this).attr('isNet') != "true") {
+                   img.push($(this).attr('src'));
+               };
+           });
+           if(img.length == 0){
+             api.alert({
+                 msg: "请上传照片"
+             });
+             return;
+           }
+          if(userAnswer == undefined){
+            api.toast({
+               msg: '请添加选项',
+               duration: 2000,
+               location: 'middle'
+           });
+          }else{
+              showSlide(currentSlide + 1);
+              $('.cur').html(currentSlide+1);
+          }
+        }else{
+          api.toast({
+             msg: '没有下一题了',
+             duration: 2000,
+             location: 'middle'
+         });
+        }
+
+   }
+
+   function showPreviousSlide() {
+     if (currentSlide != 0) {
+       showSlide(currentSlide - 1);
+       $('.cur').text(currentSlide+1);
+     }else{
+       api.toast({
+          msg: '没有上一题了',
+          duration: 2000,
+          location: 'middle'
+      });
+     }
+     }
+    //上传附件
+    function openSetting() {
+        isSettingOpen = true;
+        api.openFrame({
+            name: 'takepic',
+            url: './takepic.html',
+            bgColor: 'rgba(0,0,0,0.6)',
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                winName: 'answer_frm'
+            }
+        });
+    };
+    var setPicInfo = function(path) {
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        $api.byId("img_container").innerHTML += img_tpl({
+            img_url: path,
+            isNet: false
+        });
+
+        api.closeFrame({
+            name: 'takepic'
+        });
+
+    };
+
+    var setPicInfos = function(pathsStr) {
+        var paths = pathsStr.split(',');
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        for (var i in paths) {
+            $api.byId("img_container").innerHTML += img_tpl({
+                img_url: paths[i],
+                isNet: false
+            });
+        }
+        api.closeFrame({
+            name: 'takepic'
+        });
+    };
+    function CountDown() {
+     if (maxtime >= 0) {
+         minutes = Math.floor(maxtime / 60);
+         seconds = Math.floor(maxtime % 60);
+         msg = "距考试结束还有" + minutes + "分" + seconds + "秒";
+         document.querySelector('#timer').innerHTML = msg
+         --maxtime;
+     } else{
+         showResults();
+         clearInterval(timer);
+         previousButton.style.display = "none";
+          nextButton.style.display = "none";
+          submitButton.style.display = "block";
+         alert("时间到，结束!");
+     }
+   }
+   function showResults(){
+    //找到所有包裹选项父级的class
+      var answerContainers = quizContainer.querySelectorAll(".answers");
+      var numCorrect = 0;
+      var parames = [];//提交参数
+
+      var answerContainer = answerContainers[currentSlide];
+
+     var selector = 'input[name=question'+currentSlide+']:checked';
+
+     var userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+      myQuestions.forEach(function(currentQuestion, questionNumber) {
+        var answerContainer = answerContainers[questionNumber];
+        if(currentQuestion.type == '0' || currentQuestion.type == '2'){
+               var selector = 'input[name=question'+questionNumber+']:checked';
+               var domId = answerContainer.querySelector(selector);
+                 if(domId){
+                     var questionId = domId.getAttribute("data-parent");
+                     var userAnswer = (answerContainer.querySelector(selector) || {}).value;
+                 }else{
+                     var questionId = '';
+                     var userAnswer = ''
+                 }
+               parames.push({
+                   "questionId": questionId,
+                   "optionId":userAnswer
+               })
+           }else{
+             var selector = 'input[name=question'+questionNumber+']:checked';
+                   var domId = answerContainer.querySelector(selector);
+                   if(domId){
+                       var questionId = domId.getAttribute("data-parent");
+                   }else{
+                       var questionId = '';
+                   }
+                   //因为动态复选框name都一样 没法直接取值 需要获取所有inptt复选框的name循环取值
+                   var obj = document.getElementsByName('question'+questionNumber);
+                   var s='';
+                   for(var i=0;i<obj.length;i++){
+                       //取到对象数组后，我们来循环检测它是不是被选中
+                       if(obj[i].checked) {
+                           s+=obj[i].value+',';
+                       }
+                   };
+                   var temp = s.substr(0,s.length-1);
+                   parames.push({
+                       "questionId": questionId,
+                       "optionId":temp
+                   });
+           }
+      });
+      var img = [];
+      var fileIdList = [];
+      api.showProgress({
+          title: '加载中...',
+          modal: false
+      });
+      $('#img_container').find('img').each(function() {
+          if ($(this).attr('isNet') != "true") {
+              img.push($(this).attr('src'));
+          };
+      });
+        if (img.length != 0) {
+          api.ajax({
+           url: $reiz.urls['file'].upload_fujian,
+           method: 'post',
+            headers: {
+           "Authorization": token
+           },
+           data: {
+               values: {
+                   masterType: 'bizExam'
+               },
+               files: {
+                   file: img
+               }
+           }
+         }, function(ret, err) {
+           if (ret.code == "200") {
+               var retData = ret.data;
+               var objData = JSON.parse(retData);
+               for (var i = 0; i　 < objData.length; i++) {
+                   fileIdList.push(objData[i].fileId)
+               };
+               api.ajax({
+                   url: $reiz.urls['safetyInspect'].saveExamRecords,
+                   method: 'post',
+                   headers: {
+                       'Content-Type': 'application/json',
+                       'token':$reiz.appToken,
+                   },
+                   data: {
+                       body: {
+                         "idCardNumber":$("#idCard").val(),
+                         "examId":testPaperId,
+                         "records":parames,
+                         "fileIdList": fileIdList
+                       }
+                   }
+               }, function(ret, err) {
+                    if(ret.code == 200){
+                      api.hideProgress();
+                      var scroe = ret.data;//分数
+                      api.openWin({
+                        name: 'score_win',
+                        url: './score_win.html',
+                        pageParam: {
+                          scroe:scroe//得分
+                        }
+                      });
+                    }else{
+                      api.hideProgress();
+                      api.toast({
+                         msg: ret.msg,
+                         duration: 2000,
+                         location: 'middle'
+                     });
+                    }
+               })
+             }
+         })
+        }else{
+          api.toast({
+              msg: "附件不能为空"
+          });
+          api.hideProgress();
+        }
+   }
+   submitButton.addEventListener("click", showResults);
+   previousButton.addEventListener("click", showPreviousSlide);
+   nextButton.addEventListener("click", showNextSlide);
+
+   function removeImg(el, isNet, id) {
+       if (isNet) {
+           api.showProgress();
+           api.ajax({
+               url: $reiz.urls['file'].delete_fujian,
+               method: 'post',
+               timeout: 60,
+               dataType: 'json',
+               cache: true,
+               headers: {
+                   'Content-Type': 'application/json',
+                   'token': token
+               },
+               data: {
+                   body: {
+                       "id": id
+                   }
+               }
+           }, function(ret, err) {
+               if (ret) {
+                   api.hideProgress();
+                   if (ret.code == '200') {
+                       el.parentNode.remove();
+                   } else {
+                       api.alert({
+                           msg: ret.msg
+                       });
+                       api.hideProgress();
+                   }
+               } else {
+                   api.toast({
+                       msg: $reiz.error.getErrorMsg(err)
+                   });
+                   api.hideProgress();
+               }
+           });
+       } else {
+           el.parentNode.remove();
+       }
+   };
+   function showImg(src, isNet) {
+       var photoBrowser = api.require('photoBrowser');
+       if (!isNet) {
+         var img_path = new Array();
+        img_path = src.split('/');
+        var fs = api.require('fs');
+         fs.copyTo({
+             oldPath: src,
+             newPath: 'fs://res'
+         },function(ret,err){
+             if (ret.status) {
+                var fs_path= 'fs://res/'+img_path[img_path.length-1];
+                photoBrowser.open({
+                  images : [fs_path],
+                  placeholderImg : 'widget://res/img/apicloud.png',
+                  bgColor : '#000'
+                }, function(ret, err) {
+                  if (ret) {
+                    if (ret.eventType == 'click')
+                      photoBrowser.close();
+                  } else {
+                    alert(JSON.stringify(err));
+                  }
+                });
+             }else {
+                 console.log(err.msg);
+             };
+         });
+       } else {
+           src = src.replace('thumb/thumb_', '/');
+           photoBrowser.open({
+               images: [src],
+               placeholderImg: 'widget://res/img/apicloud.png',
+               bgColor: '#000'
+           }, function(ret, err) {
+               if (ret) {
+                   if (ret.eventType == 'click')
+                       photoBrowser.close();
+               } else {
+                   alert(JSON.stringify(err));
+               }
+           });
+       }
+   };
+</script>
+
+</html>

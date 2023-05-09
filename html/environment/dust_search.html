@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<link rel="stylesheet" type="text/css" href="../../css/aui-1.1.7.css" />
+	<title>title</title>
+	<style>
+		html,
+		body,
+		header,
+		section,
+		footer,
+		nav,
+		div,
+		ul,
+		ol,
+		li,
+		img,
+		a,
+		span,
+		em,
+		del,
+		center,
+		strong,
+		var,
+		fieldset,
+		form,
+		label,
+		dt,
+		dd,
+		cite,
+		input,
+		hr,
+		time,
+		mark,
+		code,
+		figcaption,
+		figure,
+		textarea {
+			margin: 0;
+			border: 0;
+			padding: 0;
+			font-family: Tahoma, Geneva, sans-serif;
+			font-style: normal;
+		}
+
+		html,
+		body {
+			-webkit-touch-callout: none;
+			-webkit-text-size-adjust: none;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+			-webkit-user-select: none;
+		}
+
+		header,
+		footer,
+		section,
+		nav,
+		img,
+		a,
+		button,
+		em,
+		del,
+		strong,
+		var,
+		fieldset,
+		label,
+		cite,
+		small,
+		time,
+		mark,
+		code,
+		figcaption,
+		figure,
+		textarea {
+			display: block;
+		}
+
+		header,
+		section,
+		footer,
+		nav {
+			position: relative;
+			overflow: hidden;
+		}
+
+		select {
+			padding: 0;
+		}
+
+		#header {
+			background: #1b1a1f;
+			height: 45px;
+		}
+
+		#nav {
+			display: -webkit-box;
+			height: 45px;
+		}
+
+		#left {
+			width: 80px;
+			color: #fff;
+			background: url(../../image/kq/navbtn_back.png) no-repeat 14px 12px;
+			-webkit-background-size: 12px 20px;
+		}
+
+		#left>span {
+			margin-top: 13px;
+			margin-left: 36px;
+			font-size: 18px;
+			height: 18px;
+			line-height: 45px;
+		}
+
+		#middle {
+			-webkit-box-flex: 1;
+			width: 100%;
+			display: -webkit-box;
+			-webkit-box-pack: center;
+			-webkit-box-align: center;
+		}
+
+		#title {
+			font-size: 18px;
+			text-align: center;
+			color: #fff;
+		}
+
+		#right {
+			width: 80px;
+		}
+
+		section {
+			-webkit-box-flex: 1;
+		}
+
+		body {
+			-webkit-user-select: none;
+		}
+
+		#search {
+			background-color: #fff;
+			height: 100%;
+			display: -webkit-flex;
+			-webkit-align-items: center;
+		}
+
+		#hh {
+			width: 100%;
+		}
+
+		#blank {
+			height: 150px;
+		}
+
+		.input-wrap {
+			display: -webkit-box;
+			margin: 40px 40px;
+		}
+
+		.input-wrap select {
+			display: block;
+			-webkit-box-flex: 1;
+			background-color: rgba(255, 255, 255, 0);
+			outline: none;
+			height: 30px;
+		}
+
+		.input-wrap span {
+			line-height: 30px;
+		}
+
+		select option {
+			text-indent: 2px;
+		}
+
+		.btn_green {
+			display: block;
+			padding: 5px 10px;
+			border: 1px solid blue;
+			border-width: 4px 4px 4px 4px;
+			-moz-border-image: url("../../image/xiaofei/confirm_btn_normal.9.png") 4 4 4 4;
+			-webkit-border-image: url("../../image/xiaofei/confirm_btn_normal.9.png") 4 4 4 4;
+			-o-border-image: url("../../image/xiaofei/confirm_btn_normal.9.png") 4 4 4 4;
+			background-image: url("../../image/xiaofei/confirm_btn_normal.9.png");
+			border-radius: 10px;
+			color: #fff;
+			font-size: 20px;
+			width: 70%;
+			margin: 0 auto;
+			outline: none;
+		}
+
+		.btn_tap {
+			-moz-border-image: url("../../image/xiaofei/confirm_btn_pressed.9.png") 4 4 4 4;
+			-webkit-border-image: url("../../image/xiaofei/confirm_btn_pressed.9.png") 4 4 4 4;
+			-o-border-image: url("../../image/xiaofei/confirm_btn_pressed.9.png") 4 4 4 4;
+			background-image: url("../../image/xiaofei/confirm_btn_pressed.9.png");
+		}
+
+		.aui-img-body {
+			color: #94989e;
+		}
+	</style>
+</head>
+
+<body>
+	<script id="template" type="text/x-dot-template">
+		{{ for(var i=0;i<it.length;i++) { }}
+			<li class="aui-list-view-cell aui-img" onclick="openwin({{=i}})">
+                <img class="aui-img-object aui-pull-left" src="../../image/common/yangchen.png">
+                <div class="aui-img-body">
+                  	{{=it[i].deviceName}}
+                    <p>设备ID：{{=it[i].deviceId}}</p>
+                </div>
+            </li>
+        {{ } }}
+	</script>
+	<ul class="aui-list-view">
+		<!--<li class="aui-list-view-cell aui-img" onclick="openwin({{=i}})">
+			<img class="aui-img-object aui-pull-left" src="../../image/common/yangchen.png">
+			<div class="aui-img-body">
+				{{=it[i].deviceName}}
+				<p>设备ID：{{=it[i].deviceId}}</p>
+			</div>
+		</li>-->
+	</ul>
+</body>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript">
+	var shebei;
+	var gongdidm;
+	var sbxx = {};
+	var types = [];
+	var shebeilist = [];
+	var data = [];
+	var projectCode;
+	apiready = function () {
+		api.showProgress({
+			style: 'default',
+			animationType: 'fade',
+			title: '努力加载中...',
+			text: '先喝杯茶...',
+			modal: true
+		});
+
+		api.getPrefs({
+			key: 'loginInfo'
+		}, function (ret, err) {
+			if (ret.value !== "") {
+				var loginInfo = JSON.parse(ret.value);
+				projectCode = loginInfo.projects.projectCode;
+				getSheBeiList();
+			} else {
+				api.alert({
+					msg: '请退出重新登录获取权限'
+				})
+			}
+		});
+	}
+
+	function getSheBeiList() {
+		$reiz.request.post($reiz.urls['environment'].query_shebei, {
+					body: {
+						"projectCode" : projectCode
+					}
+				}, function (ret, err) {
+
+						api.hideProgress();
+
+						if (ret) {
+							var data1 = ret.data;
+							shebeilist = JSON.parse(data1);
+							for (var i = 0; i < shebeilist.length; i++) {
+								var item = {
+									title: "设备名称：" + shebeilist[i].deviceName,
+									subTitle: "唯一标识：" + shebeilist[i].deviceId
+								}
+								data.push(item);
+							}
+							$(".aui-list-view").html(doT.template($("#template").text())(shebeilist));
+						} else {
+							api.toast({
+								msg: $reiz.error.getErrorMsg(err)
+							});
+						}
+				});
+	}
+
+	function openwin(num) {
+		var pageParam = {
+			gongdidm: projectCode,
+			shebeiid: shebeilist[num].deviceId,
+			deviceName: shebeilist[num].deviceName,
+			monitor: 'dust_monitor',
+			shebeilist: data
+		}
+		api.openWin({
+			name: 'dust_monitor',
+			url: './dust_monitor.html',
+			pageParam: pageParam
+		});
+	}
+</script>
+
+</html>

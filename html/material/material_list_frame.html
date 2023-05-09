@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>运单列表页面</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background-color: #ffffff;
+			position: relative;
+		}
+
+		.list ul li {
+			border-bottom: 1px solid #EDF7FD;
+			padding-bottom: 1px;
+		}
+
+		.listTit {
+			margin: 13.3px 0 13.3px 0;
+			font-size: 15px;
+			padding-left: 15px;
+			color: #333333;
+			font-weight: bold;
+		}
+
+		.listInfo {
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			flex-wrap: wrap;
+			-webkit-flex-wrap: wrap;
+		}
+
+		.listInfo .textWrap {
+			width: 50%;
+			font-size: 12px;
+		}
+
+		.t {
+			padding-left: 13.3px;
+			color: #666666;
+		}
+
+		.li:hover {
+			background-color: red;
+		}
+
+		.center {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-top: -18px;
+			margin-left: -12px;
+			font-size: 25px;
+			color: #0795e6;
+		}
+	</style>
+</head>
+
+<body>
+	<div class='list'>
+		<ul id="material_list">
+
+		</ul>
+
+	</div>
+	<div id="scannerDi" style='width:50px;height:50px;border-radius:50%;border:1px solid #EDF7FD;position:fixed;bottom:30px;right:20px;' onclick="scanner()">
+		<span class="icon iconfont center">&#xe607;</span>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+	var loginInfo;
+	var data = [];
+	var account;
+	var username;
+	var roleCode;
+	var projectCode;
+	var projectName;
+	var pageParam;
+	var pageIndex = 1;
+	var pageSize = 10;
+	var dataLength;
+	var count;
+	var noCount;
+	var flag;
+	var carNo = '';
+	var dispatchCar = '';
+	var collectCar = '';
+	var materialNo = '';
+	var originStakeNum = '';
+	var loadStakeNum = '';
+	var motorcadeId = '';
+	var origin = '';
+	var receiving = '';
+	var userType = '';
+	apiready = function() {
+		/*api.toast( {
+			msg: $reiz.connectionReminder($api.getStorage('connectionStatus')),
+			duration: 3000,
+			location: 'bottom'
+		} );*/
+		//获取用户信息
+		api.getPrefs({
+			key: 'loginInfo'
+		}, function(ret, err) {
+			if (ret) {
+				loginInfo = JSON.parse(ret.value);
+				account = loginInfo.account;
+				username = loginInfo.name;
+				roleCode = loginInfo.roleCode;
+
+				//$("#scannerDi").hide();
+				if (roleCode.indexOf("ShippingOperator")>-1) {
+					userType = "ShippingOperator";
+					$("#scannerDi").show();
+				}
+
+				if (roleCode.indexOf("ReceivingOperator")>-1) {
+					userType = "ReceivingOperator";
+					$("#scannerDi").show();
+				}
+
+				if (roleCode.indexOf("carDriver")>-1) {
+					userType = "carDriver";
+				}
+
+				if (roleCode.indexOf("carOwner")>-1) {
+					userType = "carOwner";
+				}
+
+				if (roleCode.indexOf("Supplier")>-1) {
+					userType = "Supplier";
+				}
+
+				projectCode = loginInfo.projects.projectCode;
+				projectName = loginInfo.projects.projectName;
+				changeTitle(username);
+				getMaterialList('1');
+			} else {
+				alert("请重新登录");
+			}
+		});
+		api.addEventListener({
+			name: 'scrolltobottom',
+			extra: {
+				threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+			}
+		}, function(ret, err) {
+			api.showProgress({
+				title: '加载中...',
+				modal: false
+			});
+
+			$reiz.request.post($reiz.urls['material'].getList, {
+				body: {
+					"account": account,
+					"projectCode": projectCode,
+					"pageIndex": pageIndex,
+					"pageSize": pageSize,
+					"userType": userType,
+					"status": flag + '',
+					"carNo": carNo,
+					"dispatchCar": dispatchCar,
+					"collectCar": collectCar,
+					"materialNo": materialNo,
+					"originStakeNum": originStakeNum,
+					"loadStakeNum": loadStakeNum,
+					"motorcadeId": motorcadeId,
+					"origin": origin,
+					"receiving": receiving
+				}
+			}, function(ret, err) {
+				if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+					var data1 = JSON.parse(ret.data);
+					var materialList = data1.records;
+					count = data1.total;
+					arrayLength = arrayLength + materialList.length;
+					pageIndex = Math.ceil(arrayLength / pageSize + 1);
+					api.hideProgress();
+					moreData(materialList);
+				} else {
+					api.hideProgress();
+					api.toast({
+						msg: '没有更多数据了'
+					});
+				}
+			});
+		});
+	}
+
+	function getMaterialList(status) {
+		flag = status;
+		$reiz.request.post($reiz.urls['material'].getList, {
+			body: {
+				"account": account,
+				"projectCode": projectCode,
+				"pageIndex": 1,
+				"pageSize": pageSize,
+				"userType": userType,
+				"status": status + '',
+				"carNo": carNo,
+				"dispatchCar": dispatchCar,
+				"collectCar": collectCar,
+				"materialNo": materialNo,
+				"originStakeNum": originStakeNum,
+				"loadStakeNum": loadStakeNum,
+				"motorcadeId": motorcadeId,
+				"origin": origin,
+				"receiving": receiving
+			}
+		}, function(ret, err) {
+			var data1 = JSON.parse(ret.data);
+			var materialList = data1.records;
+			if (status == 1 || status == '1') {
+				count = data1.total;
+				getNoList();
+			}
+			arrayLength = materialList.length;
+			pageIndex = Math.ceil(arrayLength / pageSize + 1);
+			addlilist(materialList);
+		});
+	}
+
+	function getNoList() {
+		$reiz.request.post($reiz.urls['material'].getList, {
+			body: {
+				"account": account,
+				"projectCode": projectCode,
+				"pageIndex": 1,
+				"pageSize": pageSize,
+				"userType": userType,
+				"status": '0',
+				"carNo": carNo,
+				"dispatchCar": dispatchCar,
+				"collectCar": collectCar,
+				"materialNo": materialNo,
+				"originStakeNum": originStakeNum,
+				"loadStakeNum": loadStakeNum,
+				"motorcadeId": motorcadeId,
+				"origin": origin,
+				"receiving": receiving
+			}
+		}, function(ret, err) {
+			var data1 = JSON.parse(ret.data);
+			var materialList = data1.records;
+			noCount = data1.total;
+			change();
+		});
+	}
+
+	function change() {
+		api.execScript({
+			winName: 'material',
+			script: 'change(' + count + ',' + noCount + ');'
+		});
+	}
+
+	function changeTitle(arg) {
+		api.execScript({
+			winName: 'material',
+			script: 'changeTitle("' + arg + '");'
+		});
+	}
+
+	function addlilist(data) {
+		$("#material_list").html("");
+		moreData(data);
+	}
+
+	function moreData(data) {
+		var lilist = [];
+		$(data).each(function(index, element) {
+			var projectName = element.projectName;
+			if(element.workAreaName!=null&&element.workAreaName!=""){
+				projectName= element.workAreaName;
+			}
+
+			var carNo = element.carNo;
+			var motorcadeName = element.motorcadeName == null ? "" : element.motorcadeName;
+			var originStakeNum = element.originStakeNum == null ? "" : element.originStakeNum;
+			var originStakeNumMeter = element.originStakeNumMeter == null ? "" : element.originStakeNumMeter;
+			var originStake = "K"+originStakeNum ;
+			if(originStakeNumMeter!=null&&originStakeNumMeter!=""){
+				originStake = originStake + "+"+ originStakeNumMeter;
+			}
+			var receivingStakeNum = element.receivingStakeNum == null ? "" : element.receivingStakeNum;
+			var receivingStakeNumMeter = element.receivingStakeNumMeter == null ? "" : element.receivingStakeNumMeter;
+			var receivingStake = "";
+			if(receivingStakeNumMeter!=null&&receivingStakeNumMeter!=""){
+				receivingStake = "K"+receivingStakeNum 
+				receivingStake = receivingStake +"+"+ receivingStakeNumMeter;
+			}
+			var materialName = element.materialName == null ? "" : element.materialName;
+			var quantity = element.quantity == null ? "" : element.quantity;
+			var deliverytime = element.deliverytime == null ? "" : element.deliverytime;
+			var receipttime = element.receipttime == null ? "" : element.receipttime;
+
+			lilist.push("<li onclick='detail(" + element.id + ")'>");
+			lilist.push('<p class="listTit" id="carNo">' + carNo + '</p>');
+			lilist.push('<div class="listInfo">');
+			lilist.push('<div class="textWrap"><span class="t">项目名称:</span><span class="t">' + projectName + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">车队名称:</span><span class="t">' +  motorcadeName   + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">物料名称:</span><span class="t">' + materialName  + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">物料数量:</span><span class="t">' +  quantity  + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">发料桩号:</span><span class="t">' + originStake + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">收料桩号:</span><span class="t">' + receivingStake  + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">发车:</span><span class="t">' +  deliverytime  + '</span></div>');
+			lilist.push('<div class="textWrap"><span class="t">收车:</span><span class="t">' + receipttime  + '</span></div>');
+			lilist.push('</div></li>');
+		});
+		$("#material_list").append(lilist.join(''));
+		api.parseTapmode();
+	}
+
+	function doSearch(param) {
+		if (typeof(param) !== "undefined") {
+			carNo = param;
+			dispatchCar = '';
+			collectCar = '';
+			materialNo = '';
+			originStakeNum = '';
+			loadStakeNum = '';
+			motorcadeId = '';
+			origin = '';
+			receiving = '';
+			getMaterialList(flag);
+		}
+
+	}
+
+	function detail(param) {
+		api.openWin({
+			name: 'dispatch_car_win',
+			url: './dispatch_car_win.html',
+			pageParam: {
+				id: param
+			}
+		});
+
+	}
+
+	function scanner() {
+		var FNScanner = api.require('FNScanner');
+		var carNo;
+		FNScanner.open({
+			autorotation: true
+		}, function(ret, err) {
+			if (ret) {
+				if (ret.content) {
+					carNo = ret.content.trim();
+					if(!carNo ||  carNo.indexOf("materialType")>-1){
+						api.toast({
+							msg: "车辆二维码不正确！",
+							duration: 3000,
+							location: 'middle'
+						});
+						return;
+					}
+					$reiz.request.post($reiz.urls['material'].selectWaybillStatus, {
+						body: {
+							"projectCode": projectCode,
+							"carNo": ret.content.trim()
+						}
+					}, function(ret, err) {
+						if(ret.code == 400){
+							api.toast({
+								msg: ret.msg,
+								duration: 3000,
+								location: 'middle'
+							});
+						}else{
+							var type = ret.pageType;
+							toDeliverMaterial(type,carNo);
+						}
+					});
+				}
+			} else {
+				alert(JSON.stringify(err));
+			}
+		});
+	}
+	//扫描
+	function toDeliverMaterial(type,carNo) {
+		roleCode = loginInfo.roleCode;//角色
+		if(roleCode.indexOf("ReceivingOperator")>-1){//收料料员
+			if("ReceivingOperator" == type){
+				//收料页面
+				api.openWin({
+					name: 'collect_materuals_win',
+					url: './collect_materuals_win.html',
+					pageParam: { //页面传参 api.pageParam获取
+						name: username,
+						carNo: carNo
+					}
+				});
+			}else{
+				api.alert({
+					title: '提示消息',
+					msg: "暂无收料信息！",
+				})
+			}
+		}else if(roleCode.indexOf("ShippingOperator")>-1){//发料员
+			if("ShippingOperator" == type){
+				//发料页面
+				api.openWin({
+					name: 'deliver_materials_win',
+					url: './deliver_materials_win.html',
+					pageParam: { //页面传参 api.pageParam获取
+						name: username,
+						projectCode:projectCode,
+						carNo: carNo
+					}
+				});
+			}else{
+				api.alert({
+					title: '提示消息',
+					msg: "还未收料，暂时无法发料！",
+				})
+			}
+		}else{
+			api.toast({
+				msg: "暂无收发料权限！",
+				duration: 3000,
+				location: 'middle'
+			});
+		}
+	}
+	//跳转到筛选页面
+	function select() {
+		api.openWin({
+			name: 'filter_win',
+			url: './filter_win.html',
+			pageParam: {
+				"account": account,
+				"projectCode":projectCode
+			},
+			slidBackEnabled: false
+		});
+	}
+	//跳转到统计页面
+	function countt() {
+		api.openWin({
+			name: 'count',
+			url: './count_win.html',
+			pageParam: {
+				account: account,
+				projectCode: projectCode,
+				userType: userType,
+			},
+			slidBackEnabled: false
+		});
+	}
+	//接收筛选页面的表单参数 然后在该页面发起ajax请求列表数据
+	function fngetFormParams(formParams) {
+		console.log(formParams.materialNo);
+		carNo = formParams.carNo;
+		dispatchCar = formParams.dispatchCar;
+		collectCar = formParams.collectCar;
+		materialNo = formParams.materialNo;
+		originStakeNum = formParams.originStakeNum;
+		loadStakeNum = formParams.loadStakeNum;
+		materialNo = formParams.materialNo;
+		origin = formParams.origin;
+		receiving = formParams.receiving;
+		//projectCode = formParams.projectCode;
+		getMaterialList(1);
+	}
+</script>
+
+</html>

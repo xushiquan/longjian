@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>安全培训</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+  <script src='../../script/rem.js'></script>
+	<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+  <style>
+  html,
+  body {
+      width: 100%;
+      height: 100%;
+  }
+
+  .wrap {
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      overflow: auto;
+  }
+
+  .list ul li {
+      width: 100%;
+      height:45px;
+      line-height: 45px;
+      font-size: 0.3rem;
+  }
+  .list ul li  span{
+    display: inline-block;
+  }
+  .spanName{
+    color:#666666;
+    margin:0 0.2rem;
+  }
+  .spanCont{
+      color:#333333;
+  }
+  .fjTit{
+    width: 100%;
+    height:45px;
+    line-height: 45px;
+    border-top:3px solid #E8F6FF;
+    color:#666666;
+    font-size: 0.3rem;
+    padding:0 0.2rem;
+  }
+  .fileList ul li{
+    width: 100%;
+    height:45px;
+    line-height: 45px;
+    font-size: 0.2rem;
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		border-bottom: 1px solid #92d6ee;
+  }
+	.lText{
+		flex:1;
+		font-size: 0.27rem;
+		padding-left: 0.2rem;
+		overflow: hidden;
+		text-overflow:ellipsis;
+		white-space: nowrap;
+	}
+
+	.rIcon{
+		width: 50px;
+		font-size: 0.27rem;
+		text-align: center;
+		line-height:50px;
+		color:#02B0E9;
+	}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+      <div class='list'>
+          <ul class='ulList'>
+            <li>
+              <span class='spanName'>培训名称</span>
+              <span class='spanCont name'></span>
+            </li>
+            <li>
+              <span class='spanName'>培训时间</span>
+              <span class='spanCont time'></span>
+            </li>
+            <li>
+                <span class='spanName '>培训地点</span>
+                <span class='spanCont address'></span>
+            </li>
+            <li>
+              <span class='spanName '>主&nbsp&nbsp讲&nbsp&nbsp人</span>
+              <span class='spanCont propel'></span>
+            </li>
+          </ul>
+      </div>
+      <div class='fjTit'>附件列表</div>
+      <div class='fileList'>
+        <ul class='liList'>
+          <!-- <li>
+            <span class='lText'>安全生产责任安全生产责任--书安全生产责任--书安全生产责任--书</span>
+					  <span class='rTxte'>2015-08-07</span>
+						<span class='rIcon'>
+									<i class=" iconfont icon-fengsu"></i>
+						</span>
+          </li> -->
+        </ul>
+      </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+var fileList;
+	apiready = function() {
+   var element = api.pageParam.element;
+   $('.name').text(element.trainName);
+   $('.time').text(element.trainTime);
+   $('.address').text(element.trainSite);
+   $('.propel').text(element.resenter);
+   fileList = element.fileList;
+	 $('.liList').empty();
+   if(fileList.length>0){
+      for(var i = 0; i < fileList.length;i++){
+				var html =  "<li  onclick='download("+i+")'>" +
+									 "<span class='lText'>"+fileList[i].fileName+"</span>" +
+									 "<span class='rIcon'>" +
+									 "<i class=' iconfont icon-xiazai-'></i>" +
+									 "</span></li>"
+ 				$('.liList').append(html);
+			 }
+
+   }
+	};
+ function download(index){
+	 var size = fileList[index].size;
+	 api.confirm({
+ 			title: '下载附件',
+ 			msg: '是否下载',
+ 			buttons: ['确定', '取消']
+ 	}, function(ret, err) {
+ 			var button = ret.buttonIndex;
+ 			if (button == "1") {
+ 					var url;
+ 					url = fileList[index].path;
+ 					var downloadManager = api.require('downloadManager2');
+					api.showProgress({
+							style: 'default',
+							animationType: 'fade',
+							title: '努力加载中...',
+							text: '先喝杯茶...',
+							modal: false
+					});
+ 					downloadManager.download({
+ 							url: url,
+ 							title: fileList[index].fileName
+ 					}, function(ret) {
+ 							if(ret.code == 0){
+								api.hideProgress();
+								api.toast({
+		              msg: '下载成功'
+		            });
+							}
+ 					});
+
+ 			}
+ 	});
+ }
+</script>
+
+</html>

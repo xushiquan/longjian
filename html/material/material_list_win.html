@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>运单列表面</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			body {
+				background-color: #ffffff;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				<a id="title"></a>
+			</div>
+			<a class="aui-pull-right aui-btn" onclick="count()"> <span class="aui-iconfont">统计</span> </a>
+		</header>
+		<div class="aui-searchbar" id="search">
+			<div class="aui-searchbar-input aui-border-radius" tapmode>
+				<i class="aui-iconfont aui-icon-search"></i>
+				<form action="javascript:search();">
+					<input type="search" placeholder="请输入车牌号搜索" id="search-input">
+				</form>
+			</div>
+			<div class="aui-searchbar-cancel" tapmod onclick="select()">
+				筛选
+			</div>
+		</div>
+		<div class="aui-bar aui-bar-btn aui-bar-btn-round" style="width:90%;">
+			<div class="aui-bar-btn-item aui-active" id="received" onclick="received()">
+				已收车
+			</div>
+			<div class="aui-bar-btn-item" id="unreceived" onclick="unreceived()">
+				未收车
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript">
+		var hasSelected = 1;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			var nav = $api.byId('wrapper');
+			var header_h = $api.offset(header).h;
+			$("#title").text("收料员-王立军(收)");
+			$('#search-input').on('input', function() {
+				search();
+			});
+			api.openFrame({
+				name : 'material_list_frame',
+				url : './material_list_frame.html',
+				rect : {
+					x : 0,
+					y : header_h + 80,
+					w : 'auto',
+					h : 'auto'
+				}
+			})
+		};
+		function select() {
+			api.execScript({
+				frameName : 'material_list_frame',
+				script : 'select();'
+			});
+		}
+
+		function search() {
+			api.execScript({
+				frameName : 'material_list_frame',
+				script : 'doSearch("' + $("#search-input").val() + '");'
+			});
+		}
+
+		function count() {
+			api.execScript({
+				frameName : 'material_list_frame',
+				script : 'countt();'
+			});
+		}
+
+		function received() {
+			if (hasSelected == 0) {
+				$("#unreceived").removeClass("aui-active");
+				$("#received").addClass("aui-active");
+				hasSelected = 1;
+				api.execScript({
+					frameName : 'material_list_frame',
+					script : 'getMaterialList("' + hasSelected + '");'
+				});
+			}
+		}
+
+		function unreceived() {
+			if (hasSelected == 1) {
+				$("#received").removeClass("aui-active");
+				$("#unreceived").addClass("aui-active");
+				hasSelected = 0;
+				api.execScript({
+					frameName : 'material_list_frame',
+					script : 'getMaterialList("' + hasSelected + '");'
+				});
+			}
+		}
+
+		function change(count, noCount) {
+			$("#unreceived").removeClass("aui-active");
+			$("#received").addClass("aui-active");
+			hasSelected = 1;
+			$("#received").text("已收车(" + count + ")");
+			$("#unreceived").text("未收车(" + noCount + ")");
+		}
+
+		function changeTitle(arg) {
+			$("#title").text(arg);
+		}
+	</script>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui-1.1.7.css" />
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="aui-card aui-noborder" id="shang">
+        <ul class="aui-list-view" id="info">
+            <!-- <li class='aui-list-view-cell'>项目名称:3443</li>
+            <li class='aui-list-view-cell'>项目名称:3443</li> -->
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript">
+    var projectCode, projectName;
+    apiready = function() {
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret.value) {
+                var loginInfo = JSON.parse(ret.value);
+                projectCode = loginInfo.projects.projectCode;
+                $reiz.request.post($reiz.urls['project'].query_project_detail, {
+                    body: {
+                        "projectCode": projectCode
+                    }
+                }, function(ret, error) {
+                    if (ret.code == 200) {
+                        var data = ret.data;
+                        var danweiList = JSON.parse(data);
+                        setValue(danweiList);
+                    }
+                })
+            }
+        });
+    }
+
+    function setValue(danweiList) {
+        var list = [];
+        for (var i = 0; i < danweiList.length; i++) {
+            list.push("<li class='aui-list-view-cell'>项目名称:" + danweiList[i].projectName || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>建设单位:" + danweiList[i].constructionUnit || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>设计单位:" + danweiList[i].designUnit || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>施工单位:" + danweiList[i].executionUnit || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>监理单位:" + danweiList[i].supervisingUnit || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>开工时间:" + danweiList[i].startTime || '未知' + "</li>");
+            list.push("<li class='aui-list-view-cell'>竣工时间:" + danweiList[i].endTime || '未知' + "</li>");
+        }
+        $('#info').append(list.join(''));
+    }
+</script>
+
+</html>

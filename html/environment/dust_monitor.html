@@ -1,0 +1,907 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        #main {
+            bottom: 0;
+            width: 100%;
+            height: 80%;
+        }
+
+        .whiteBg {
+            background-color: transparent;
+        }
+
+        .aui-content-padded {
+            margin: 0 10px;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 15px;
+        }
+
+        .aui-tab {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .aui-tab-nav {
+            width: 100%;
+            display: box;
+            display: -webkit-box;
+            box-sizing: border-box;
+            font-size: 16px;
+            height: 45px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .aui-tab-nav li {
+            height: 45px;
+            line-height: 45px;
+            -webkit-box-flex: 1;
+            box-sizing: border-box;
+            text-align: center;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            width: 100%;
+        }
+
+        .aui-tab-nav li.active {
+            color: #ffffff;
+            border-bottom: 2px #1abc9c solid;
+            /*-webkit-animation: fadeIn .5s ease both;
+				 animation: fadeIn .5s ease both;*/
+        }
+
+        .aui-tab-nav.aui-tab-border {
+            background-color: transparent;
+            border: 1px solid #1abc9c;
+            border-radius: 3px;
+        }
+
+        .aui-tab-nav.aui-tab-border li {
+            /*width: 1%;*/
+            overflow: hidden;
+            line-height: 43px;
+            color: #1abc9c;
+            background-color: #C7F4FE;
+            border-color: #1abc9c;
+            border-left: 1px solid #1abc9c;
+        }
+
+        .aui-tab-nav.aui-tab-border li:first-child {
+            border-left: 0px;
+        }
+
+        .aui-tab-nav.aui-tab-border li.active {
+            background-color: #1abc9c;
+            color: #ffffff;
+            /*-webkit-animation: fadeIn .5s ease both;
+				 animation: fadeIn .5s ease both;*/
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+        <div class="aui-title">
+            环境监测
+        </div>
+        <a class="aui-pull-right aui-btn" onclick="switchsb()"> <span class="aui-iconfont"></span><span id="title">切换</span></a>
+    </header>
+    <div class="whiteBg">
+        <div class="aui-content-padded">
+            <div class="aui-tab">
+                <ul class="aui-tab-nav aui-tab-border" id="tab">
+                    <li class="active first">
+                        实时
+                    </li>
+                    <li>
+                        24小时
+                    </li>
+                    <li>
+                        48小时
+                    </li>
+                    <li>
+                        72小时
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="main"></div>
+</body>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script src="../../script/echarts.min.js"></script>
+<script type="text/javascript">
+    var url_getWarn = $reiz.urls["environment"].getWarn;
+    var url_getHZ = $reiz.urls["environment"].query_sjhz;
+    var url = $reiz.urls["environment"].query;
+    var pm2 = [];
+    var pm2_avg = [];
+    var pm2_max = [];
+    var pm2_min = [];
+    var pm10 = [];
+    var pm10_avg = [];
+    var pm10_max = [];
+    var pm10_min = [];
+    var times = [];
+    var deviceId;
+    var projectCode;
+    var myChart;
+    var isLaunched;
+    var echarts;
+    var timeTicket;
+    var token;
+    var deviceName;
+    var pm25_warn = 150;
+    var pm10_warn = 150;
+    var pm25high_warn = 150;
+    var pm10high_warn = 150;
+    apiready = function() {
+        var header = $api.byId('header');
+        $api.fixIos7Bar(header);
+        deviceId = api.pageParam.shebeiid;
+        projectCode = api.pageParam.gongdidm;
+        deviceName = api.pageParam.deviceName;
+        $("#tab li").each(function(index, e) {
+            this.onclick = function() {
+                $("#tab li.active").removeClass('active');
+                $(this).addClass('active');
+                switch (index) {
+                    case 0:
+                        sendAjaxforNow();
+                        break;
+                    case 1:
+                        sendAjaxforHistory(24);
+                        break;
+                    case 2:
+                        sendAjaxforHistory(48);
+                        break;
+                    case 3:
+                        sendAjaxforHistory(72);
+                        break;
+                }
+            }
+        })
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '努力加载中...',
+            text: '先喝杯茶...',
+            modal: true
+        });
+        sendAjaxforNow();
+    }
+
+    function reload(val) {
+        shebeiid = val;
+        $("#tab li.active").removeClass('active');
+        $('.first').addClass('active');
+        sendAjaxforNow();
+    }
+
+    function format(shijianchuo) {
+        //shijianchuo是整数，否则要parseInt转换
+        var time = new Date(shijianchuo);
+        var y = time.getFullYear();
+        var m = time.getMonth() + 1;
+        var d = time.getDate();
+        var h = time.getHours();
+        var mm = time.getMinutes();
+        var s = time.getSeconds();
+        return h + ":" + mm + ":" + s;
+    }
+
+    function sendAjaxforNow() {
+        var showTime = [];
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '努力加载中...',
+            text: '先喝杯茶...',
+            modal: true
+        });
+        $reiz.request.post($reiz.urls['environment'].query, {
+            body: {
+                "projectCode": projectCode,
+                "deviceId": deviceId,
+                "deviceName": deviceName,
+                "maxResult": 200
+            }
+        }, function(ret, err) {
+            var data = ret.data;
+            api.hideProgress();
+            
+            
+            if (data != null && data.length > 0) {
+                var envlist = JSON.parse(data);
+                times.length = 0;
+                pm2.length = 0;
+                pm10.length = 0;
+                showTime.length = 0;
+                for (var i = 0; i < envlist.length; i++) {
+                    var date = format(envlist[i].gmtCreate);
+                    showTime.push(date);
+                    times.push(date);
+                    pm2.push(envlist[i].pm25);
+                    pm10.push(envlist[i].pm10);
+                }
+                makeChart(times, pm2, pm10, showTime);
+            } else {
+                api.toast({
+                    msg: '此设备暂无数据上报'
+                });
+            }
+        });
+    }
+
+    function sendAjaxforHistory(timeInterval) {
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '努力加载中...',
+            text: '先喝杯茶...',
+            modal: true
+        });
+        $reiz.request.post($reiz.urls['environment'].query, {
+            body: {
+                "projectCode": projectCode,
+                "deviceId": deviceId,
+                "deviceName": deviceName,
+                "maxResult": 200
+            }
+        }, function(ret, err) {
+            var data = ret.data;
+            api.hideProgress();
+            var envlist = JSON.parse(data);
+            if (envlist != null && data.length > 0) {
+                times.length = 0;
+                pm2_avg.length = 0;
+                pm2_max.length = 0;
+                pm2_min.length = 0;
+                pm10_avg.length = 0;
+                pm10_max.length = 0;
+                pm10_min.length = 0;
+                $(envlist).each(function(index) {
+                    var date = format(envlist[index].gmtCreate);
+                    times.push(date);
+                    pm2_avg.push(200);
+                    pm2_max.push(250);
+                    pm2_min.push(150);
+                    pm10_avg.push(200);
+                    pm10_max.push(250);
+                    pm10_min.push(100);
+                })
+                if (isLaunched) {
+                    myChart.dispose();
+                }
+                myChart = echarts.init($("#main")[0]);
+                clearInterval(timeTicket);
+                setHistoryOption();
+            } else {
+                api.toast({
+                    msg: '此设备暂无历史数据 '
+                });
+            }
+        })
+    }
+
+    function makeChart(times, pm2, pm10, tooltipTime) {
+        if (isLaunched) {
+            myChart.dispose();
+            myChart = echarts.init($("#main")[0]);
+            clearInterval(timeTicket);
+            setOption(tooltipTime);
+        } else {
+            isLaunched = 1;
+            setOption(tooltipTime);
+        }
+    }
+
+    function setHistoryOption() {
+        myChart.setOption({
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['pm2.5平均值', 'pm2.5最大值', 'pm2.5最小值', 'pm10平均值', 'pm10最大值', 'pm10最小值'],
+                textStyle: {
+                    //color : "#fff"
+                }
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {
+                        show: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: false
+                    }
+                },
+                top: 'bottom'
+            },
+            grid: [{
+                left: '45',
+                right: '20',
+                height: '35%'
+            }, {
+                left: '45',
+                right: '20',
+                top: '55%',
+                height: '35%'
+            }],
+            xAxis: [{
+                type: 'category',
+                data: times,
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    textStyle: {
+                        //color : "#fff"
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1, //这里是为了突出显示加上的
+                    }
+                }
+            }, {
+                gridIndex: 1,
+                type: 'category',
+                data: times,
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    textStyle: {
+                        //color : "#BFBFBF"
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1, //这里是为了突出显示加上的
+                    }
+                }
+            }],
+            yAxis: [{
+                type: 'value',
+                scale: true,
+                boundaryGap: [0.2, 0.2],
+                axisLabel: {
+                    formatter: '{value}',
+                    textStyle: {
+                        //color : "#fff"
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1, //这里是为了突出显示加上的
+                    }
+                }
+            }, {
+                gridIndex: 1,
+                type: 'value',
+                scale: true,
+                boundaryGap: [0.2, 0.2],
+                axisLabel: {
+                    formatter: '{value}',
+                    textStyle: {
+                        //color : "#fff"
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1, //这里是为了突出显示加上的
+                    }
+                }
+            }],
+            series: [{
+                name: 'pm2.5平均值',
+                type: 'line',
+                data: pm2_avg,
+                markLine: {
+                    lineStyle: {
+                        normal: {
+                            color: '#17ECE7'
+                        }
+                    },
+                    symbol: 'none',
+                    data: [
+                        [{
+                            name: 'pm2.5预警值',
+                            coord: [0, pm25_warn],
+                            value: pm25_warn
+                        }, {
+                            coord: [pm2_avg.length - 1, pm25_warn]
+                        }],
+                        [{
+                            name: 'pm2.5报警值',
+                            coord: [0, pm25high_warn],
+                            value: pm25high_warn
+                        }, {
+                            coord: [pm2_avg.length - 1, pm25high_warn]
+                        }]
+                    ]
+                }
+            }, {
+                name: 'pm2.5最大值',
+                type: 'line',
+                data: pm2_max
+            }, {
+                name: 'pm2.5最小值',
+                type: 'line',
+                data: pm2_min
+            }, {
+                name: 'pm10平均值',
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                type: 'line',
+                data: pm10_avg,
+                markLine: {
+                    lineStyle: {
+                        normal: {
+                            color: '#17ECE7'
+                        }
+                    },
+                    symbol: 'none',
+                    data: [
+                        [{
+                            name: 'pm10预警值',
+                            coord: [0, pm10_warn],
+                            value: pm10_warn
+                        }, {
+                            coord: [pm10_avg.length - 1, pm10_warn]
+                        }],
+                        [{
+                            name: 'pm10报警值',
+                            coord: [0, pm10high_warn],
+                            value: pm10high_warn
+                        }, {
+                            coord: [pm10_avg.length - 1, pm10high_warn]
+                        }]
+                    ]
+                }
+            }, {
+                name: 'pm10最大值',
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                type: 'line',
+                data: pm10_max
+            }, {
+                name: 'pm10最小值',
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                type: 'line',
+                data: pm10_min
+            }],
+            color: ['#3FCC74', '#c23531', '#FFA500']
+        });
+    }
+
+    function setOption(tooltipTime) {
+        var tooltipTime_ = tooltipTime.reverse();
+        myChart = echarts.init($("#main")[0]);
+        myChart.setOption({
+            tooltip: {
+                trigger: 'axis',
+                // formatter : function(datas) {
+                // 	console.log("5555");
+                // 	for (var i = 0, length = datas.length; i < length; i++) {
+                // 		return tooltipTime_[datas[i].dataIndex] + '<br/>' + datas[i].seriesName + ':' + datas[i].value
+                // 	}
+                // }
+            },
+            legend: {
+                data: ['pm2.5', 'pm10'],
+                textStyle: {
+                    //color : "#fff"
+                }
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {
+                        show: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'bar']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: false
+                    }
+                },
+                top: 'bottom'
+            },
+            grid: {
+                left: '45',
+                right: '25'
+            },
+            xAxis: [{
+                type: 'category',
+                data: times.reverse(),
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    textStyle: {
+                        //color : "#fff"
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1 //这里是为了突出显示加上的
+                    }
+                }
+            }],
+            yAxis: [{
+                type: 'value',
+                scale: true,
+                boundaryGap: [0.2, 0.2],
+                axisLabel: {
+                    formatter: '{value}',
+                    textStyle: {
+                        //color : "#fff"
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#BFBFBF']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#3c4653',
+                        width: 1 //这里是为了突出显示加上的
+                    }
+                }
+            }],
+            series: [{
+                name: 'pm2.5',
+                type: 'line',
+                data: pm2.reverse(),
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                },
+                markLine: {
+                    lineStyle: {
+                        normal: {
+                            color: '#17ECE7'
+                        }
+                    },
+                    symbol: 'none',
+                    data: [
+                        [{
+                            name: 'pm2.5预警值',
+                            coord: [0, pm25_warn],
+                            value: pm25_warn
+                        }, {
+                            coord: [pm2.length - 1, pm25_warn]
+                        }],
+                        [{
+                            name: 'pm2.5报警值',
+                            coord: [0, pm25high_warn],
+                            value: pm25high_warn
+                        }, {
+                            coord: [pm2.length - 1, pm25high_warn]
+                        }]
+                    ]
+                }
+            }, {
+                name: 'pm10',
+                type: 'line',
+                data: pm10.reverse(),
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                },
+                markLine: {
+                    lineStyle: {
+                        normal: {
+                            color: '#17ECE7'
+                        }
+                    },
+                    symbol: 'none',
+                    data: [
+                        [{
+                            name: 'pm10预警值',
+                            coord: [0, pm10_warn],
+                            value: pm10_warn
+                        }, {
+                            coord: [pm10.length - 1, pm10_warn]
+                        }],
+                        [{
+                            name: 'pm10报警值',
+                            coord: [0, pm10high_warn],
+                            value: pm10high_warn
+                        }, {
+                            coord: [pm10.length - 1, pm10high_warn]
+                        }]
+                    ]
+                }
+            }]
+        });
+        timeTicket = setInterval(function() {
+            $reiz.request.post($reiz.urls['environment'].query, {
+                body: {
+                    "projectCode": projectCode,
+                    "deviceId": deviceId,
+                    "deviceName": deviceName,
+                    "maxResult": 200
+                }
+            }, function(ret, err) {
+                var data = ret.data;
+
+                var envlist = JSON.parse(data);
+                var time = String(envlist[0].gmtCreate);
+                if (true) {
+                    if (time.substring(10) == times[times.length - 1]) {
+                        return;
+                    } else {
+                        times.shift();
+                        var date = format(envlist[0].gmtCreate)
+                        times.push(date);
+                        pm2.shift();
+                        pm2.push(envlist[0].pm25);
+                        pm10.shift();
+                        pm10.push(envlist[0].pm10);
+                        myChart.dispose();
+                        myChart = echarts.init($("#main")[0]);
+                        myChart.setOption({
+                            tooltip: {
+                                trigger: 'axis',
+                                // formatter : function(datas) {
+                                // 	console.log("5555");
+                                // 	for (var i = 0, length = datas.length; i < length; i++) {
+                                // 		return tooltipTime_[datas[i].dataIndex] + '<br/>' + datas[i].seriesName + ':' + datas[i].value
+                                // 	}
+                                // }
+                            },
+                            legend: {
+                                data: ['pm2.5', 'pm10'],
+                                textStyle: {
+                                    //color : "#fff"
+                                }
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    dataView: {
+                                        show: false
+                                    },
+                                    magicType: {
+                                        show: true,
+                                        type: ['line', 'bar']
+                                    },
+                                    restore: {
+                                        show: true
+                                    },
+                                    saveAsImage: {
+                                        show: false
+                                    }
+                                },
+                                top: 'bottom'
+                            },
+                            xAxis: [{
+                                type: 'category',
+                                data: times.reverse(),
+                                axisTick: {
+                                    show: false
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        //color : "#fff"
+                                    }
+                                },
+                                splitLine: {
+                                    lineStyle: {
+                                        color: ['#BFBFBF']
+                                    }
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#3c4653',
+                                        width: 1 //这里是为了突出显示加上的
+                                    }
+                                }
+                            }],
+                            yAxis: [{
+                                type: 'value',
+                                scale: true,
+                                boundaryGap: [0.2, 0.2],
+                                axisLabel: {
+                                    formatter: '{value}',
+                                    textStyle: {
+                                        //color : "#fff"
+                                    }
+                                },
+                                axisTick: {
+                                    show: false
+                                },
+                                splitLine: {
+                                    lineStyle: {
+                                        color: ['#BFBFBF']
+                                    }
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#3c4653',
+                                        width: 1 //这里是为了突出显示加上的
+                                    }
+                                }
+                            }],
+                            series: [{
+                                name: 'pm2.5',
+                                type: 'line',
+                                data: pm2.reverse(),
+                                markPoint: {
+                                    data: [{
+                                        type: 'max',
+                                        name: '最大值'
+                                    }, {
+                                        type: 'min',
+                                        name: '最小值'
+                                    }]
+                                },
+                                markLine: {
+                                    lineStyle: {
+                                        normal: {
+                                            color: '#17ECE7'
+                                        }
+                                    },
+                                    symbol: 'none',
+                                    data: [
+                                        [{
+                                            name: 'pm2.5预警值',
+                                            coord: [0, pm25_warn],
+                                            value: pm25_warn
+                                        }, {
+                                            coord: [pm2.length - 1, pm25_warn]
+                                        }],
+                                        [{
+                                            name: 'pm2.5报警值',
+                                            coord: [0, pm25high_warn],
+                                            value: pm25high_warn
+                                        }, {
+                                            coord: [pm2.length - 1, pm25high_warn]
+                                        }]
+                                    ]
+                                }
+                            }, {
+                                name: 'pm10',
+                                type: 'line',
+                                data: pm10.reverse(),
+                                markPoint: {
+                                    data: [{
+                                        type: 'max',
+                                        name: '最大值'
+                                    }, {
+                                        type: 'min',
+                                        name: '最小值'
+                                    }]
+                                },
+                                markLine: {
+                                    lineStyle: {
+                                        normal: {
+                                            color: '#17ECE7'
+                                        }
+                                    },
+                                    symbol: 'none',
+                                    data: [
+                                        [{
+                                            name: 'pm10预警值',
+                                            coord: [0, pm10_warn],
+                                            value: pm10_warn
+                                        }, {
+                                            coord: [pm10.length - 1, pm10_warn]
+                                        }],
+                                        [{
+                                            name: 'pm10报警值',
+                                            coord: [0, pm10high_warn],
+                                            value: pm10high_warn
+                                        }, {
+                                            coord: [pm10.length - 1, pm10high_warn]
+                                        }]
+                                    ]
+                                }
+                            }]
+                        })
+                    }
+                }
+            })
+        }, 60000);
+    }
+
+    function switchsb() {
+        api.openFrame({
+            name: 'shebeilist',
+            url: './shebeilist.html',
+            bgColor: 'rgba(0,0,0,0.6)',
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: api.pageParam
+        });
+    }
+</script>
+
+</html>

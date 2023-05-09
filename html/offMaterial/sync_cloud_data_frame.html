@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>AUI快速完成布局</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../icon/iconfont.css" />
+    </script>
+    <style type="text/css">
+        .list ul li {
+			border-bottom: 1px solid #EDF7FD;
+			padding-bottom: 1px;
+		}
+
+		.listTit {
+			margin: 0px 0px 10px 0px;
+            padding-top: 10px;
+			font-size: 15px;
+			padding-left: 15px;
+			color: #333333;
+			font-weight: bold;
+		}
+
+		.listInfo {
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			flex-wrap: wrap;
+			-webkit-flex-wrap: wrap;
+		}
+
+		.listInfo .textWrap {
+			width: 90%;
+			font-size: 12px;
+            margin-bottom: 3px;
+		}
+
+		.t {
+			padding-left: 13.3px;
+			color: #666666;
+		}
+
+		.li:hover {
+			background-color: red;
+		}
+
+        .btn_{
+            margin-top: 30px;
+            width: 60%;
+            margin-left: 20%;
+            text-align: center;
+            border-radius: 3px;
+            height: 35px;
+            line-height: 35px;
+        }
+        .btn2{
+            color:#ffffff;
+            background:linear-gradient(to right,#23d2ff,#138dc5);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list" id="message_list">
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/db-api.js"></script>
+<script type="text/javascript" src="../../script/offline-sync-method.js"></script>
+<script type="text/javascript">
+    var loginInfo;
+    var account;
+    var projectCode;
+    var pageIndex;
+    var pageSize = 10;
+    var arrayLength;
+    var datas = [];
+    apiready = function() {
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret) {
+                loginInfo = JSON.parse(ret.value);
+                projectCode = loginInfo.projects.projectCode;
+                
+                initLoadSyncDbDatalist(loginInfo);
+            } else {
+                alert("暂无同步数据");
+            }
+        });
+    }
+
+    //加载本地Db基础数据列表
+    function initLoadSyncDbDatalist(loginInfo){
+        var db = api.require('db');
+        var orgId = loginInfo.orgId;
+        var data = dictSyncDa;
+        var sysnMapList = [];
+        for (let key in data) {
+            var entity = data[key];
+            if(key == "org" || key == "waybill" || key == "role" || key == "userRole"){
+                continue;
+            }
+            var countDa = queryMain[key+"QuCountDbData"](db,orgId);
+            var temp = {}; 
+            temp.name = entity.name;
+            temp.count = countDa[0].count;
+            temp.syncCreate = countDa[0].syncCreate;
+            sysnMapList.push(temp);
+        }
+        addAllLilist(sysnMapList)
+    }
+
+    function addAllLilist(data) {
+        $("#message_list").html("");
+        var lilist = [];
+        
+        $(data).each(function(index, element) {
+            var name = element.name;
+            var count = element.count;
+            var syncCreate = element.syncCreate;
+
+            var txt = 
+                '<li class="aui-list-item" id="' + index + '")>'+
+                '   <p class="listTit">' + name + '</p>'+
+                '   <div class="listInfo">'+
+                '       <div class="textWrap">'+
+                '           <span class="t">数据条数:</span><span class="t">' + count + '</span>'+
+                '       </div>'+
+                '       <div class="textWrap">'+
+                '           <span class="t">同步时间:</span><span class="t">' +  syncCreate   + '</span>'+
+                '       </div>'+
+                '   </div>'+
+                '</li>';
+            lilist.push(txt);
+        });
+
+        var btnTxt =
+            '<div style="border-bottom: 0px solid #EDF7FD;text-align: center;">'+
+            '   <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">'+
+            '       <div class="btn_ btn2" onclick="handDownSync();">手动同步下载云数据</div>'+
+            '   </div>'+
+            '</div>';
+        lilist.push(btnTxt);
+
+        $("#message_list").append(lilist.join(''));
+        api.parseTapmode();
+    }
+
+    function handDownSync(){
+        syncCloudBasicsAllData(true);
+    }
+
+    function time(time) {
+        var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+        return date.toJSON().substr(0, 10).replace('T', ' ');
+    }
+</script>
+
+</html>

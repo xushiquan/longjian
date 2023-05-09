@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui-1.1.7.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/reiz.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mobiscroll.core-2.5.2.css"/>
+
+		<style>
+			body{
+				background-color: #ffffff;
+			}
+			.item_arrow {
+				float: right;
+				width: 15px;
+				padding-top: 15px;
+			}
+			.aui-user-view-cell:active {
+				background-color: rgba(255, 0, 0, 0);
+			}
+			#aui-list-view .aui-user-view-cell:after {
+				border: 1px solid #23455F;
+			}
+			.item_arrow {
+				float: right;
+				width: 15px;
+				padding: 0px;
+			}
+			.aui-user-view-cell {
+				position: relative;
+				padding: 3px 15px;
+				overflow: hidden;
+			}
+			.aui-user-view-cell .aui-img-object {
+				margin-top: 5px;
+				max-width: 52px !important;
+				height: 60px !important;
+				line-height: 60px !important;
+				border-radius: 10%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-content">
+			<ul class="aui-user-view" id="aui-user-view"></ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/echo.js"></script>
+	<script type="text/javascript">
+		echo.init({
+			offset : 0,
+			throttle : 0
+		});
+		var data = [];
+			var imagePath = $reiz.imagePath;
+		var projectCode;
+		var pageParam;
+		var token;
+		var pageIndex = 1;
+		var pageSize = 10;
+		var dataLength;
+		var workerName;
+		var username;
+		apiready = function() {
+			api.getPrefs({
+				key : 'loginInfo'
+			}, function(ret, err) {
+				if (ret) {
+					username = JSON.parse(ret.value).account;
+					projectCode = JSON.parse(ret.value).projects.projectCode;
+					$reiz.request.post($reiz.urls['worker'].querygrxx, {
+						body: {
+							"projectCode" : projectCode,
+							"account" : username,
+							"pageIndex" : 1,
+							"pageSize" : pageSize
+						}
+					}, function (ret, err) {
+						if(ret.data){
+							var data1 = JSON.parse(ret.data);
+							var workerList = data1.records;
+							arrayLength = workerList.length;
+							pageIndex = arrayLength / pageSize + 1;
+							addlilist(workerList);
+						}
+					});
+				} else {
+					alert(JSON.stringify(err));
+				}
+			});
+
+			api.addEventListener({
+				name : 'scrolltobottom',
+				extra : {
+					threshold : 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+				}
+			}, function(ret, err) {
+				api.showProgress({
+					title : '加载中...',
+					modal : false
+				});
+				$reiz.request.post($reiz.urls['worker'].querygrxx, {
+					body: {
+						"projectCode" : projectCode,
+						"workerName" : workerName,
+						"account" : username,
+						"pageIndex" : pageIndex,
+						"pageSize" : pageSize
+					}
+				}, function (ret, err) {
+					if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+						var data = JSON.parse(ret.data);
+						var workerList = data.records;
+						arrayLength = arrayLength + workerList.length;
+						pageIndex = arrayLength / pageSize + 1;
+						api.hideProgress();
+						moreData(workerList);
+					} else {
+						api.hideProgress();
+						api.toast({
+							msg : '没有更多数据了'
+						});
+					}
+				})
+			});
+		};
+
+		function addlilist(data) {
+			$("#aui-user-view").html("");
+			var lilist = [];
+			$(data).each(function(index, element) {
+				var name = element.workerName;
+				var xingbie = element.gender == "0" ? "男" : "女";
+				
+				var ptName = $reiz.handleProjectName(element);
+
+				var bumen = ptName;//element.projectName;
+				var idCardNumber = element.idCardNumber;
+				var defaultpic = imagePath + projectCode + "/" + idCardNumber+"_card.bmp";
+				var param = JSON.stringify(element);
+				lilist.push("<li class='aui-user-view-cell aui-img' tapmode='item_hover' onclick='openNewWindow(" + param + ")'><img onerror='this.src=\"../../image/common/person_nophoto.gif\"' class='aui-img-object aui-pull-left' src='" + defaultpic + "' alt='照片' data-echo='" + defaultpic + "'/><div class='aui-img-body'><span>");
+				lilist.push(name);
+				lilist.push('</span><p class="aui-ellipsis-1">');
+				lilist.push(xingbie);
+				lilist.push('<i style="float:right;margin-right:0.52rem;color:#09B3EB;" class="aui-iconfont aui-icon-right"></i><p class="aui-ellipsis-1">');
+				lilist.push(bumen);
+				lilist.push('</p></p></div></li>');
+			});
+			$("#aui-user-view").append(lilist.join(''));
+			api.parseTapmode();
+		}
+
+		function moreData(data) {
+			var lilist = [];
+			$(data).each(function(index, element) {
+				var name = element.workerName;
+				var xingbie = element.gender == "0" ? "男" : "女";
+				var ptName = $reiz.handleProjectName(element);
+				var bumen = ptName;//element.projectName;
+				var idCardNumber = element.idCardNumber;
+				//var pic = element.zhaopian;
+				var defaultpic = imagePath + projectCode + "/" + idCardNumber+"_card.bmp";
+				var param = JSON.stringify(element);
+				/*if (pic && pic != "" && pic != null) {
+				 defaultpic = $reiz['imgurls'].base.url + "receive/ryphoto/" + gongdidm + "/" + pic
+				 }*/
+				lilist.push("<li class='aui-user-view-cell aui-img' tapmode='item_hover' onclick='openNewWindow(" + param + ")'><img onerror='this.src=\"../../image/common/person_nophoto.gif\"' class='aui-img-object aui-pull-left' src='" + defaultpic + "' alt='照片' data-echo='" + defaultpic + "'/><div class='aui-img-body'><span>");
+				lilist.push(name);
+				lilist.push('</span><p class="aui-ellipsis-1">');
+				lilist.push(xingbie + "      " + idCardNumber);
+				// <img src="../../image/common/arrow.png" alt="" class="item_arrow">
+				lilist.push('<i style="float:right;margin-right:0.52rem;color:#09B3EB;" class="aui-iconfont aui-icon-right"></i><p class="aui-ellipsis-1">');
+				lilist.push(bumen);
+				lilist.push('</p></p></div></li>');
+			});
+			$("#aui-user-view").append(lilist.join(''));
+			api.parseTapmode();
+		}
+
+		function search(name) {
+			workerName = name;
+
+			$reiz.request.post($reiz.urls['worker'].querygrxx, {
+				body: {
+					"projectCode" : projectCode,
+					"workerName" : name,
+					"account" : username,
+					"pageIndex" : 1,
+					"pageSize" : pageSize
+				}
+			}, function (ret, err) {
+				if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+					var data = JSON.parse(ret.data);
+					var workerList = data.records;
+					arrayLength = workerList.length;
+					pageIndex = arrayLength / pageSize + 1;
+					addlilist(workerList);
+				} else {
+					//	api.hideProgress();
+					api.toast({
+						msg : '未查询到相关人员'
+					});
+				}
+			})
+		}
+
+		function openNewWindow(ryid) {
+			api.openWin({
+				alone : "true",
+				name : 'gongrenxx_detail',
+				url : './gongrenxx_detail.html',
+				bounces : false,
+				slidBackEnabled : false,
+				reload : true,
+				pageParam : {
+					ryid : ryid
+				}
+			});
+		}
+	</script>
+</html>

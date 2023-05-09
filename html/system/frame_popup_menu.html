@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../icon/iconfont.css" />
+    <style>
+        html,
+        body {
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+
+        #mask-background {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            background-color: transparent;
+        }
+
+        #popup-menu {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            bottom: 3.5rem;
+            margin-left: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #popup-menu .aui-popup-content {
+            width: 20em;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 1rem 0 #3836369f;
+        }
+
+        #popup-menu .aui-row {
+            line-height: 0.8rem;
+            vertical-align: bottom;
+        }
+
+        #popup-menu .menu-icon {
+            content: '';
+            display: inline-block;
+            height: 1.7rem;
+            width: 1.7rem;
+            position: relative;
+            border-radius: 25%;
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+            background: linear-gradient(to bottom right, #138dc5, #23d2ff);
+            box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(2) .menu-icon {
+            background: linear-gradient(to bottom right, #13c3c5, #18e1e3) !important;
+            box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(3) .menu-icon {
+            background: linear-gradient(to bottom right, #ee5489, #fd8db3) !important;
+            box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(4) .menu-icon {
+            background: linear-gradient(to bottom right, #2284d4, #39b4f7) !important;
+            box-shadow: 0rem 0.02rem 0.3rem 0.1rem #bbe9f5;
+        }
+
+        #popup-menu .menu-icon::before {
+            content: '';
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            bottom: 2%;
+            right: 5%;
+            border-radius: 25%;
+            background: linear-gradient(to bottom right, #23d2ff, #138dc5);
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(2) .menu-icon::before {
+            background: linear-gradient(to bottom right, #18e5e7, #10b2b4) !important;
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(3) .menu-icon::before {
+            background: linear-gradient(to bottom right, #fd91b6, #e9437b) !important;
+        }
+
+        #popup-menu .aui-col-xs-3:nth-child(4) .menu-icon::before {
+            background: linear-gradient(to bottom right, #3bb8fa, #1c78cb) !important;
+        }
+
+        #popup-menu .iconfont {
+            font-size: 2rem;
+            background: linear-gradient(#23d2ff, #138dc5);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        #popup-menu .menu-icon .iconfont {
+            position: absolute;
+            font-size: 1.5rem;
+            top: 25%;
+            left: 5%;
+            margin-top: 0;
+            margin-bottom: 0%;
+            transform: rotate(-45deg) scale(0.8);
+            -webkit-text-fill-color: white;
+        }
+
+        /* #popup-menu .menu-icon .icon-anquanxunshi {
+            font-size: 1rem;
+            margin-left: 0rem;
+            margin-top: 0.5rem;
+        } */
+
+        #btn-close-frame {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            bottom: 0.3rem;
+            margin-left: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #btn-close-frame .btn-close {
+            height: 2.6rem;
+            width: 2.6rem;
+            background-color: white;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 1rem 0 #3836369f;
+        }
+
+        #btn-close-frame .btn-close::before, #btn-close-frame .btn-close::after {
+            content: '';
+            position: absolute;
+            left: 49.6vw;
+            bottom: 0.8rem;
+            height: 1rem;
+            width: 0.1rem;
+            background-color: #d67079;
+        }
+
+        #btn-close-frame .btn-close::before {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+
+        #btn-close-frame .btn-close::after {
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+        }
+
+    </style>
+</head>
+
+<body>
+    <script type="text/x-dot-template" id="templPopupMenu">
+        <div class="aui-popup-content">
+            <div class="aui-grid aui-margin-b-10">
+                {{~ it :p:i }}
+                {{? i < 15 }}
+                    {{? i%4 === 0}}
+                    <div class="aui-row aui-paded">
+                    {{?}}
+                        <div class="aui-col-xs-3">
+                            {{? p.badgeCountField && p.badgeCountField != '' && p.badgeCountField > 0 }}
+                            <div class="aui-badge" id="{{=p.badgeCountField}}"></div>
+                            {{?}}
+                            {{? p.url && p.url != ''}}
+                            <a onclick="openWin('{{=p.label}}', '{{=p.url}}')">
+                                {{#def.templMenuIcon || ''}}
+                            </a>
+                            {{?? p.type == 'scan'}}
+                            <a onclick="scanGj()">
+                                {{#def.templMenuIcon || ''}}
+                            </a>
+                            {{??}}
+                            <a onclick="alert('功能暂未上线，敬请期待')">
+                                {{#def.templMenuIcon || ''}}
+                            </a>
+                            {{?}}
+                            <div class="aui-grid-label">{{=p.label}}</div>
+                        </div>
+                    {{? i%4 === 3 || i === it.length - 1 }}
+                    </div>
+                    {{?}}
+                {{?}}
+                {{~}}
+            </div>
+        </div>
+
+        {{##def.templMenuIcon:
+            {{? p.icon && p.icon != ''}}
+                {{? p.icon.match("#default-menus .+")}}
+                <i class="{{=p.icon.substr(15)}}"></i>
+                {{?? p.icon.match("#.+")}}
+                <div class="menu-icon">
+                    <i class="{{=p.icon.substr(1)}}"></i>
+                </div>
+                {{??}}
+                <div class="aui-iconfont menu-icon" src="{{=p.icon}}"></div>
+                {{?}}
+            {{??}}
+            <i class="aui-iconfont menu-icon default-icon"></i>
+            {{?}}
+        #}}
+    </script>
+    <div id="mask-background" onclick="api.closeFrame()"></div>
+    <div class="aui-popup aui-popup-bottom aui-popup-in" id="popup-menu"></div>
+    <div id="btn-close-frame">
+        <i class="btn-close"></i>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script>
+    apiready = function () {
+
+        var dotDef = {
+            debug: true,
+        }
+        var templPopupMenu = doT.template($api.dom('#templPopupMenu').innerHTML);
+
+        var popupMenus = [{
+            label: '安全检查',
+            badgeCountField: 'safetyInspectMsgCount',
+            icon: '#iconfont icon-anquanjiancha',
+            url: '',
+        }, {
+            label: '安全验收',
+            badgeCountField: 'safetyAcceptInspectMsgCount',
+            icon: '#iconfont icon-anquanyanshou',
+            url: '',
+        }, {
+            label: '质量检查',
+            badgeCountField: 'qualityInspectMsgCount',
+            icon: '#iconfont icon-zhiliangjiancha',
+            url: '',
+        }, {
+            label: '质量验收',
+            badgeCountField: 'qualityAcceptInspectMsgCount',
+            icon: '#iconfont icon-zhiliangyanshou',
+            url: '',
+        }, {
+            label: '人员信息',
+            badgeCountField: 'personInfoMsgCount',
+            icon: '#iconfont icon-renyuanxinxi',
+            url: ''
+        }, {
+            label: '物料运输',
+            badgeCountField: 'shipmentMsgCount',
+            icon: '#iconfont icon-wuliaoyunshu',
+            url: ''
+        }, {
+            label: '材料台账',
+            badgeCountField: 'inventoryListMsgCount',
+            icon: '#iconfont icon-jizhangben',
+            url: '',
+        }]
+
+        var defaultMenus = [{
+            label: '问题拍照',
+            icon: '#default-menus iconfont icon-paizhao',
+            url: '',
+        }, {
+            label: '扫一扫',
+            type:'scan',
+            icon: '#default-menus iconfont icon-iconfontscan',
+            url: '',
+        }, {
+            label: '更多',
+            badgeCountField: 'featuresMsgCount',
+            icon: '#default-menus iconfont icon-jiahao1',
+            url: '',
+        }]
+
+        popupMenus = popupMenus.concat(defaultMenus);
+
+        api.setPrefs({
+            key: 'popupMenus',
+            value: popupMenus,
+        });
+
+        api.getPrefs({
+            key: 'popupMenus'
+        }, function(ret, err){
+            var v = ret.value;
+            if ( v === '' ) {
+                // 不存在该变量
+            } else {
+                var popupMenus = JSON.parse(ret.value);
+                $('#popup-menu').append(templPopupMenu(popupMenus));
+            }
+        });
+
+    }
+    //扫面构件
+      function scanGj(){
+        var FNScanner = api.require('FNScanner');
+        FNScanner.open({
+          autorotation: true
+        }, function(ret, err) {
+          if(ret){
+            if (ret.content) {
+                var str = ret.content;
+                var index = str.indexOf(':');
+                var key = str.substr(0,index);
+                var value = str.substr(index + 1,str.length);
+                 switch(key){
+                   case "bridge"://桥梁
+                        // memberList_win
+                        api.openWin({
+                          name: 'memberList_win',
+                          url: '../member/memberList_win.html',
+                          pageParam: { //页面传参 api.pageParam获取
+                            bridgeId: value
+                          }
+                        });
+                        break;
+                  case "component"://岛位
+                        api.openWin({
+                          name: 'memberDetaile_win',
+                          url: '../member/memberDetaile_win.html',
+                          pageParam: { //页面传参 api.pageParam获取
+                            componentId: value
+                          }
+                        });
+                        break;
+                 }
+
+            }
+          }
+
+        })
+      };
+</script>
+
+</html>

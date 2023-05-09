@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>window</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../icon/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="../../script/tagTree/tagTree.css"/>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            min-width: 320px;
+            padding: 0;
+            margin: 0;
+
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+        }
+
+        body {
+            font-size: 14px;
+        }
+
+        .searchBtn {
+            margin-right: 10px;
+        }
+
+        .twoLevel {
+            margin-left: 25px
+        }
+
+        .menu {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+           overflow: auto;
+        }
+        .test{
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+        .footer {
+            width: 100%;
+            height: 45px;
+        }
+        .btn_{
+            width: 80%;
+            text-align: center;
+            border-radius: 3px;
+            height: 60px;
+            line-height: 60px;
+            background: url('../../image/btnBg.png') no-repeat;
+            background-size: 100% 100%;
+        }
+        .btn2{
+          color:#ffffff;
+          /*background:linear-gradient(to right,#23d2ff,#138dc5);*/
+          margin-bottom: 5px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class='wrap'>
+
+        <!-- <div class="aui-searchbar" id="search">
+            <div  class="aui-searchbar-input aui-border-radius" tapmode>
+                <i class="aui-iconfont aui-icon-search"></i>
+                <form >
+                    <input id='name' type="search" placeholder="请输入项目名称" id="search-input">
+                </form>
+            </div>
+            <div class="aui-searchbar-cancel searchBtn" tapmod  onclick="search();">查询</div>
+        </div> -->
+        <div class="menu">
+          <div id='test'>
+
+          </div>
+        </div>
+        <div style='width:100%;display:flex;   justify-content: center;align-items: center;'>
+            <div class="btn_ btn2" onclick="send();">确认选择</div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../../script/tagTree/tagTree.js"></script>
+<!-- <script type="text/javascript" src="../../script/zepto.js"></script> -->
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/db-api.js"></script>
+<script>
+    var account; //用户名 也可以缓存里取
+    var name;
+    var defaultData;
+    var treeId;//当前选择树的id
+    var selectTreeData;//当前点击的tree数据
+    apiready = function() {
+
+        loadProjectDbDataList();
+    }
+
+    //加载手机本地库db项目信息数据
+    function loadProjectDbDataList(){
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+
+        var loginInfo = $api.getStorage('loginInfo');
+        account = loginInfo.account;
+        var orgId = loginInfo.orgId;
+        var db = api.require('db');
+        var data = queryMain.projectQuListDbData(db,orgId);
+        //alert("无网络，projectQuListDbData数据，，，"+JSON.stringify(data));
+
+        if(data.length>0){
+			api.hideProgress();
+            var root = getRoot(data); //拿到第一级的数据
+            for (let i = root.length - 1; i >= 0; i--) {
+                if (root[i] && root[i].id) {
+                    var child = findChildrenNodesByParentIdAsc(data, root[i].id);
+                    if (child && child.length > 0) {
+                        root[i].children = child;
+                        root[i].nav_open = true;
+                    }else{
+                        root[i].nav_open = false;
+                    }
+                }
+            }
+
+            // 初始化控件数据
+            $("#test").tagTree({
+                id: "",
+                data: root,
+                fold: false,
+                multiple: false,
+                check: function(val) {
+                    selectTreeData = val;
+                },
+                done: function() {
+                    console.log('tagTree is ok!22');
+                }
+            });
+		}else {
+            api.hideProgress();
+            api.toast({
+                msg: '没有更多数据了'
+            });
+        }
+    }
+
+    function send(){
+      if(selectTreeData){
+        var params = JSON.stringify(selectTreeData);
+        api.execScript({
+            name:'off_main',
+            script: 'getProjectInfo('+params+');'
+        });
+        api.execScript({
+          name: 'off_main',
+          frameName: 'off_main',
+          script: 'refresh('+params+');'
+        });
+        api.closeWin();
+      }else{
+        api.toast({
+            msg: '请选择项目'
+        });
+      }
+    }
+    //循环数据拿到第一级的数据 就是pid = 0的数据 (id!=pid)
+    function getRoot(data) {
+        let result = [];
+        for (let i in data) {
+            let isRoot = true;
+            let pid = data[i].pid;
+            for (let j in data) {
+                let jid = data[j].id;
+                if (jid == pid) {
+                    isRoot = false;
+                    break;
+                }
+            }
+            if (isRoot) {
+                addProjectName2(data[i]);
+                result.push(data[i]);
+            }
+        }
+        return result;
+    }
+
+    function addProjectName2(temp){
+        if(temp.projectName.length >16){
+            temp.projectName2 = temp.projectName.substring( 0,18)+"...";
+        }else{
+            temp.projectName2 = temp.projectName;
+        }
+    }
+
+    //递归处理子集元素
+    function findChildrenNodesByParentId(data, pid) {
+        let result = [];
+        if (data && data.length > 0) {
+            for (let i = data.length - 1; i >= 0; i--) {
+                let temp = data[i];
+                //如果当前数据的pid等于传过来父节点的id  则是当前父级的child数据
+                if (temp && temp.pid == pid) {
+                    data.splice(i, 1);
+                    let child = findChildrenNodesByParentId(data, temp.id);
+                    if (child && child.length > 0){
+                        temp.children = child;
+                        temp.nav_open = true;
+                    }else{
+                      temp.nav_open = false;
+                    }
+
+                    addProjectName2(temp);
+                    result.push(temp);
+                }
+            }
+        }
+        return result;
+    }
+
+    function findChildrenNodesByParentIdAsc(data, pid) {
+        let result = [];
+        if (data && data.length > 0) {
+            for (let i=0;i <data.length; i++) {
+                let temp = data[i];
+                //如果当前数据的pid等于传过来父节点的id  则是当前父级的child数据
+                if (temp && temp.pid == pid) {
+                    //data.splice(i, 1);
+                    let child = findChildrenNodesByParentIdAsc(data, temp.id);
+                    if (child && child.length > 0){
+                        temp.children = child;
+                        temp.nav_open = true;
+                    }else{
+                      temp.nav_open = false;
+                    }
+
+                    addProjectName2(temp);
+                    result.push(temp);
+                }
+            }
+        }
+        return result;
+    }
+</script>
+
+</html>

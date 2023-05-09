@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>AUI快速完成布局</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../icon/iconfont.css" />
+    </script>
+    <style type="text/css">
+
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list" id="message_list">
+        </ul>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+    var loginInfo;
+    var account;
+    var projectCode;
+    var pageIndex;
+    var pageSize = 10;
+    var arrayLength;
+    var datas = [];
+    apiready = function() {
+        api.getPrefs({
+            key: 'loginInfo'
+        }, function(ret, err) {
+            if (ret) {
+                loginInfo = JSON.parse(ret.value);
+                account = loginInfo.account;
+                projectCode = loginInfo.projects.projectCode;
+                getKnowledgeData();
+            } else {
+                alert("请退出重新登录");
+            }
+        });
+
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            api.showProgress({
+                title: '加载中...',
+                modal: false
+            });
+
+            $reiz.request.post($reiz.urls['safe'].knowledgeList, {
+                body: {
+                    "bizType": '2',
+                    "pageIndex": pageIndex,
+                    "pageSize": pageSize
+                }
+            }, function(ret, err) {
+                if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+                    var data1 = JSON.parse(ret.data);
+                    var safeList = data1.records;
+                    datas = datas.concat(safeList);
+                    arrayLength = arrayLength + safeList.length;
+                    pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                    api.hideProgress();
+                    moreData(safeList);
+                } else {
+                    api.hideProgress();
+                    api.toast({
+                        msg: '没有更多数据了'
+                    });
+                }
+            });
+        });
+    }
+
+    function getKnowledgeData() {
+        $reiz.request.post($reiz.urls['safe'].knowledgeList, {
+            body: {
+                "bizType": '2',
+                "pageIndex": 1,
+                "pageSize": pageSize
+            }
+        }, function(ret, err) {
+            var data1 = JSON.parse(ret.data);
+            var safeList = data1.records;
+            datas = [];
+            datas = datas.concat(safeList);
+            arrayLength = safeList.length;
+            pageIndex = Math.ceil(arrayLength / pageSize + 1);
+            addlilist(safeList);
+        });
+    }
+
+    function addlilist(data) {
+        $("#message_list").html("");
+        moreData(data);
+    }
+
+    function moreData(data) {
+        var lilist = [];
+        $(data).each(function(index, element) {
+            var code = element.code;
+            var name = element.name;
+
+            lilist.push("<li class='aui-list-item' onclick=detail(" + index + ")>");
+            lilist.push('<div class="aui-media-list-item-inner">');
+            lilist.push('<div class="aui-list-item-inner">');
+            lilist.push('<div class="aui-list-item-text">');
+            lilist.push('<div class="aui-list-item-title">' + code + '</div>');
+            lilist.push('</div><div class="aui-list-item-text aui-ellipsis-2">');
+            lilist.push(name);
+            lilist.push('</div></div></div></li>');
+        });
+        $("#message_list").append(lilist.join(''));
+        api.parseTapmode();
+    }
+
+    function detail(element) {
+        api.openWin({
+            name: 'knowledge_detail_win',
+            url: './knowledge_detail_win.html',
+            pageParam: {
+                element: datas[element]
+            }
+        });
+
+    }
+
+    function time(time) {
+
+        var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+
+        return date.toJSON().substr(0, 10).replace('T', ' ');
+
+    }
+</script>
+
+</html>

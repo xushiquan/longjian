@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+.demo_line_02{
+    height: 1px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+.demo_line_02 span{
+    position: relative;
+    top: -8px;
+    background: #fff;
+    padding: 0 20px;
+}
+    	
+    	
+    	
+    </style>
+</head>
+<body>
+	<div style="height: 40px;text-align: center;" ><strong style="height: 50px;text-align: center;font-size:25px;">智慧工地监管系统视频服务协议</strong></div>
+<div class="demo_line_02"></div>
+<div style="height: 600px;">
+    <iframe style="overflow: auto;height: 100%;width: 100%" src="xieyi.html"></iframe>
+</div>
+<div style="padding-top: 20px" align="center" style="width:85%;">
+					<a id="button-query-tongyi" href="#"
+						class="easyui-linkbutton" onclick="tongyi();" iconCls="icon-redo">同意</a>
+					<a id="button-query-butongyi" href="#"
+						class="easyui-linkbutton" onclick="butongyi();" iconCls="icon-redo">不同意</a>
+</div>
+</body>
+<script type="text/javascript">
+	apiready = function(){
+		
+	};
+	
+	function tongyi(){
+		var testurl = $reiz.urls["video"].controlxieyi;
+		var userName = api.getPrefs({
+			sync : true,
+			key : 'loginInfo'
+		});
+		var user=JSON.parse(userName);
+		var usern=user.username;
+		api.ajax({
+			url : $reiz.urls["video"].controlxieyi,
+			method : 'post',
+			data : {
+				values : {
+					data : usern
+				}
+			}
+		}, function(ret, err) {
+			var zt=ret.zhuangtai;
+			if(zt=="true"){
+				api.closeFrame();
+			}else{
+			    api.closeWin();
+			}
+		});
+	}
+	
+	
+	function butongyi(){
+		api.closeWin();
+	}
+</script>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/api.css">
+    <link rel="stylesheet" type="text/css" href="../../css/reiz.css" />
+    <title></title>
+    <style>
+        body,
+        html {
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        #panel {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 200px;
+            background-color: #fff;
+        }
+
+        .block {
+            display: inline-block;
+            height: 34px;
+            width: 34px;
+            border-radius: 5px;
+            margin: 5px;
+            text-align: center;
+            line-height: 34px;
+            background-color: #FFFFFF;
+            opacity: 0.6;
+        }
+
+        .orient {
+            position: absolute;
+            display: block;
+            height: 154px;
+            width: 154px;
+            bottom: 0px;
+            margin-bottom: 23px;
+            margin-left: 23px;
+        }
+
+        .p_up {
+            display: block;
+            margin: 0 auto;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #000;
+            margin-top: 8px;
+        }
+
+        .p_left {
+            display: block;
+            margin: 0 auto;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 20px solid #000;
+            margin-top: 8px;
+        }
+
+        .p_right {
+            display: block;
+            margin: 0 auto;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 20px solid #000;
+            margin-top: 8px;
+        }
+
+        .p_down {
+            display: block;
+            margin: 0 auto;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #000;
+            margin-top: 8px;
+        }
+
+        .rotate {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+
+        .nonborder {
+            border: 1px solid #fff;
+        }
+
+        .zoom {
+            position: absolute;
+            display: block;
+            height: 154px;
+            width: 154px;
+            right: 0;
+            bottom: 0px;
+            margin-bottom: 23px;
+            margin-right: 23px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 34px;
+            font-family: "黑体";
+            font-weight: bold;
+        }
+
+        #close {
+            position: absolute;
+            display: block;
+            width: 50px;
+            height: 50px;
+            border-radius: 100px;
+            margin: 20px;
+            background-color: #FFFFFF;
+            text-align: center;
+            line-height: 50px;
+            font-size: 50px;
+            opacity: 0.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #camera {
+            position: absolute;
+            top: 55px;
+            font-size: 32px;
+            display: block;
+            margin: 0 auto;
+            padding: 0 1px;
+        }
+
+        .circle {
+            display: inline-block;
+            margin: 0 10px;
+            margin-top: 52px;
+            width: 50px;
+            height: 50px;
+            border-radius: 100px;
+            background-color: #FFFFFF;
+            text-align: center;
+            line-height: 50px;
+            font-size: 50px;
+            opacity: 0.6;
+        }
+
+        .in {
+            opacity: 1 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="close" tapmode="in" onclick="stop();">
+        x
+    </div>
+    <div class="orient">
+        <div class="block" tapmode="in" ontouchstart="touchstart('up.left');" ontouchend="end();">
+            <div class="p_left rotate"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('tilt.up');" ontouchend="end();">
+            <div class="p_up"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('up.right');" ontouchend="end();">
+            <div class="p_up rotate"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('pan.left');" ontouchend="end();">
+            <div class="p_left"></div>
+        </div>
+        <div class="block" tapmode="in">
+            <div id="camera" class="reiz-iconfont reiz-icon-camera" tapmode onclick="screenshot();"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('pan.right');" ontouchend="end();">
+            <div class="p_right"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('down.left');" ontouchend="end();">
+            <div class="p_down rotate"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('tilt.down');" ontouchend="end();">
+            <div class="p_down"></div>
+        </div>
+        <div class="block" tapmode="in" ontouchstart="touchstart('down.right');" ontouchend="end();">
+            <div class="p_right rotate"></div>
+        </div>
+    </div>
+    <div class="zoom">
+        <div class="circle" tapmode="in" ontouchstart="touchstart('zoom.out');" ontouchend="end();">-</div>
+        <div class="circle" tapmode="in" ontouchstart="touchstart('zoom.in');" ontouchend="end();">+</div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script>
+    var url = $reiz.urls['video'].control;
+    var url_screenshot = $reiz.urls['video'].screenshot;
+    var token;
+    apiready = function() {
+        data = api.pageParam;
+
+        api.getPrefs({
+            key: 'userJwtToken'
+        }, function(ret, err) {
+            if (ret) {
+                token = ret.value;
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function touchstart(direct) {
+        sendAjax(direct);
+    }
+
+    function end() {
+        setTimeout(function() {
+            sendAjax('stop');
+        }, 20);
+    }
+
+    function sendAjax(type) {
+        $reiz.request.post($reiz.urls['video'].control, {
+          body: {
+            "deptCode": data.deptCode,
+            "sn": data.sn,
+            "channel": data.channel,
+            "type": type
+          }
+        }, function (ret, err) {
+          
+        });
+        // api.ajax({
+        //     url: url  ,
+        //     method: 'post',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'token':token
+        //     },
+        //     data: {
+        //         body: {
+        //             "deptCode": data.deptCode,
+        //             "sn": data.sn,
+        //             "channel": data.channel,
+        //             "type": type
+        //         }
+        //     }
+        // }, function(ret, err) {});
+    }
+
+    function stop() {
+        api.execScript({
+            name: 'vplayer',
+            script: 'closeWin();'
+        });
+    }
+
+    function screenshot() {
+        api.ajax({
+            url: url_screenshot,
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'token':token
+            },
+            data: {
+                body: {
+                    "deptCode": data.deptCode,
+                    "sn": data.sn,
+                    "channel": data.channel,
+
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                api.toast({
+                    msg: ret
+                });
+            }
+        });
+    }
+
+    function showpanel() {
+        $("#panel").removeClass('hidden');
+    }
+
+    function hidepanel() {
+        $("#panel").addClass('hidden');
+    }
+</script>
+
+</html>

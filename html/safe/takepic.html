@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+			html, body {
+				height: 100%;
+				background: transparent;
+				-webkit-touch-callout: none;
+				font-family: Tahoma, Geneva, sans-serif;
+				font-style: normal;
+			}
+			#dialog {
+				background-color: #e7e7e7;
+				border-radius: 6px;
+				position: absolute;
+				margin: auto;
+				bottom: 0;
+				width: 100%;
+				height: 120px;
+				-webkit-transition: all .1s;
+				transition: all .1s;
+				-webkit-transform: scale(0);
+				transform: scale(0);
+				opacity: 0;
+			}
+			#dialog.in {
+				-webkit-transform: scale(1);
+				transform: scale(1);
+				opacity: 1;
+			}
+			.setContent {
+				background-color: white;
+				display: -moz-box;
+				display: -webkit-box;
+				display: box;
+				-moz-box-orient: vertical;
+				-webkit-box-orient: vertical;
+				box-orient: vertical;
+				-webkit-box-pack: center;
+				-webkit-box-align: center
+			}
+			li {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				width: 100%;
+				height: 50px;
+				margin: none;
+			}
+			.btn_green {
+				display: block;
+				color: #000000;
+				font-size: 20px;
+				width: 100%;
+				height: 40px;
+				border: none;
+				text-align: center;
+				vertical-align: middle;
+				line-height: 40px;
+				border-bottom: 1px solid grey;
+			}
+			.btn_green:last-child {
+				border: none;
+			}
+			.btn_tap {
+			}
+		</style>
+	</head>
+	<body>
+		<div id="dialog">
+			<div class="setContent">
+				<div  onclick="take_photo();" tapmode="btn_tap" class="btn_green" >
+					拍照
+				</div>
+				<div onclick="select_pics();" tapmode="btn_tap" class="btn_green" >
+					选取本地图片
+				</div>
+				<div onclick="api.closeFrame();" tapmode="btn_tap" class="btn_green" >
+					取消
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script>
+		var winName;
+		$('#dialog').addClass('in');
+		$(document.body).on('touchend', function(e) {
+			var dialog = document.getElementById('dialog');
+			if (!$.contains(dialog, e.target)) {
+				$('#dialog').removeClass('in');
+				setTimeout(function() {
+					api.closeFrame();
+				}, 200);
+			}
+		});
+		apiready = function() {
+			winName = api.pageParam.winName;
+			api.addEventListener({
+				name : 'keyback'
+			}, function(ret, err) {
+				api.closeFrame({
+					name : 'takepic'
+				});
+			});
+		}
+
+		function select_pic() {
+			api.getPicture({
+				sourceType : 'library',
+				encodingType : 'jpg',
+				mediaValue : 'pic',
+				destinationType : 'url',
+				allowEdit : true,
+				quality : 90
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.data) {
+						var jsfun = 'setPicInfo("' + ret.data + '");';
+						api.execScript({
+							frameName : winName,
+							script : jsfun
+						});
+					}
+				} else {
+					if ('user canceled' === (err.msg)) {
+						api.closeFrame();
+					} else {
+						api.alert({
+							msg : '错误2' + err.msg
+						});
+					}
+				};
+			});
+		};
+		function select_pics() {
+			var UIMediaScanner = api.require('UIMediaScanner');
+			UIMediaScanner.open({
+				type : 'picture',
+				column : 3,
+				classify : true,
+				max : 3,
+				sort : {
+					key : 'time',
+					order : 'desc'
+				},
+				texts : {
+					stateText : '已选择*项',
+					cancelText : '取消',
+					finishText : '完成'
+				},
+				styles : {
+					bg : '#fff',
+					mark : {
+						icon : '',
+						position : 'bottom_left',
+						size : 20
+					},
+					nav : {
+						bg : '#eee',
+						stateColor : '#000',
+						stateSize : 18,
+						cancelBg : 'rgba(0,0,0,0)',
+						cancelColor : '#000',
+						cancelSize : 18,
+						finishBg : 'rgba(0,0,0,0)',
+						finishColor : '#000',
+						finishSize : 18
+					}
+				},
+				scrollToBottom : {
+					intervalTime : -1,
+					anim : true
+				},
+				exchange : true,
+				rotation : true
+			}, function(ret) {
+				if (ret) {
+					if (ret.eventType == "confirm" && ret.list) {
+						if (ret.list.length <= 0) {
+							api.closeFrame();
+							return;
+						}
+						var paths = [];
+						for (var i in ret.list) {
+							paths.push(ret.list[i].path);
+						}
+						var pathsStr = paths.join(',');
+						var jsfun = 'setPicInfos("' + pathsStr + '");';
+						api.execScript({
+							frameName : winName,
+							script : jsfun
+						});
+					} else {
+					}
+				} else {
+				}
+			});
+		}
+
+		function take_photo() {
+			api.getPicture({
+				sourceType : 'camera',
+				encodingType : 'jpg',
+				mediaValue : 'pic',
+				destinationType : 'url',
+				allowEdit : true,
+				quality : 90,
+				saveToPhotoAlbum : true
+			}, function(ret, err) {
+				if (ret) {
+					if (ret.data) {
+						var jsfun = 'setPicInfo("' + ret.data + '");';
+						api.execScript({
+							frameName : winName,
+							script : jsfun
+						});
+					}
+				} else {
+					if ('user canceled' === (err.msg)) {
+						api.closeFrame();
+					} else {
+						api.alert({
+							msg : '错误1' + err.msg
+						});
+					}
+				}
+			});
+		};
+	</script>
+</html>

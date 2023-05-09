@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		html,
+		body,
+		header,
+		section,
+		footer,
+		nav,
+		div,
+		ul,
+		ol,
+		li,
+		img,
+		a,
+		span,
+		em,
+		del,
+		center,
+		strong,
+		var,
+		fieldset,
+		form,
+		label,
+		dt,
+		dd,
+		cite,
+		input,
+		hr,
+		time,
+		mark,
+		code,
+		figcaption,
+		figure,
+		textarea {
+			margin: 0;
+			border: 0;
+			padding: 0;
+			font-family: Tahoma, Geneva, sans-serif;
+			font-style: normal;
+		}
+
+		html,
+		body {
+			-webkit-touch-callout: none;
+			-webkit-text-size-adjust: none;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+			-webkit-user-select: none;
+		}
+
+		header,
+		footer,
+		section,
+		nav,
+		img,
+		a,
+		button,
+		em,
+		del,
+		strong,
+		var,
+		fieldset,
+		label,
+		cite,
+		small,
+		time,
+		mark,
+		code,
+		figcaption,
+		figure,
+		textarea {
+			display: block;
+		}
+
+		header,
+		section,
+		footer,
+		nav {
+			position: relative;
+			overflow: hidden;
+		}
+
+		#nav {
+			display: -webkit-box;
+			height: 44px;
+		}
+
+		#left {
+			width: 80px;
+			color: #fff;
+			background: url(../../image/kq/navbtn_back.png) no-repeat 14px 12px;
+			-webkit-background-size: 12px 20px;
+		}
+
+		#left>span {
+			margin-top: 13px;
+			margin-left: 36px;
+			font-size: 18px;
+			height: 18px;
+			line-height: 45px;
+		}
+
+		#middle {
+			-webkit-box-flex: 1;
+			width: 100%;
+			display: -webkit-box;
+			-webkit-box-pack: center;
+			-webkit-box-align: center;
+		}
+
+		#title {
+			font-size: 18px;
+			text-align: center;
+			color: #fff;
+		}
+
+		#right {
+			width: 80px;
+			color: #fff;
+		}
+
+		#right>span {
+			margin-top: 13px;
+			margin-right: 36px;
+			font-size: 18px;
+			height: 18px;
+			line-height: 45px;
+		}
+
+		body {
+			-webkit-user-select: none;
+		}
+
+		#main {
+			background-color: #FFFFFF;
+			display: -webkit-flex;
+			-webkit-flex-direction: column;
+		}
+
+		#myplayer {
+			width: 100%;
+			height: 220px;
+			-webkit-shrink: 0;
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		.blackbg {
+			background-color: #000000;
+		}
+
+		#videoinfo {
+			display: block;
+			width: 100%;
+			-webkit-shrink: 1;
+			padding-top: 5px;
+		}
+
+		li span {
+			display: block;
+			margin-top: 15px;
+			padding-left: 15px;
+			line-height: 15px;
+			font-size: 15px;
+			color: #444444;
+		}
+
+		.hits i {
+			display: inline-block;
+			width: 0;
+			height: 0;
+			border-width: 6px;
+			overflow: hidden;
+			border-color: transparent transparent transparent #999;
+			border-style: dotted dotted dotted solid;
+			background: none;
+		}
+
+		.vtitle {
+			border-bottom: 1px solid #DDDFE3;
+			height: 40px;
+			line-height: 40px;
+			background: #EBECF0;
+			font-size: 16px;
+		}
+
+		.vtitle span {
+			margin-right: 10px;
+			margin-left: 10px;
+			width: 50px;
+			color: #4e72b8;
+		}
+
+		.content {
+			text-indent: 3em;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="wrap">
+		<div class="aui-bar aui-bar-nav" id="header">
+			<nav id="nav">
+				<a id="left" tapmode="" onclick="closeWin();"> <span>返回</span> </a>
+				<div id="middle">
+					<strong id="title">视频监控</strong>
+				</div>
+				<a id="right"></a>
+			</nav>
+		</div>
+		<div id="main">
+			<div id="myplayer">
+				<script type="text/javascript" src="../../res/player/sewise.player.min.js"></script>
+				<script type="text/javascript" src="../../script/reiz.js"></script>
+				<script type="text/javascript">
+					var data;
+					var isFullScreen = false;
+					var liveUrl;
+					var token;
+					apiready = function() {
+				 		bofang();
+					};
+
+					function bofang() {
+
+						data = api.pageParam;
+						playVision();
+						//console.log(url);
+
+					}
+
+
+					// 全屏
+					function toFullScreen() {
+						isFullScreen = true;
+						onFullScreen();
+					}
+
+					// 正常屏
+					function toNoramlScreen() {
+						isFullScreen = false;
+						onNoramlScreen();
+					}
+
+
+					// 全屏回调函数
+					function onFullScreen() {
+						api.setScreenOrientation({
+							orientation: 'auto'
+						});
+						$('body').addClass('blackbg');
+						$("#myplayer").css({
+							position: 'fixed',
+							width: '100%',
+							height: '100%',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0
+						});
+					};
+					// 退出全屏回调函数
+					function onNoramlScreen() {
+						api.setScreenOrientation({
+							orientation: 'portrait_up'
+						});
+						$('body').removeClass('blackbg');
+						$("#myplayer").css({
+							position: '',
+							width: '100%',
+							height: '220px',
+							top: '',
+							left: '',
+							right: '',
+							bottom: ''
+						});
+						document.webkitCancelFullScreen();
+					};
+
+					//注册旋转监听事件
+					window.addEventListener("orientationchange", function() {
+						if (isFullScreen) {
+							if (Math.abs(window.orientation) == 90) {
+								$("#myplayer").css({
+									width: api.winHeight * 1.09,
+									height: api.winWidth
+								});
+							} else {
+								$("#myplayer").css({
+									width: '100%',
+									height: '100%'
+								});
+							}
+						}
+					}, false);
+			/*		api.addEventListener({
+						name: 'keyback'
+					}, function(ret, err) {
+						if (isFullScreen) {
+							$(".controlbar-btns-normalscreen").click();
+						} else {
+							closeWin();
+						}
+					});
+					api.addEventListener({
+						name: 'pause'
+					}, function(ret, err) {
+						onNoramlScreen();
+					});*/
+
+					function closeWin() {
+						api.setScreenOrientation({
+							orientation: 'portrait_up'
+						});
+						api.closeWin();
+					}
+
+					//调用播放接口
+				function playVision() {
+					//	console.log(token);
+					//	var liveUrl;
+					$reiz.request.post($reiz.urls['video'].playVision, {
+						body: {
+							"deptCode": data.deptCode,
+							"sn": data.sn,
+							"channel": data.channel
+						}
+					}, function (ret, err) {
+						var rtnData = JSON.parse(ret.data);
+						liveUrl = rtnData.liveUrl;
+						aaa(liveUrl);
+					})
+
+
+						// api.ajax({
+						// 	url: $reiz.urls["video"].playVision + "?token=" + token,
+						// 	method: 'post',
+						// 	async: false,
+						// 	headers: {
+						// 		'Content-Type': 'application/json'
+						// 	},
+						// 	data: {
+						// 		body: {
+						// 			"deptCode": data.deptCode,
+						// 			"sn": data.sn,
+						// 			"channel": data.channel
+						// 		}
+						// 	}
+						// }, function(ret, err) {
+						// 	console.log(JSON.stringify(ret));
+						// 	var rtnData = JSON.parse(ret.data);
+						// 	liveUrl = rtnData.liveUrl;
+						// 	console.log(liveUrl);
+						// 	aaa(liveUrl);
+						// 	//	return liveUrl;
+						// });
+					//	console.log(liveUrl);
+
+				}
+
+				function aaa(liveUrl){
+						console.log(liveUrl);
+					SewisePlayer.setup({
+
+						logo: '../../image/common/logo2.png', // 默认播放右上交角的logo，比如搜狐视频，腾讯视频的logo
+						poster: 'cover.png',
+						server: "vod",
+						type: "m3u8",
+						videourl: liveUrl,
+						skin: "vodFoream",
+						title: data.title,
+						volume: "0.5", // 默认音量
+						lang: 'zh_CN',
+						claritybutton: "disable",
+						draggable: "true"
+					});
+
+					SewisePlayer.onStart(function(id) {
+						setTimeout(function() {
+							api.toast({
+								msg: '为节省流量，防止长时间无人操作，视频将立即停止。'
+							});
+							SewisePlayer.doStop();
+						}, 60 * 1000 * 10);
+					});
+
+					SewisePlayer.playerReady(function(name) {
+						$(".controlbar-btns-fullscreen").on('click', function() {
+							toFullScreen();
+						});
+
+						$(".controlbar-btns-normalscreen").on('click', function() {
+							toNoramlScreen();
+						});
+
+						var tmp = [];
+						tmp.push('<div class="vtitle">');
+						tmp.push('<span>详情</span>');
+						tmp.push('</div>');
+						tmp.push('<div id="videoinfo">');
+						tmp.push('<ul><li><span id="mingcheng"class="hits"><i></i>设备名称:</span><span class="content">' + data.title + '</span></li>');
+						tmp.push('<li><span id="address"class="hits"><i></i>设备地址:</span><span class="content">' + data.address + '</span></li></ul>');
+						tmp.push('</div>');
+						$("#main").append(tmp.join(''));
+					});
+				}
+
+					function play(url) {
+						pushRtmpOrVideoPlay = api.require('pushRtmpOrVideoPlay');
+						pushRtmpOrVideoPlay.showPlayer({
+							x: 0,
+							y: 0,
+							url: url
+						});
+						pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+							"btnid": "play_progress",
+							"show": 0
+						});
+						pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+							"btnid": "playbtnbox",
+							"show": 1
+						});
+						pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+							"btnid": "btnLog",
+							"show": 0
+						});
+						pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+							"btnid": "btnPlay",
+							"show": 0
+						});
+						pushRtmpOrVideoPlay.setPlaysButtonVisibe({
+							"btnid": "btnHWEncode",
+							"show": 0
+						});
+						pushRtmpOrVideoPlay.ClickPlayButtonForId({
+							"btnid": "btnRenderMode"
+						});
+						pushRtmpOrVideoPlay.PlayStart();
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

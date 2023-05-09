@@ -1,0 +1,830 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>收料页面</title>
+    	<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<style>
+    .twoNum{
+      letter-spacing: 15px
+    }
+	  select{
+	        text-indent: 5px;
+	  }
+    .carImg{
+      color: #212121;
+      width: 35%;
+      min-width: 1.5rem;
+      margin: 0;
+      padding: 0;
+      padding-right: 0.25rem;
+      line-height: 2.2rem;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100%;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .inp{
+      border: none;
+      background-color: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      display: block;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 2.2rem;
+      line-height: normal;
+      color: #424242;
+      font-size: 0.8rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+		.k{
+			min-height: 2.2rem;
+			line-height:45px;
+			padding:0 5px;
+
+		}
+		.kInp{
+			flex:1;
+			min-height: 2.2rem;
+		 	line-height:45px;
+			padding: 0 3px;
+		}
+		.delmb{
+			width:80%;
+			margin:20px auto;
+		}
+		.xrequired:before{
+			content:"* ";
+			color:red;
+		}
+		.aui-input:disabled{
+            color: #C0C4CC;
+        }
+        .aui-input::placeholder{
+            color: #C0C4CC;
+        }
+		.radioDi{
+			font-size: 12px;
+		}
+		</style>
+	</head>
+	<body>
+<div class="aui-content aui-margin-b-15">
+    <ul class="aui-list aui-form-list">
+        <li class="aui-list-item">
+           <div class="aui-list-item-inner">
+               <div class="aui-list-item-label">
+                   司&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp机
+               </div>
+               <div class="aui-list-item-input">
+                   <input disabled="disabled" class="aui-input" type="text" name='driverName'>
+               </div>
+           </div>
+        </li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+							司机电话
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" name='driverMobile'>
+				</div>
+			</div>
+		</li>
+       <li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					车&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp号
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" name='carNo'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					车&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp况
+				</div>
+				<div class="aui-list-item-input">
+						<input type="text" disabled="disabled" class="aui-input" name='carParams' placeholder="">
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					体&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp积
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" name='standardVolumeVl'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					材料名称
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" disabled="disabled" name='name'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+							规格型号
+				</div>
+				<div class="aui-list-item-input">
+						<input type="text" disabled="disabled" class="aui-input" name='materialStandard'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-media" style="width: 100px;">
+				发&nbsp料&nbsp时&nbsp间
+			</div>
+			<div class="aui-list-item-inner">
+				<input disabled="disabled" class="aui-input" type="text" name='deliveryTime'>
+			</div>
+		</li>
+		<li class="aui-list-item" id="consignorNameLi1">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					发料员姓名
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" name='consignorName'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item" id="consignorNameLi2">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label xrequired">
+					发&nbsp&nbsp料&nbsp&nbsp员
+				</div>
+				<div class="aui-list-item-input">
+					<select  class='consignorId' id="consignorId">
+						<option value="">请选择发料员</option>
+					</select>
+				</div>
+				<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+			</div>
+		</li>
+		<li class="aui-list-item" style="display: none;">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+						发料员电话
+				</div>
+				<div class="aui-list-item-input">
+						<input disabled="disabled" class="aui-input" type="text" name='consignorMobike'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+						供&nbsp&nbsp应&nbsp&nbsp商
+					</div>
+					<div class="aui-list-item-input">
+						<input disabled="disabled" class="aui-input" type="text" disabled="disabled" name='supplier'>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							发&nbsp&nbsp料&nbsp&nbsp地
+					</div>
+					<div class="aui-list-item-input">
+							<input disabled="disabled" class="aui-input" type="text" name='origin'>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item" style="display: none;">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					发料桩号
+				</div>
+				<div class="aui-list-item-input" style='display:flex;'>
+				<span class='k'>k</span>
+				<span class='kInp'>
+					<input disabled="disabled" class="aui-input" type="text" name='originStakeNum'>
+				</span>
+				<span class='k'>+</span>
+				<span class='kInp'>
+					<input disabled="disabled" class="aui-input" type="text" name='originStakeNumMeter'>
+				</span>
+							<span class='k'>米</span>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					支线距离
+				</div>
+				<div class="aui-list-item-input">
+					<input disabled="disabled" class="aui-input" type="text" name='distance'>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">
+					上路桩号
+				</div>
+				<div class="aui-list-item-input" style='display:flex;'>
+				<span class='k'>k</span>
+				<span class='kInp'>
+					<input disabled="disabled" class="aui-input" type="text" name='loadStakeNum'>
+				</span>
+				<span class='k'>+</span>
+				<span class='kInp'>
+					<input disabled="disabled" class="aui-input" type="text" name='loadStakeNumMeter'>
+				</span>
+					<span class='k'>米</span>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							发料备注
+					</div>
+					<div class="aui-list-item-input">
+							<input disabled="disabled" class="aui-input" name='deliveryRemark' ></input>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							发料数量
+					</div>
+					<div class="aui-list-item-input">
+						<input disabled="disabled" class="aui-input" type="text" name='quantity' >
+					</div>
+			</div>
+		</li>
+	
+		<li class="aui-list-item" style="display: none;">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							状&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp态
+					</div>
+					<div class="aui-list-item-input">
+						<input disabled="disabled" class="aui-input"  type="text" name='status'>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label xrequired">
+							分项工程1
+					</div>
+					<div class="aui-list-item-input" >
+						<select class='subwork1' id="subwork1">
+						</select>
+					</div>
+					<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+			</div>
+		</li>
+		<li class="aui-list-item" id="subwork2Li">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label xrequired">
+							分项工程2
+					</div>
+					<div class="aui-list-item-input" >
+						<select  class='subwork2' id="subwork2">
+						</select>
+					</div>
+					<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label xrequired">
+							收&nbsp&nbsp料&nbsp&nbsp地
+				</div>
+				<div class="aui-list-item-input" style="display:flex;">
+					<span class="kInp">
+						<select  class='receiving' id="receiving">
+							<option value="">请选择收料地</option>
+						</select>
+					</span>	
+					<i style='margin-right:0.52rem;color:#09B3EB;' class="aui-iconfont aui-icon-down"></i>
+					<div class="radioDi" style="padding-top: 10px;">
+						<input class="aui-checkbox;" type="checkbox" name="receivingCheckbox" id="receivingCheckbox" value="1" checked>
+						<label style="width:75px;">桩号即收料地</label>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner xrequired">
+					<div class="aui-list-item-label">
+							收料数量
+					</div>
+					<div class="aui-list-item-input" style="display:flex;">
+						<span class="kInp">
+							<input type="text" class="aui-input"  disabled="disabled" name='adjustQuantity' placeholder="请输入收料数量">
+						</span>	
+						<div class="radioDi" style="padding-top: 10px;">
+							<input class="aui-checkbox;" type="checkbox" name="adjustQuantityCheckbox" id="adjustQuantityCheckbox" value="1" >
+							<label style="width:60px;">勾选修改</label>
+						</div>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							收料地桩号
+					</div>
+					<div class="aui-list-item-input" style='display:flex;'>
+						<span class='k'>k</span>
+						<span class='kInp'>
+							<input type="text" class="aui-input" disabled="disabled" name='receivingStakeNum'>
+						</span>
+						<span class='k'>+</span>
+						<span class='kInp'>
+								<input type="text" class="aui-input" disabled="disabled" name='receivingStakeNumMeter'>
+						</span>
+						<span class='k'>米</span>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							 收料备注
+					</div>
+					<div class="aui-list-item-input">
+							<input class="aui-input" name='receiptRemark' placeholder="请输入收料备注"></input>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							运距调整
+					</div>
+					<div class="aui-list-item-input">
+						<div class="radioDi" id="adjustRemarkBefDi" style="width:40%;float: left;margin-top:8px;">
+							<label><input class="aui-radio" type="radio" name="adjustRemarkBef" value="1" checked="">加</label>
+							<label><input class="aui-radio" type="radio" name="adjustRemarkBef" value="2">减</label>
+						</div>
+						<input type="number"  name='adjustDistance' id="adjustDistance" placeholder="（公里）" style="width:40%;float: left;">
+						<span style="margin-top:10px;">公里</span>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+						运&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp距
+					</div>
+					<div class="aui-list-item-input">
+						<input type="number" class="aui-input"  disabled="disabled" name='distanceResult' style="width:80%;float: left;"><span style="margin-top:10px;">公里</span>
+					</div>
+			</div>
+		</li>
+		<li class="aui-list-item">
+			<div class="aui-list-item-inner">
+					<div class="aui-list-item-label">
+							 微调备注
+					</div>
+					<div class="aui-list-item-input">
+							<input class='adjustRemark' class="aui-input"  name='adjustRemark' placeholder="请输入微调备注"></input>
+					</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<!-- <script type="text/javascript" src="../../script/zepto.js"></script> -->
+	<script type="text/javascript" src="../../script/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+	  var account;//用户名 也可以缓存里取
+		var username;
+		var projectCode;
+		var paramsId;//提交需要的id参数
+		var receivingData;
+		var radioTemp = "1";
+		var adjustDistanceTemp;
+		var dbid;
+		 apiready = function() {
+			 //页面打开带过来的参数
+				var paramsName = api.pageParam.name;
+				var carNo = api.pageParam.carNo;
+
+				api.getPrefs({
+		 		key : 'loginInfo'
+		 	 }, function(ret, err) {
+		 		 if(ret.value){
+		 			 var loginInfo = JSON.parse(ret.value);
+		 			 account = loginInfo.account;
+					 username = loginInfo.name;
+
+					 changeTitle(username);
+					 //projectList(loginInfo.account);
+					 projectCode = loginInfo.projects.projectCode;
+					 projectOneList();
+					//收料信息
+		 			 receiveWaybill(loginInfo.account,loginInfo.projects.projectCode);
+					 receivingSelectList("2");
+					 $("#consignorNameLi2").hide();
+					 consignorSelectList();
+					 subworkSelectList(1,0);
+		 		 }
+		 	 });
+
+			$('input[type=checkbox][name=adjustQuantityCheckbox]').change(function() {
+				var sck = $('input[type=checkbox][name=adjustQuantityCheckbox]').prop('checked');
+				if(sck){
+					$('input[name=adjustQuantity]').removeAttr("disabled");
+				}else{
+					$('input[name=adjustQuantity]').attr("disabled","disabled");
+				}
+			});
+
+			$('input[type=checkbox][name=receivingCheckbox]').change(function() {
+				var sck = $('input[type=checkbox][name=receivingCheckbox]').prop('checked');
+				if(sck){
+					$("#receiving").change();
+					$('input[name=receivingStakeNum]').attr("disabled","disabled");
+					$('input[name=receivingStakeNumMeter]').attr("disabled","disabled");
+				}else{
+					$('input[name=receivingStakeNum]').removeAttr("disabled");
+					$('input[name=receivingStakeNumMeter]').removeAttr("disabled");
+				}
+			});
+
+			$("input[type=radio][name=adjustRemarkBef]").on('change',function(){
+				var adjustDistance = $("#adjustDistance").val();
+				if (this.value == '1') {
+					adjustDistance = Number(adjustDistance);
+					radioTemp = "1";
+				} else if (this.value == '2') {
+					adjustDistance = -Number(adjustDistance);
+					radioTemp = "2"
+				}
+				calculateDistance(adjustDistance);
+			});
+
+			$("#adjustDistance").on('input',function(){
+				var adjustDistance = $("#adjustDistance").val();
+				var value = $("input[type=radio][name=adjustRemarkBef]").val();
+				if (radioTemp == '1') {
+					adjustDistance = Number(adjustDistance);
+				} else if (radioTemp == '2') {
+					adjustDistance = -Number(adjustDistance);
+				}
+				calculateDistance(adjustDistance);
+			});
+		}
+
+		function changeTitle(arg) {
+			api.execScript({
+				winName: 'collect_materuals_win',
+				script: 'changeTitle("' + arg + '");'
+			});
+		}
+		//收料信息post
+		function receiveWaybill(account,projectCode){
+				$reiz.request.post($reiz.urls['material'].receiveWaybill, {
+					body:{
+						"carNo":api.pageParam.carNo,
+						"account":account,
+						"projectCode":projectCode,
+					}
+				},function(ret,error){
+					if(ret.code !=400){
+						paramsId = 	ret.waybill.id;
+						var vehicle = ret.vehicle;
+						var material = ret.material;
+						var waybill = ret.waybill;
+						$('.projectCode').val(vehicle.projectCode);
+						$("input[name='driverName']").val(ret.driverName || '');
+						$("input[name='driverMobile']").val(ret.driverMobile || '');
+						$("input[name='carNo']").val(vehicle.carNo || '');
+						var carParams = "长:"+vehicle.carLength+",宽:"+vehicle.carWidth+",高:"+vehicle.carHeight+",加高:"+(vehicle.addHeight==null?'0':vehicle.addHeight);
+					 	$("input[name='carParams']").val(carParams);
+						$("input[name='carLength']").val(vehicle.carLength || 0);
+						$("input[name='carWidth']").val(vehicle.carWidth || 0);
+						$("input[name='carHeight']").val(vehicle.carHeight || 0);
+						$("input[name='addHeight']").val(vehicle.addHeight || 0);
+						$("input[name='standardVolume']").val(vehicle.standardVolume || 0);
+						var standardVolumeVlAdd="";
+						var standardVolumeVl = vehicle.carLength*vehicle.carWidth*vehicle.carHeight;
+						standardVolumeVl = Math.round(standardVolumeVl*100)/100;
+						if(vehicle.addHeight || vehicle.addHeight!=0){
+							standardVolumeVlAdd = vehicle.carLength*vehicle.carWidth*(vehicle.carHeight+vehicle.addHeight);
+							standardVolumeVlAdd = Math.round(standardVolumeVlAdd*100)/100;
+						}
+						$("input[name='standardVolumeVl']").val("标准体积"+standardVolumeVl+",加高后体积"+standardVolumeVlAdd);
+
+						$("input[name='name']").val(material.name || '');
+						$("input[name='supplier']").val(ret.supplierName || '');
+						$("input[name='materialStandard']").val(material.materialStandard || '');
+						$("input[name='materialType']").val(material.materialType || '');
+						$("input[name='distance']").val((waybill.distance || 0)+"公里");
+						$("input[name='deliveryTime']").val(waybill.deliverytime || '');
+
+						var vl = "k"+waybill.originStakeNum+"+"+waybill.originStakeNumMeter;
+						$("input[name='receipttime']").val(waybill.receipttime || '');
+						$("input[name='origin']").val(vl || '');
+						$("input[name='consignorName']").val(waybill.consignorName || '');
+						$("input[name='consigneeId']").val(waybill.consigneeId || '');
+						$("input[name='consignorMobike']").val(ret.consignorMobike || '');
+
+						$("input[name='loadStakeNum']").val(waybill.loadStakeNum || 0);
+						$("input[name='loadStakeNumMeter']").val(waybill.loadStakeNumMeter || 0);
+						$("input[name='originStakeNum']").val(waybill.originStakeNum || 0);
+						$("input[name='originStakeNumMeter']").val(waybill.originStakeNumMeter || 0);
+						$("input[name='receivingStakeNum']").val(waybill.receivingStakeNum || 0);
+						$("input[name='receivingStakeNumMeter']").val(waybill.receivingStakeNumMeter || 0);
+
+						$("input[name='deliveryRemark']").val(waybill.deliveryRemark);
+						$("input[name='receiptRemark']").val(waybill.receiptRemark)
+						$("input[name='quantity']").val(waybill.quantity || '');
+						$("input[name='adjustQuantity']").val(waybill.quantity || '');
+						$("input[name='adjustDistance']").val(waybill.adjustDistance || '0');
+						dbid = waybill.dbid;
+						if(dbid){
+							$("#consignorNameLi1").hide();
+							$("#consignorNameLi2").show();
+						}else{
+							$("#consignorNameLi1").show();
+							$("#consignorNameLi2").hide();
+						}
+						
+						if(waybill.status =='0'){
+								$("input[name='status']").val('已发料');
+						}else if(waybill.status =='1'){
+								$("input[name='status']").val('已收料');
+						}else if(waybill.status =='2'){
+								$("input[name='status']").val('退回');
+						}else if(waybill.status =='3'){
+								$("input[name='status']").val('审核中');
+						}else if(waybill.status =='4'){
+								$("input[name='status']").val('已审核');
+						}
+					}else{
+						alert(ret.msg);
+						//alert(date.msg);
+						api.closeWin();
+
+					}
+
+					// $("input[name='adjustQuantity']").val(waybill.adjustQuantity);
+				})
+		}
+
+		function submit(){
+			if(dbid){
+				var consignorId = $("#consignorId").val();
+				if(consignorId == ""){
+					api.toast({
+							msg: '请选择发料员',
+							duration: 2000,
+							location: 'bottom'
+					});
+					return;
+				}
+			}
+
+			var subwork1 = $('#subwork1').val();
+			if(subwork1 == ""){
+				api.toast({
+						msg: '请选择分项工程',
+						duration: 2000,
+						location: 'bottom'
+				});
+				return;
+			}
+
+			var receiving = $("#receiving").val();
+			if(receiving == ""){
+				api.toast({
+						msg: '请选择收料地',
+						duration: 2000,
+						location: 'bottom'
+				});
+				return;
+			}
+
+			var receivingStakeNum = $("input[name='receivingStakeNum']").val();
+			var receivingStakeNumMeter = $("input[name='receivingStakeNumMeter']").val();
+
+			if(receivingStakeNum == "" || receivingStakeNumMeter == ""){
+				api.toast({
+						msg: '收料地桩号不能为空',
+						duration: 2000,
+						location: 'bottom'
+				});
+			}
+
+			$reiz.request.post($reiz.urls['material'].confirmWaybill, {
+					body:{
+						account:account,
+						id:paramsId,
+						receiving:$("#receiving option:selected").text(),//收料地
+						receivingStakeNum:$("input[name='receivingStakeNum']").val(),//收料地桩号
+						receivingStakeNumMeter:$("input[name='receivingStakeNumMeter']").val(),		//收料地桩号   加号后数字
+						adjustQuantity:$("input[name='adjustQuantity']").val(),//调整后收货数量
+						adjustDistance:adjustDistanceTemp,//调整后距离$("input[name='adjustDistance']").val()
+						adjustRemark:$("input[name='adjustRemark']").val(),//微调备注
+						receiptRemark:$("input[name='receiptRemark']").val(),//收货备注
+						distanceHaul:$("input[name='distanceResult']").val(),
+						consignorId:$("#consignorId").val(),//收料地
+						subwork:$("#subwork1 option:selected").text()+"—"+$("#subwork2 option:selected").text()
+					}
+			},function(ret,error){
+					if(ret.code == 200){
+						api.alert({
+									title: '提示消息',
+									msg: ret.msg,
+							}, function(ret, err) {
+								api.execScript({
+									name: 'material',
+									frameName: 'material_list_frame',
+									script:  'getMaterialList(1);'
+								});
+								api.closeWin();
+							});
+
+					}else{
+						api.toast({
+								msg: ret.msg,
+								duration: 2000,
+								location: 'middle'
+						});
+					}
+
+			})
+		}
+		//项目下拉
+		function projectList(account){
+			$reiz.request.get($reiz.urls['project'].querylist, {
+				body:{
+						account:account
+				}
+			},function(ret,error){
+					if(ret.code == 200){
+						var data = JSON.parse(ret.data);
+							for(var i=0; i<data.length;i++){
+								$('.projectCode').append('<option value='+data[i].projectCode+'>'+data[i].projectName+'</option>')
+							}
+					}
+			})
+		}
+
+		function projectOneList(){
+			 $reiz.request.post($reiz.urls['project'].projectOne, {
+				 body:{
+					"projectCode":projectCode
+				 }
+			 },function(ret,error){
+					if(ret.code == 200){
+						var data = JSON.parse(ret.data);
+						for(var i=0; i<data.length;i++){
+							$('.projectCode').append('<option value='+data[i].projectCode+'>'+data[i].projectName+'</option>')
+						}
+					}
+			 })
+		}
+
+		//收料地下拉
+		function receivingSelectList(materialType){
+			$reiz.request.post($reiz.urls['material'].getMaterialLocationList, {
+				 body: {
+					"projectCode":projectCode,
+				 	"materialType":materialType
+				}
+			}, function (ret, err) {
+				if(ret.code == 200){
+					var data = JSON.parse(ret.data);
+					for(var i=0; i<data.length;i++){
+						var vl = "k"+data[i].originStakeNum+"+"+data[i].originStakeNumMeter;
+						data[i].receivingStakeNum= data[i].originStakeNum;
+						data[i].receivingStakeNumMeter= data[i].originStakeNumMeter;
+						$('#receiving').append('<option value='+data[i].id+'>'+vl+'</option>')
+					}
+					receivingData = data;
+				}
+			});
+
+			$('#receiving').change(function(){
+				var id = $(this).val();
+				if(id==""){
+					$("input[name='receivingStakeNum']").val('');
+					$("input[name='receivingStakeNumMeter']").val('');
+					$("input[name='distanceResult']").val('');
+				}
+				for(var i=0;i<receivingData.length;i++){
+					if(receivingData[i].id == id){
+						$("input[name='receivingStakeNum']").val(receivingData[i].receivingStakeNum);
+						$("input[name='receivingStakeNumMeter']").val(receivingData[i].receivingStakeNumMeter);
+						calculateDistance();
+					}
+				}
+			});
+		}
+
+		function calculateDistance(adjustDistance){
+			adjustDistanceTemp = adjustDistance;
+			var loadStakeNum = $("input[name='loadStakeNum']").val();
+			var loadStakeNumMeter = $("input[name='loadStakeNumMeter']").val();
+			var receivingStakeNum = $("input[name='receivingStakeNum']").val();;
+			var receivingStakeNumMeter = $("input[name='receivingStakeNumMeter']").val();
+			var distance = $("input[name='distance']").val();
+			var distanceResult = 
+				(Number(receivingStakeNum)*1000+Number(receivingStakeNumMeter))-
+				(Number(loadStakeNum)*1000+Number(loadStakeNumMeter))
+				+(Number(distance.replace("公里","")))*1000;
+			distanceResult = Number(distanceResult)/1000;
+			if(adjustDistance && Number(adjustDistance)!=0){
+				distanceResult = Number(distanceResult) + Number(adjustDistance);
+			}
+			$("input[name='distanceResult']").val(distanceResult);
+		}
+
+		//发料员下拉
+		function consignorSelectList(){
+			$reiz.request.post($reiz.urls['user'].getUsersByRoleCodeAndProject, {
+				 body: {
+					"projectCode":projectCode,
+				 	"roleCode":$reiz.roleCodeDicts.SHIPOPERATOR,
+				}
+			}, function (ret, err) {
+				 if(ret.code == 200){
+					var data = JSON.parse(ret.data);
+					for(var i=0; i<data.length;i++){
+						$('#consignorId').append('<option value='+data[i].account+'>'+data[i].name+'</option>')
+					}
+				 }
+			});
+		}
+
+		//分项工程下拉
+		function subworkSelectList(level,pid){
+			$reiz.request.post($reiz.urls['material'].getSubworkList, {
+				 body: {
+					"projectCode":projectCode,
+				 	"level":level,
+					"pid":pid
+				}
+			}, function (ret, err) {
+				 if(ret.code == 200){
+					var data = JSON.parse(ret.data);
+					$('#subwork'+level).empty();
+					$('#subwork'+level).append('<option value="" style="color: #C0C4CC">请选择分项工程'+level+'</option>')
+					for(var i=0; i<data.length;i++){
+						$('#subwork'+level).append('<option value='+data[i].id+'>'+data[i].name+'</option>')
+					}
+					if(level ==2 && data.length>0){
+						$("#subwork2Li").show();
+					}else{
+						$("#subwork2Li").val('');
+						$("#subwork2Li").hide();
+					}
+				 }
+			});
+
+			$('#subwork1').change(function(){
+				var id = $(this).val();
+				if(id==""){
+					$("#subwork2Li").val('');
+					$("#subwork2Li").hide();
+				}else{
+					subworkSelectList(2,id)
+				}
+			});
+		}
+
+	</script>
+</html>

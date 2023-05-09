@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+  <style>
+    html,body{
+      width: 100%;
+      height: 100%;
+    }
+    .wrap{
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class='wrap'>
+    <video  autoplay muted style="width:100%;height:100%;" class='video' controls="controls">
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript">
+	apiready = function() {
+  var videoUrl  = api.pageParam.videoUrl;
+  $('.video').attr('src',videoUrl)
+	};
+  $('.video').on('ended', function () {
+            var _this = this;
+            _this.play();
+        });
+</script>
+
+</html>

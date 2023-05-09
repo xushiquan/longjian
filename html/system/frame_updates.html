@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>AUI快速完成布局</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" href="../../icon/iconfont.css" />
+		</script>
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				position: relative;
+				background-color: #ffffff;
+			}
+			.iconfont{
+			 height: 1.4rem;
+			 font-size: 1.4rem;
+			 line-height: 1.4rem;
+	/*		 color: #1492CA;*/
+			 }
+			 .active {
+	 			color: #138dc5;
+	 		}
+			 .btnColor {
+				background: linear-gradient(#23d2ff, #138dc5);
+				background-clip: text;
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+			.divWrap {
+				position: relative;
+			}
+			.divWrap:after {
+				content: '';
+				position: absolute;
+				top: 35px;
+				width: 0px;
+				right: 0;
+				height: 20px;
+				border-right: 1px solid #B3B3B3;
+			}
+			.textInfo {
+				padding: 0.03rem 0.53rem;
+				font-size: 0.58rem;
+				line-height: 0.90rem;
+				margin-right: 0.67rem;
+				border-radius: 9px;
+			}
+			.danger {
+				border: 1px solid #70D2F2;
+				background-color: #F0FAFF;
+				color: #20A7D6;
+			}
+			.changing {
+				border: 1px solid #F86496;
+				background-color: #FEF3F5;
+				color: #F96496;
+			}
+			.changed {
+				border: 1px solid #0FC1C3;
+				background-color: #EEFFFE;
+				color: #0FC1C3;
+			}
+			.textinnerWrap {
+				height: 3rem;
+				position: absolute;
+				font-size: 0.65rem;
+			}
+			.none_data {
+				color: #666;
+				margin-top: 20px;
+				width: 100%;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			.none_data > img {
+				display: block;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<section class="aui-grid">
+			<div class="aui-row" id="tabbox">
+				<div class="aui-col-xs-6 divWrap active">
+					<i class="icon iconfont icon-yujing btnColor"></i>
+					<div class="aui-grid-label">
+						告警信息
+					</div>
+				</div>
+				<div class="aui-col-xs-6 divWrap">
+					<i class="icon iconfont icon-renwu"></i>
+					<div class="aui-grid-label">
+						任务代办
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class="aui-content aui-margin-b-15">
+			<ul class="aui-list aui-media-list" id="message_list"></ul>
+		</div>
+		<div id="msglist" class="aui-content"  style=" overflow: auto;position: fixed; bottom: 0;top: 150px;width:100%;">
+						 <ul class="aui-list aui-media-list" id ="msglist-container" style=" overflow: auto;position: fixed;bottom: 0;top: 150px;width:100%;">
+				</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js" ></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript">
+		var loginInfo;
+		var account;
+		var projectCode;
+		var pageIndex;
+		var pageSize = 10;
+		var arrayLength;
+		apiready = function() {
+			loginInfo = api.pageParam.loginInfo;
+			account = loginInfo.account;
+			projectCode = loginInfo.projects.projectCode;
+			$('#msglist').hide();
+			getMessageDate();
+			$("#tabbox .aui-col-xs-6").click(function ()
+　  　 {
+　　　　//获取点击的元素给其添加样式，讲其兄弟元素的样式移除
+　　　　$(this).addClass("active").siblings().removeClass("active");
+		 $(this).siblings().find('i').removeClass("btnColor")
+　　　　//获取选中元素的下标
+　　　　index = $(this).index();
+	     if(index==0){
+			    getMessageDate();
+	     }else if(index==1){
+		    daibanInfo();
+	    }
+　　　　$(this).parent().siblings().children().eq(index).addClass("active")
+　 　　　.siblings().removeClass("active");
+		 $(this).find('i').addClass("btnColor")
+　    　});
+			api.addEventListener({
+				name : 'scrolltobottom',
+				extra : {
+					threshold : 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+				}
+			}, function(ret, err) {
+				api.showProgress({
+					title : '加载中...',
+					modal : false
+				});
+				$reiz.request.post($reiz.urls['message'].query, {
+					body : {
+						"account" : account,
+						"projectCode" : projectCode,
+						"pageIndex" : pageIndex,
+						"pageSize" : pageSize
+					}
+				}, function(ret, err) {
+					if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+						var data1 = JSON.parse(ret.data);
+						var messageList = data1.records;
+						arrayLength = arrayLength + messageList.length;
+						pageIndex = Math.ceil(arrayLength / pageSize + 1);
+						api.hideProgress();
+						moreData(messageList);
+					} else {
+						api.hideProgress();
+						api.toast({
+							msg : '没有更多数据了'
+						});
+					}
+				});
+			});
+		}
+		function getMessageDate() {
+			$('#msglist').hide();
+			$('#message_list').show();
+			$reiz.request.post($reiz.urls['message'].query, {
+				body : {
+					"account" : account,
+					"projectCode" : projectCode,
+					"pageIndex" : 1,
+					"pageSize" : pageSize
+				}
+			}, function(ret, err) {
+				var data1 = JSON.parse(ret.data);
+				var messageList = data1.records;
+				arrayLength = messageList.length;
+				pageIndex = Math.ceil(arrayLength / pageSize + 1);
+				addlilist(messageList);
+			});
+		}
+
+		function addlilist(data) {
+			$("#message_list").html("");
+			moreData(data);
+		}
+
+		function moreData(data) {
+			var lilist = [];
+			$(data).each(function(index, element) {
+				var title = element.title;
+				var message = element.message;
+				var sendTime = "";
+		    if(element.sendTime!=null&&element.sendTime!=""){
+		      sendTime = element.sendTime;
+		    }
+				var timeStamp = (new Date(sendTime)).valueOf();
+				var data = {
+					"title" : title,
+					"message" : message,
+					"fromUser" : element.fromUser,
+					"sendTime" : timeStamp
+				};
+				lilist.push("<li class='aui-list-item' onclick=detail(" + JSON.stringify(data) + ")>");
+				lilist.push('<div class="aui-media-list-item-inner">');
+				lilist.push('<div class="aui-list-item-inner">');
+				lilist.push('<div class="aui-list-item-text">');
+				lilist.push('<div class="aui-list-item-title">' + title + '</div>');
+				lilist.push('<div class="aui-list-item-right">' + sendTime + '</div>');
+				lilist.push('</div><div class="aui-list-item-text aui-ellipsis-1">');
+				lilist.push(message);
+				lilist.push('</div></div></div></li>');
+			});
+			$("#message_list").append(lilist.join(''));
+			api.parseTapmode();
+		}
+
+		function fresh() {
+			getMessageDate();
+		}
+
+		function detail(element) {
+			api.openWin({
+				name : 'message_detail_win',
+				url : './message_detail_win.html',
+				pageParam : {
+					element : element
+				}
+			});
+		}
+
+		function daibanInfo(){
+			$('#message_list').hide();
+			$('#msglist').show();
+			var buildNothingDiv = function(msg) {
+				if (msg) {
+					var hint = msg;
+				} else {
+					var hint = "查询无返回数据！";
+				}
+				var tmp = [];
+				tmp.push('<div class="none_data">');
+				tmp.push('<img src="../../image/empty_page_nothing.png"><br><span>' + hint + '</span>');
+				tmp.push('</div>');
+				return tmp.join('');
+			};
+       $('#msglist').html('<ul class="aui-list aui-media-list" id ="msglist-container"></ul>');
+       $('#msglist').css({
+								"display" : "block"
+							});
+							$("#msglist").html(buildNothingDiv());
+    }
+
+	</script>
+</html>

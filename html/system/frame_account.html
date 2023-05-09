@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>AUI快速完成布局</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+
+    </script>
+    <style type="text/css">
+      /*html,body{
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+      }*/
+        .text-white {
+            color: #ffffff !important;
+        }
+        .aui-grid [class*=aui-col-] {
+            padding: 0.75rem 0;
+        }
+        #header{
+          width:100%;
+          height: 180px;
+          background: url('../../image/bg.png') no-repeat;
+          background-size: 100% 100%;
+          box-sizing: border-box;
+          display: -webkit-box;
+          display: -webkit-flex;
+          display: flex;
+          justify-content: center;
+        }
+        .userImg{
+          width:65px;
+          height: 65px;
+          border-radius: 50%;
+          align-self: center;
+        }
+        #title{
+          align-self: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部 -->
+
+    <div id='header'>
+      <div class='userImg'>
+        <a id="title"></a><img style='width:100%;height:100%;margin-top: 10px;' src='../../image/head.png'>
+      </div>
+    </div>
+    <section class="aui-content">
+        <ul class="aui-list aui-list-in aui-margin-b-15">
+         
+            <li class="aui-list-item Logout">
+                <div class="aui-list-item-label-icon">
+                  <i class="aui-iconfont aui-icon-image aui-text-default"></i>
+                </div> 
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title ">退出登录</div>
+                </div>
+            </li>
+            <li class="aui-list-item" id="updateSoft">
+              <div class="aui-list-item-label-icon">
+                <i class="aui-iconfont aui-icon-image aui-text-info"></i>
+              </div>
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title ">
+                    软件更新
+                  </div>
+              </div>
+            </li>
+            <li class="aui-list-item" id="attendanceClock">
+              <div class="aui-list-item-label-icon">
+                <i class="aui-iconfont aui-icon-image aui-text-warning"></i>
+              </div>
+              <div class="aui-list-item-inner aui-list-item-arrow">
+                  <div class="aui-list-item-title ">
+                    考勤打卡
+                  </div>
+              </div>
+            </li>
+        </ul>
+    </section>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+var loginInfo;
+apiready = function () {
+  api.getPrefs({
+    key: 'loginInfo'
+  }, function(ret, err) {
+    if (ret) {
+      loginInfo = JSON.parse(ret.value);
+      changeTitle(loginInfo.name);
+    } else {
+      alert("请重新登录");
+    }
+  });
+
+  
+  $('.Logout').click(function(){
+    api.removePrefs({
+      key : 'loginInfo'
+    });
+    api.closeToWin({
+      name : 'root'
+    });
+    api.openWin({
+       name : 'login',
+       url : 'login.html',
+       slidBackEnabled : false
+    });
+  });
+
+
+  $("#updateSoft").click(function(){
+    var path = ""
+    if($reiz.versionApp == "2"){
+      path = $reiz.appUpdateSoftPathOff
+    }else{ 
+      path = $reiz.appUpdateSoftPath
+    }
+    api.openApp({
+        androidPkg: 'android.intent.action.VIEW',
+        mimeType: 'text/html',
+        uri: path
+    }, function(ret, err) {
+    });
+  })
+
+  $("#attendanceClock").click(function(){
+    roleCode = loginInfo.roleCode;//角色
+    if(roleCode.indexOf("ConstructionWorker")>-1){//施工人员
+      api.openWin({
+        name : 'punch_clock_win',
+        url : '../attendance/punch_clock_win.html',
+        slidBackEnabled : false
+      });
+    }else{
+      api.toast({
+          msg: "暂无权限！",
+          duration: 2000,
+          location: 'middle',
+          global: 'true'
+      });
+    }
+
+   
+  })
+
+}
+
+function changeTitle(arg) {
+  $("#title").text(arg);
+}
+
+function setting(){
+  api.openWin({
+     name : 'setting_win',
+     url : 'setting_win.html',
+     slidBackEnabled : false
+  });
+}
+</script>
+</html>

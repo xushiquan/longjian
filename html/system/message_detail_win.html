@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    </style>
+</head>
+<body>
+	<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				消息详情
+			</div>
+		</header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		var header = $api.byId('header');
+				$api.fixIos7Bar(header);
+				var nav = $api.byId('wrapper');
+				var header_h = $api.offset(header).h;
+        var element = api.pageParam.element;
+				api.openFrame({
+					name : 'message_datail_frame',
+					url : 'message_detail_frame.html',
+          pageParam : {
+            element : element
+          },
+					rect : {
+						x : 0,
+						y : header_h,
+						w : 'auto',
+						h : 'auto'
+					}
+				})
+	};
+</script>
+</html>

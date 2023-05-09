@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		  <link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css"/>
+		<style>
+			.img-container {
+				float: left;
+				width: 80px;
+				margin: 5px;
+				height: 100px;
+			}
+			.img-item {
+				line-height: 80px;
+				width: 80px;
+				height: 80px;
+			}
+			.img-bottom-btn {
+				width: 78px;
+				height: 18px;
+				line-height: 18px;
+				font-size: 10px;
+				color: red;
+				border: 1px solid red;
+				border-radius: 1px;
+				display: inline;
+			}
+			.pic {
+				display: inline;
+			}
+			.pic img {
+				display: block;
+				margin: 9px;
+				width: 80px;
+				height: 80px;
+				float: left;
+			}
+			.aui-btn-row:after {
+				border: none;
+			}
+			.btn_{
+					width: 80%;
+					text-align: center;
+
+					border-radius: 3px;
+					height: 35px;
+					line-height: 35px;
+			}
+			.btn2{
+				color:#ffffff;
+				background:linear-gradient(to right,#23d2ff,#138dc5);
+			}
+			.xrequired:before{
+				content:"* ";
+				color:red;
+			}
+			.flexWrap{
+				 display: -webkit-box;
+				 display: -webkit-flex;
+				 display: flex;
+				 -webkit-box-orient: horizontal;
+				 -webkit-flex-flow: clum;
+				 flex-flow: row;
+			}
+			.flexCW{
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+				display: -webkit-box;
+				display: -webkit-flex;
+				/* display: flex; */
+				-webkit-box-orient: horizontal;
+				-webkit-flex-flow: clum;
+				flex-flow: row;
+			}
+			.flexC{
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-content aui-margin-b-15">
+			<ul class="aui-list aui-form-list">
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label xrequired">
+									日志时间
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="riqi" type="text"  readonly="" >
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label xrequired">
+									开工时间
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="beginDate" type="text"  readonly="">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									工程地点
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="projectSite" type="text" placeholder="请填写工程地点">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label xrequired">
+									桩&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号
+							</div>
+							<div class="aui-list-item-input">
+								<div class='flexWrap'>
+									<span class='flexCW'>
+										<span class='flexC' style='line-height: 2.3rem;'>
+											<input class="aui-input"  id="stake_ahead_attr" type="text" placeholder="">
+										</span>
+										<span class='flexC' style="border-left: 1px solid #c8c7cc;">
+											<input class="aui-input"  id="stake_num" type="text">
+										</span>
+									</span>
+								 	<span style='flex:1;display:flex'>
+										<span  style='line-height: 2.3rem;width: 20px;text-align: center;'>+</span>
+										<span class='flexC'>
+											<input class="aui-input" id="stake_num_meter" type="text">
+										</span>
+								 	</span>
+							 </div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									现场负责人
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="fieldLeader" type="text" placeholder="请填写现在负责人">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									工&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;长
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="gangmaster" type="text" placeholder="请填写工长">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									工长手机号
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="gangmasterMobile" type="text" placeholder="请填写工长手机号">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;气
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="weather" type="text" placeholder="请填写天气">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+								 最高温度
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="highTmp" type="text" placeholder="请填写最高温度">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+								 最低温度
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="lowTmp" type="text" placeholder="请填写最低温度">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+								 风&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="windDirect" type="text" placeholder="请填写风向">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+								 风&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;力
+							</div>
+							<div class="aui-list-item-input">
+										<input class="aui-input" id="windSpeed" type="text" placeholder="请填写风力">
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label xrequired">
+									施工内容
+							</div>
+							<div class="aui-list-item-input">
+										<textarea style="height:180px;" class="aui-input"  id="neirong" type="text" placeholder="请输入工作内容"></textarea>
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label xrequired">
+									问题处理
+							</div>
+							<div class="aui-list-item-input">
+										<textarea style="height:150px;" class="aui-input" id="shuoming"  placeholder="请输入存在问题及处理情况"></textarea>
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+								<div class="aui-list-item-label">
+										附件列表
+								</div>
+								<div class="aui-list-item-input">
+										<div id="imgs_container"></div>
+										</div>
+								</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner">
+							<div class="aui-list-item-label">
+									上传附件
+							</div>
+							<div class="aui-list-item-input">
+								<div id="img_container"></div>
+								<div class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openSetting();"></img>
+								</div>
+							</div>
+						</div>
+				</li>
+				<li class="aui-list-item">
+									<div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+											 <div class="btn_ btn2" onclick="send();">提交</div>
+									</div>
+							</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/doT.min.js"></script>
+	<script type="text/javascript" src="../../script/echo.js"></script>
+	<script type="text/javascript" src="../../script/toucher.js"></script>
+		<script src="../../script/LCalendar/js/LCalendar.js"></script>
+		<script type="text/x-dot-template" id="img_tpl">
+		    <div class="img-container">
+		        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg('{{=it.lookImg}}',{{=it.isNet}});" />
+		        <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+		    </div>
+		</script>
+	<script type="text/javascript">
+		var projectCode;
+		var projectName;
+		var username;
+		var data;
+		var token;
+		var img = {
+			".gif" : "1",
+			".jpg" : "1",
+			".jpeg" : "1",
+			".bmp" : "1",
+			".png" : "1"
+		};
+		apiready = function() {
+			api.getPrefs({
+				key : 'loginInfo'
+			}, function(ret, err) {
+				if (ret.value !== "") {
+					var loginInfo = JSON.parse(ret.value);
+					name = loginInfo.name;
+					username = loginInfo.account;
+					projectCode = loginInfo.projects.projectCode;
+					projectName = loginInfo.projects.projectName;
+				}
+			});
+			api.getPrefs({
+			    key: 'userJwtToken'
+			}, function(ret, err){
+			    if( ret ){
+			         token = ret.value;
+			    }else{
+			         alert( JSON.stringify( err ) );
+			    }
+			});
+
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '加载中...',
+				text : '请稍后...',
+				modal : false
+			});
+			data = api.pageParam.data;
+
+			showInfo();
+			api.hideProgress();
+			var files = data.files;
+			var imgList   = [];
+			if(files.length>0){
+				for (var i = 0; i < files.length; i++) {
+					if(files[i].type == 'jpg' ||
+					 files[i].type == 'png' ||
+					 files[i].type == 'bmp' ||
+					 files[i].type == 'gif' ||
+					 files[i].type == 'jpeg' ){
+						 imgList.push(files[i]);
+					}
+				}
+			}
+			//回显图片
+			setPicNet(imgList);
+		};
+		var setPicNet = function(paths) {
+			var img_tpl = doT.template($api.byId("img_tpl").text);
+			for (var i in paths) {
+				$api.byId("imgs_container").innerHTML += img_tpl({
+					img_url: paths[i].thumbnail2x,
+					isNet: true,
+					id: paths[i].id,
+					lookImg:paths[i].path
+				});
+			}
+		};
+		var showInfo = function() {
+			$('#riqi').val(data.recordDate==undefined?"":data.recordDate);
+			$('#neirong').val(data.content==undefined?"":data.content);
+			$('#shuoming').val(data.question==undefined?"":data.question);
+			$('#beginDate').val(data.beginDate==undefined?"":data.beginDate);
+			$('#pileNo').val(data.pileNo==undefined?"":data.pileNo);
+			$('#gangmasterMobile').val(data.gangmasterMobile==undefined?"":data.gangmasterMobile);
+			$('#gangmaster').val(data.gangmaster ==undefined?"":data.gangmaster);
+			$('#fieldLeader').val(data.fieldLeader ==undefined?"":data.fieldLeader);
+			$('#projectSite').val(data.projectSite ==undefined?"":data.projectSite);
+			$('#stake_ahead_attr').val(data.stakeAheadAttr ==undefined?"":data.stakeAheadAttr);
+			$('#stake_num').val(data.stakeNum ==undefined?"":data.stakeNum);
+			$('#stake_num_meter').val(data.stakeNumMeter ==undefined?"":data.stakeNumMeter=='0'?'000':data.stakeNumMeter);
+			$('#weather').val(data.weather ==undefined?"":data.weather);
+			$('#highTmp').val(data.highTmp ==undefined?"":data.highTmp);
+			$('#lowTmp').val(data.lowTmp ==undefined?"":data.lowTmp);
+			$('#windSpeed').val(data.windSpeed ==undefined?"":data.windSpeed);
+			$('#windDirect').val(data.windDirect ==undefined?"":data.windDirect);
+
+		}
+		var calendar = new LCalendar();
+	calendar.init({
+		'trigger' : '#riqi', //标签ID
+		'type' : 'date', //date 调出日期选择
+		'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+		'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+	});
+	var calendar1 = new LCalendar();
+calendar1.init({
+	'trigger' : '#beginDate', //标签ID
+	'type' : 'date', //date 调出日期选择
+	'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+	'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+});
+		$('#neirong').val('施工内容:\n\n施工人员数量:\n\n工程进度情况:\n\n安全管理方面:\n\n质量管理方面:');
+		var send = function() {
+			var riqi = $('#riqi').val();
+			if (riqi == "") {
+				api.alert({
+					msg : "请选择日期！"
+				});
+				return;
+			}
+			var beginDate = $('#beginDate').val();
+			if (beginDate == "") {
+				api.alert({
+					msg : "请选择开工日期！"
+				});
+				return;
+			}
+			var stake_num = $('#stake_num').val();
+			if (stake_num == "") {
+				api.alert({
+					msg : "请输入桩号k__+__！"
+				});
+				return;
+			}
+			var stake_ahead_attr = $('#stake_ahead_attr').val();
+			var stake_num_meter = $('#stake_num_meter').val();
+			if (stake_num_meter == "") {
+				api.alert({
+					msg : "请输入桩号k__+__！"
+				});
+				return;
+			}
+			var content = $('#neirong').val();
+			var question = $('#shuoming').val();
+			var projectSite = $('#projectSite').val();
+			var pileNo = $('#pileNo').val();
+			var fieldLeader = $('#fieldLeader').val();
+			var gangmaster = $('#gangmaster').val();
+			var gangmasterMobile = $('#gangmasterMobile').val();
+			if(content == "" || question == ""){
+				api.toast({
+				    msg: '请填写必填项',
+				    duration: 2000,
+				    location: 'bottom'
+				});
+				return;
+			}
+			var weather = $('#weather').val();
+			var highTmp = $('#highTmp').val();
+			var lowTmp = $('#lowTmp').val();
+			var windSpeed = $('#windSpeed').val();
+			var windDirect = $('#windDirect').val();
+			var img = [];
+	    	var fileIdList = [];
+			$('#img_container').find('img').each(function() {
+				if ($(this).attr('isNet') != "true") {
+					img.push($(this).attr('src'));
+				};
+			});
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '加载中...',
+				text : '请稍后...',
+				modal : false
+			});
+
+			if(img.length !=0){
+				api.ajax({
+				    url: $reiz.urls['file'].upload_fujian,
+				    method: 'post',
+						headers: {'Authorization':token},
+				    data: {
+				        values: {
+				            masterType: 'bizConstructionLog'
+				        },
+				        files: {
+				            file: img
+				        }
+				    }
+				},function(ret, err){
+				    if (ret.code=="200") {
+							var retData = ret.data;
+							var objData = JSON.parse(retData);
+							for(var i = 0; i　< objData.length; i++){
+								fileIdList.push(objData[i].fileId)
+							}
+							$reiz.request.post($reiz.urls['project'].saveData, {
+								body: {
+									"id" : data.id,
+									"projectCode" : data.projectCode,
+									"projectName" : projectName,
+									"account" : username,
+									"content" : content,
+									"question" :question,
+									"recordDate" : riqi,
+									"beginDate" : beginDate,
+									"projectSite" : projectSite,
+									"pileNo" : pileNo,
+									"fieldLeader" : fieldLeader,
+									"gangmaster" : gangmaster,
+									"gangmasterMobile" : gangmasterMobile,
+									"fileIdList" : fileIdList,
+									"stakeAheadAttr":stake_ahead_attr,
+									"stakeNum":stake_num,
+									"stakeNumMeter":stake_num_meter,
+									"weather" : weather,
+									"highTmp" : highTmp,
+									"lowTmp" : lowTmp,
+									"windSpeed" : windSpeed,
+									"windDirect" : windDirect,
+								}
+							}, function(ret, err) {
+								api.hideProgress();
+								if (ret) {
+									if (ret.code == '200') {
+										api.openWin({
+											name : 'gzrz_all',
+											url : './gzrz_all.html',
+											animation : {
+												type : 'none'
+											},
+											reload : true
+										});
+										api.alert({
+											msg : ret.msg
+										}, function(ret, err) {
+											api.closeWin();
+										});
+									} else {
+										api.alert({
+											msg : ret.msg
+										});
+									}
+								} else {
+									api.toast({
+										msg : $reiz.error.getErrorMsg(err)
+									});
+								}
+							});
+				    } else {
+				        alert( JSON.stringify( err ) );
+				    }
+				});
+			}else{
+				$reiz.request.post($reiz.urls['project'].saveData, {
+					body: {
+						"id" : data.id,
+						"projectCode" : data.projectCode,
+						"projectName" : projectName,
+						"account" : username,
+						"content" : content,
+						"question" :question,
+						"recordDate" : riqi,
+						"beginDate" : beginDate,
+						"projectSite" : projectSite,
+						"pileNo" : pileNo,
+						"fieldLeader" : fieldLeader,
+						"gangmaster" : gangmaster,
+						"gangmasterMobile" : gangmasterMobile,
+						"weather" : weather,
+						"fileIdList" : fileIdList,
+						"stakeAheadAttr":stake_ahead_attr,
+						"stakeNum":stake_num,
+						"stakeNumMeter":stake_num_meter,
+						"weather" : weather,
+						"highTmp" : highTmp,
+						"lowTmp" : lowTmp,
+						"windSpeed" : windSpeed,
+						"windDirect" : windDirect,
+					}
+				}, function(ret, err) {
+					api.hideProgress();
+					if (ret) {
+						if (ret.code == '200') {
+							api.openWin({
+								name : 'gzrz_all',
+								url : './gzrz_all.html',
+								animation : {
+									type : 'none'
+								},
+								reload : true
+							});
+							api.alert({
+								msg : ret.msg
+							}, function(ret, err) {
+								api.closeWin();
+							});
+						} else {
+							api.alert({
+								msg : ret.msg
+							});
+						}
+					} else {
+						api.toast({
+							msg : $reiz.error.getErrorMsg(err)
+						});
+					}
+				});
+			}
+		}
+		var openSetting = function() {
+			isSettingOpen = true;
+			api.openFrame({
+				name : 'takepic',
+				url : './takepic.html',
+				bgColor : 'rgba(0,0,0,0.6)',
+				bounces : false,
+				rect : {
+					x : 0,
+					y : 0,
+					w : 'auto',
+					h : 'auto'
+				},
+				pageParam : {
+					winName : 'gzrz_edit_frm'
+				}
+			});
+		};
+		var setPicInfo = function(path) {
+			var img_tpl = doT.template($api.byId("img_tpl").text);
+			$api.byId("img_container").innerHTML += img_tpl({
+				img_url : path,
+				isNet : false
+			});
+
+			api.closeFrame({
+				name : 'takepic'
+			});
+
+		};
+		var setPicInfos = function(pathsStr) {
+			var paths = pathsStr.split(',');
+			var img_tpl = doT.template($api.byId("img_tpl").text);
+			for (var i in paths) {
+				$api.byId("img_container").innerHTML += img_tpl({
+					img_url : paths[i],
+					isNet : false
+				});
+			}
+			api.closeFrame({
+				name : 'takepic'
+			});
+		};
+
+		function removeImg(el, isNet, id) {
+			if (isNet) {
+				api.showProgress();
+				api.ajax({
+					url : $reiz.urls['file'].delete_fujian,
+					method : 'post',
+					timeout : 60,
+					dataType : 'json',
+					cache : true,
+					headers: {'Content-Type':'application/json','Authorization':token},
+					data : {
+						body : {
+							"id" : id
+						}
+					}
+				}, function(ret, err) {
+					if (ret) {
+						api.hideProgress();
+						if (ret.code == '200') {
+							el.parentNode.remove();
+						} else {
+							api.alert({
+								msg : ret.msg
+							});
+							el.parentNode.remove();
+							api.hideProgress();
+						}
+					} else {
+						api.toast({
+							msg : $reiz.error.getErrorMsg(err)
+						});
+						api.hideProgress();
+					}
+				});
+			} else {
+				el.parentNode.remove();
+			}
+		}
+
+		function showImg(src, isNet) {
+			var photoBrowser = api.require('photoBrowser');
+			if (!isNet) {
+				var img_path = new Array();
+				img_path = src.split('/');
+				var fs = api.require('fs');
+				fs.copyTo({
+						oldPath: src,
+						newPath: 'fs://res'
+				},function(ret,err){
+						if (ret.status) {
+								var fs_path= 'fs://res/'+img_path[img_path.length-1];
+								photoBrowser.open({
+									images : [fs_path],
+									placeholderImg : 'widget://res/img/apicloud.png',
+									bgColor : '#000'
+								}, function(ret, err) {
+									if (ret) {
+										if (ret.eventType == 'click')
+											photoBrowser.close();
+									} else {
+										alert(JSON.stringify(err));
+									}
+								});
+						}else {
+								console.log(err.msg);
+						};
+				});
+			} else {
+				src = src.replace('thumb/thumb_', '/');
+				photoBrowser.open({
+					images : [src],
+					placeholderImg : 'widget://res/img/apicloud.png',
+					bgColor : '#000'
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.eventType == 'click')
+							photoBrowser.close();
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+		}
+
+		var removepic = function() {
+			document.getElementById("takepic").src = "../../image/common/camero.png";
+			var del = $api.byId("delpic");
+			$api.attr(del, 'style', 'display:none');
+		};
+		var del = function() {
+			api.confirm({
+				title : '提示信息',
+				msg : '日志删除后无法恢复，确认继续吗？',
+				buttons : ['取消', '确定']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 2) {
+					api.ajax({
+						url : $reiz.urls['project'].del,
+						method : 'post',
+						timeout : 60,
+						dataType : 'json',
+						cache : true,
+						data : {
+							values : {
+								"id" : data.id,
+								"type" : "gzrzfj"
+							}
+						}
+					}, function(ret, err) {
+						api.hideProgress();
+						if (ret) {
+							if (ret.status == '1') {
+								api.openWin({
+									name : 'gzrz_all',
+									url : './gzrz_all.html',
+									animation : {
+										type : 'none'
+									},
+									reload : true
+								});
+								api.alert({
+									msg : ret.resp_data
+								}, function(ret, err) {
+									api.closeWin();
+								});
+							} else {
+								api.alert({
+									msg : ret.resp_data
+								});
+							}
+						} else {
+							api.toast({
+								msg : $reiz.error.getErrorMsg(err)
+							});
+						}
+					});
+				}
+			});
+		}
+		function time(time) {
+
+			var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+
+			return date.toJSON().substr(0, 10).replace('T', ' ');
+
+		}
+	</script>
+</html>

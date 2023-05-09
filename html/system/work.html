@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>frame</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<style>
+			body {
+				min-width: 320px;
+			}
+			.category {
+				width: 100%;
+				margin-top: 250px;
+			}
+			.category li {
+				display: inline-block;
+				width: 23.9%;
+				text-align: center;
+				padding: 30px 0 10px;
+				background-size: 40px;
+				background-repeat: no-repeat;
+				background-position: top;
+			}
+			.category li a {
+				margin: 15px 10px 0 10px;
+			}
+			img {
+				width: 100%;
+				height: 100%;
+			}
+			.imgs {
+				padding: 10px 0;
+				width: 100%;
+				background-color: #F0F0F0;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+			}
+			.imgs li {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+				height: 55px;
+			}
+			.imgs li:not(:last-child) {
+				-webkit-box-flex: 1;
+				-webkit-flex: 1;
+				flex: 1;
+				border-right: 1px solid #EDEDEB;
+				height: 55px;
+			}
+			.img:first-of-type {
+				padding-top: 0;
+			}
+			.img {
+				height: 124px;
+				padding-top: 10px;
+				background-color: #F4F4F4;
+				position: relative;
+			}
+		</style>
+	</head>
+	<body>
+		<ul id="main" class="category"></ul>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<script type="text/javascript" src="../../script/reiz.js"></script>
+		<script type="text/javascript" src="../../script/zepto.js"></script>
+		<script>
+			var UIScrollPicture;
+			apiready = function() {
+				init();
+				UIScrollPicture = api.require('UIScrollPicture');
+				fnOpen();
+			};
+			function fnOpen() {
+				UIScrollPicture.open({
+					rect : {
+						x : 0,
+						y : 0,
+						w : api.winWidth,
+						h : api.winHeight / 3
+					},
+					data : {
+						paths : ['../../image/l1.png', '../../image/l2.png', '../../image/l3.png']
+					},
+					styles : {
+						caption : {
+							height : 35,
+							color : '#E0FFFF',
+							size : 13,
+							bgColor : '#696969',
+							position : 'bottom'
+						},
+						indicator : {
+							align : 'center',
+							color : '#FFFFFF',
+							activeColor : '#DA70D6'
+						}
+					},
+					placeholderImg : '../../image/l1.png',
+					contentMode : 'scaleToFill',
+					interval : 3,
+					loop : true,
+					fixedOn : 'work',
+					fixed : true
+				}, function(ret, err) {
+					if (ret) {
+					} else {
+					}
+				});
+			};
+			function init() {
+				api.getPrefs({
+					key : 'category'
+				}, function(ret, err) {
+					if (ret && ret.value != '') {
+						document.getElementById("main").innerHTML = "";
+						grids = JSON.parse(ret.value);
+						for (var x in grids) {
+							var infohtml = "";
+							if (grids[x].isShow) {
+								infohtml += "<li tapmode=\"\" onclick=\"openWin('" + grids[x].name + "')\" style=\"background-image:url('../../image/" + grids[x].icon + ".png')\">";
+								infohtml += "<a>" + grids[x].title + "</a></li>";
+								grids[x].isShow = true;
+							}
+							$('#main').append(infohtml);
+						};
+					} else {
+						return;
+					}
+				});
+			};
+			function openWin(name) {
+				api.openWin({
+					name : name,
+					url : $reiz.func_url[name].url,
+					reload : true
+				})
+			};
+		</script>
+	</body>
+</html>

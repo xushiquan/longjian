@@ -1,0 +1,663 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<script type="text/javascript" src="../../script/api.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			html, body, header, section, footer, nav, div, ul, ol, li, img, a, span, em, del, center, strong, var, fieldset, form, label, dt, dd, cite, input, hr, time, mark, code, figcaption, figure, textarea {
+				margin: 0;
+				border: 0;
+				padding: 0;
+				font-family: Tahoma, Geneva, sans-serif;
+				font-style: normal;
+			}
+			html, body {
+				-webkit-touch-callout: none;
+				-webkit-text-size-adjust: none;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-user-select: none;
+			}
+			header, footer, section, nav, img, a, button, em, del, strong, var, fieldset, label, cite, small, time, mark, code, figcaption, figure, textarea {
+				display: block;
+			}
+			header, section, footer, nav {
+				position: relative;
+				overflow: hidden;
+			}
+			#header {
+				background: #1b1a1f;
+				height: 45px;
+			}
+			#nav {
+				display: -webkit-box;
+				height: 45px;
+			}
+			#left {
+				width: 80px;
+				color: #fff;
+				background: url(../../image/kq/navbtn_back.png) no-repeat 14px 12px;
+				-webkit-background-size: 12px 20px;
+			}
+			#left > span {
+				margin-top: 13px;
+				margin-left: 36px;
+				font-size: 18px;
+				height: 18px;
+				line-height: 45px;
+			}
+			#middle {
+				-webkit-box-flex: 1;
+				width: 100%;
+				display: -webkit-box;
+				-webkit-box-pack: center;
+				-webkit-box-align: center;
+			}
+			#title {
+				font-size: 18px;
+				text-align: center;
+				color: #fff;
+			}
+			#right {
+				width: 80px;
+			}
+			section {
+				-webkit-box-flex: 1;
+			}
+			body {
+				-webkit-user-select: none;
+			}
+			#main {
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				background-color: transparent;
+			}
+			.whiteBg {
+				background-color: transparent;
+			}
+			.active {
+				color: #bfffff;
+				background-color: #0e96e4;
+				border-color: #1a4462;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-bar aui-bar-nav" id="wrap">
+			<div id="header">
+				<nav id="nav">
+					<a id="left" tapmode="" onclick="api.closeWin();"> <span>返回</span> </a>
+					<div id="middle">
+						<strong id="title">噪声监测</strong>
+					</div>
+					<a id="right" onclick="switchsb()"><span>切换</span></a>
+				</nav>
+			</div>
+			<div class="whiteBg">
+				<div class="aui-content-padded">
+					<div class="aui-tab">
+						<ul class="aui-tab-nav aui-tab-border" id="tab">
+							<li class="active">
+								实时
+							</li>
+							<li>
+								24小时
+							</li>
+							<li>
+								48小时
+							</li>
+							<li>
+								72小时
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="main"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script src="../../script/echarts.min.js"></script>
+	<script type="text/javascript">
+		var url_getWarn = $reiz.urls["zsyc"].getWarn;
+		var url_getHZ = $reiz.urls["zsyc"].query_sjhz;
+		var url = $reiz.urls["zsyc"].query;
+		var zaosheng = [];
+		var times = [];
+		var zaosheng_avg = [];
+		var zaosheng_max = [];
+		var zaosheng_min = [];
+		var shebeiid;
+		var gongdidm;
+		var deviceName;
+		var myChart;
+		var isLaunched;
+		var echarts;
+		var timeTicket;
+		apiready = function() {
+			shebeiid = api.pageParam.shebeiid;
+			gongdidm = api.pageParam.gongdidm;
+			deviceName = api.pageParam.deviceName;
+
+			$("#tab li").each(function(index, e) {
+				this.onclick = function() {
+					$("#tab li.active").removeClass('active');
+					$(this).addClass('active');
+					switch(index) {
+						case 0:
+							sendAjaxforNow();
+							break;
+						case 1:
+							sendAjaxforHistory(24);
+							break;
+						case 2:
+							sendAjaxforHistory(48);
+							break;
+						case 3:
+							sendAjaxforHistory(72);
+							break;
+					}
+				}
+			})
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '努力加载中...',
+				text : '先喝杯茶...',
+				modal : true
+			});
+			api.ajax({
+				url : url_getWarn,
+				method : 'post',
+				data : {
+					values : {
+						gongdidm : gongdidm
+					}
+				}
+			}, function(ret, err) {
+				if (ret) {
+					zaosheng_warn = ret.zaosheng;
+					zaoshenghigh_warn = ret.zaoshenghigh
+				} else {
+					zaosheng_warn = 70;
+					zaoshenghigh_warn = 90;
+				}
+				sendAjaxforNow();
+			});
+		}
+		function reload(val) {
+			shebeiid = val;
+			sendAjaxforNow();
+		}
+
+		function sendAjaxforNow() {
+			var showTime = [];
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '努力加载中...',
+				text : '先喝杯茶...',
+				modal : true
+			});
+			api.ajax({
+				url : url,
+				method : 'post',
+				 headers: {'Content-Type':'application/json','token':token},
+				data : {
+					body : {
+						projectCode : gongdidm,
+						deviceId : shebeiid,
+						deviceName:deviceName,
+						maxResult : '200'
+					}
+				}
+			}, function(ret, err) {
+				api.hideProgress();
+				if (ret) {
+					if (ret.length > 0) {
+						times.length = 0;
+						zaosheng.length = 0;
+						showTime.length = 0;
+						if (ret[0].shebeitype == "03") {
+							for (var i = 0; i < ret.length; i++) {
+								showTime.push(ret[i].gentime);
+								times.push(ret[i].gentime.substring(10));
+								zaosheng.push(JSON.parse(ret[i].shuju).zaosheng);
+							}
+						} else {
+							for (var i = 0; i < ret.length; i++) {
+								showTime.push(ret[i].time);
+								times.push(ret[i].time.substring(10));
+								zaosheng.push(ret[i].zaosheng);
+							}
+						}
+						makeChart(times, zaosheng,showTime);
+					} else {
+						api.toast({
+							msg : '此设备暂无数据上报'
+						});
+					}
+				} else {
+					api.toast({
+						msg : $reiz.error.getErrorMsg(err)
+					});
+				}
+			});
+		}
+
+		function sendAjaxforHistory(timeInterval) {
+			var hourTime = [];
+			api.showProgress({
+				style : 'default',
+				animationType : 'fade',
+				title : '努力加载中...',
+				text : '先喝杯茶...',
+				modal : true
+			});
+			api.ajax({
+				url : url_getHZ,
+				method : 'post',
+				headers: {'Content-Type':'application/json','token':token},
+				data : {
+					body : {
+						shebeiid : shebeiid,
+						timeInterval : timeInterval
+					}
+				}
+			}, function(ret, err) {
+				api.hideProgress();
+				if (ret) {
+					if (ret.length > 0) {
+						times.length = 0;
+						zaosheng_avg.length = 0;
+						zaosheng_max.length = 0;
+						zaosheng_min.length = 0;
+						hourTime.length = 0;
+						$(ret).each(function(index) {
+							hourTime.push(ret[index].GENTIME);
+							times.push(ret[index].GENTIME.substring(5, 16));
+							zaosheng_avg.push(JSON.parse(ret[index].AVGDATA).zaosheng);
+							zaosheng_max.push(JSON.parse(ret[index].MAXDATA).zaosheng);
+							zaosheng_min.push(JSON.parse(ret[index].MINDATA).zaosheng);
+						})
+						if (isLaunched) {
+							myChart.dispose();
+						}
+						myChart = echarts.init($("#main")[0]);
+						clearInterval(timeTicket);
+						setHistoryOption(hourTime);
+					} else {
+						api.toast({
+							msg : '此设备暂无历史数据 '
+						});
+					}
+				} else {
+					api.toast({
+						msg : $reiz.error.getErrorMsg(err)
+					});
+				}
+			});
+		}
+
+		function makeChart(times, zaosheng,tooltipTime) {
+			if (isLaunched) {
+				myChart.dispose();
+				myChart = echarts.init($("#main")[0]);
+				clearInterval(timeTicket);
+				setOption(tooltipTime);
+			} else {
+				isLaunched = 1;
+				myChart = echarts.init($("#main")[0]);
+				setOption(tooltipTime);
+			}
+		}
+
+		function setHistoryOption(hourTime) {
+			myChart.setOption({
+				visualMap : {
+					show : false,
+					type : 'piecewise',
+					pieces : [{
+						lte : zaosheng_warn,
+						label : '正常',
+						color : '#9fe7f8'
+					}, {
+						gt : zaosheng_warn,
+						lte : zaoshenghigh_warn,
+						label : '预警',
+						color : '#ffff93'
+					}, {
+						gt : zaoshenghigh_warn,
+						label : '报警',
+						color : '#ff8f59'
+					}]
+				},
+				backgroundColor : {
+					color : '#434f5c'
+				},
+				tooltip : {
+					trigger : 'axis',
+					formatter: function(datas){
+						for(var i = 0, length = datas.length; i < length; i++) {
+							return hourTime[datas[i].dataIndex] + '<br/>' + datas[i].seriesName +':' +datas[i].value
+						}
+					}
+				},
+				legend : {
+					data : ['平均值', '最大值', '最小值'],
+					textStyle : {
+						color : "#fff"
+					}
+				},
+				toolbox : {
+					show : true,
+					feature : {
+						dataView : {
+							show : false
+						},
+						magicType : {
+							show : true,
+							type : ['line', 'bar']
+						},
+						restore : {
+							show : true
+						},
+						saveAsImage : {
+							show : false
+						}
+					},
+					top : 'bottom'
+				},
+				grid : {
+					left : '50',
+					right : '20'
+				},
+				xAxis : [{
+					type : 'category',
+					data : times,
+					axisTick : {
+					show : false
+				},
+				axisLabel : {
+					textStyle : {
+						color : "#fff"
+					}
+				},
+				splitLine : {
+					lineStyle : {
+						color : ['#3c4653']
+					}
+				},
+				axisLine : {
+					lineStyle : {
+						color : '#3c4653',
+						width : 2,//这里是为了突出显示加上的
+					}
+				}
+				}],
+				yAxis : [{
+					type : 'value',
+					scale : true,
+					name : 'dB',
+					boundaryGap : [0.2, 0.2],
+					axisLabel : {
+						formatter : '{value} dB',
+						textStyle : {
+							color : "#fff"
+						}
+					},
+					axisTick : {
+						show : false
+					},
+					splitLine : {
+						lineStyle : {
+							color : ['#3c4653']
+						}
+					},
+					axisLine : {
+						lineStyle : {
+							color : '#3c4653',
+							width : 2,//这里是为了突出显示加上的
+						}
+					}
+				}],
+				series : [{
+					name : '平均值',
+					type : 'line',
+					data : zaosheng_avg,
+					markLine : {
+						lineStyle : {
+							normal : {
+								color : '#ffff93'
+							}
+						},
+						symbol : 'none',
+						data : [[{
+							name : '预警值',
+
+							value : zaosheng_warn
+						}], [{
+							name : '报警值',
+
+							value : zaoshenghigh_warn
+						}]]
+					}
+				}, {
+					name : '最大值',
+					type : 'line',
+					data : zaosheng_max
+				}, {
+					name : '最小值',
+					type : 'line',
+					data : zaosheng_min
+				}],
+				color : ['#000000', '#c23531', '#FFA500', '#00BFFF', '#FFFF00', '#c4ccd3']
+			});
+		}
+
+		function setOption(tooltipTime) {
+			var tooltipTime_ = tooltipTime.reverse();
+			myChart.setOption({
+				visualMap : {
+					type : 'piecewise',
+					show:false,
+					pieces : [{
+						lte : zaosheng_warn,
+						label : '正常',
+						color : '#9fe7f8'
+					}, {
+						gt : zaosheng_warn,
+						lte : zaoshenghigh_warn,
+						label : '预警',
+						color : '#ffff93'
+					}, {
+						gt : zaoshenghigh_warn,
+						label : '报警',
+						color : '#ff8f59'
+					}]
+				},
+				backgroundColor : {
+					color : 'transparent'
+				},
+				tooltip: {
+            show: true,
+						trigger: 'axis',
+            formatter: function(datas){
+                for(var i = 0, length = datas.length; i < length; i++) {
+									return tooltipTime_[datas[i].dataIndex] + '<br/>' + datas[i].seriesName +':' +datas[i].value
+                }
+            }
+        },
+				legend : {
+					data : ['噪声'],
+					textStyle : {
+						color : "#fff"
+					}
+				},
+				toolbox : {
+					show : true,
+					feature : {
+						dataView : {
+							show : false
+						},
+						magicType : {
+							show : true,
+							type : ['line', 'bar']
+						},
+						restore : {
+							show : true
+						},
+						saveAsImage : {
+							show : false
+						}
+					},
+					top : 'bottom'
+				},
+				grid : {
+					left : '50',
+					right : '20'
+				},
+				xAxis : [{
+					type : 'category',
+					data : times.reverse(),
+					axisTick : {
+						show : false
+					},
+					axisLabel : {
+						textStyle : {
+							color : "#fff"
+						}
+					},
+					splitLine : {
+						lineStyle : {
+							color : ['#3c4653']
+						}
+					},
+					axisLine : {
+						lineStyle : {
+							color : '#3c4653',
+							width : 2,//这里是为了突出显示加上的
+						}
+					}
+				}],
+				yAxis : [{
+					type : 'value',
+					scale : true,
+					name : 'dB',
+					boundaryGap : [0.2, 0.2],
+					axisLabel : {
+						formatter : '{value} dB',
+						textStyle : {
+							color : "#fff"
+						}
+					},
+					axisTick : {
+						show : false
+					},
+					splitLine : {
+						lineStyle : {
+							color : ['#3c4653']
+						}
+					},
+					axisLine : {
+						lineStyle : {
+							color : '#3c4653',
+							width : 2,//这里是为了突出显示加上的
+						}
+					}
+				}],
+				series : [{
+					name : '噪声',
+					type : 'line',
+					data : zaosheng.reverse(),
+					itemStyle : {
+						normal : {
+							color : '#eb6877',
+							lineStyle : {
+								//color : '#53fcfd'
+							}
+						}
+					},
+					markPoint : {
+						data : [{
+							type : 'max',
+							name : '最大值'
+						}, {
+							type : 'min',
+							name : '最小值'
+						}]
+					},
+					markLine : {
+						lineStyle : {
+							normal : {
+								color : '#ffff93'
+							}
+						},
+						symbol : 'none',
+						data : [[{
+							name : '预警值',
+
+							value : zaosheng_warn
+						}], [{
+							name : '报警值',
+
+							value : zaoshenghigh_warn
+						}]]
+					}
+				}], //'#c23531''#FFA500'
+				color : ['#53fcfd', '#c23531', 'eb6877', '#00BFFF', '#FFFF00', '#c4ccd3']
+			});
+			timeTicket = setInterval(function() {
+				api.ajax({
+					url : url,
+					method : 'post',
+					data : {
+						values : {
+							gongdidm : gongdidm,
+							shebeiid : shebeiid,
+							maxResult : '1'
+						}
+					}
+				}, function(ret, err) {
+					if (ret[0].time.substring(10) == times[times.length - 1]) {
+						return;
+					} else {
+						times.shift();
+						times.push(ret[0].time.substring(10));
+						zaosheng.shift();
+						zaosheng.push(ret[0].zaosheng);
+						myChart.setOption({
+							xAxis : [{
+								data : times
+							}],
+							series : [{
+								name : '噪声',
+								data : zaosheng
+							}]
+						})
+					}
+				});
+			}, 60000);
+		}
+
+		function switchsb() {
+			api.openFrame({
+				name : 'shebeilist',
+				url : './shebeilist.html',
+				bgColor : 'rgba(0,0,0,0.6)',
+				bounces : false,
+				rect : {
+					x : 0,
+					y : 0,
+					w : 'auto',
+					h : 'auto'
+				},
+				pageParam : api.pageParam
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>登录</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+			body, html {
+				height: 100%;
+    			-webkit-box-sizing: border-box;
+    			overflow:hidden;
+    			background:url('../../image/login/login.jpg') no-repeat;
+    			background-size:100% 100%; 
+			}
+			
+		</style>
+		<!-- <script type="text/javascript" src="../../../script/aui-toast.js"></script> -->
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			.aui-toast {
+				left: 12.5%; 
+				top:1%;
+				width: 20em; 
+				color: rgba(0, 0, 0, 0.7); 
+				background: #ffffff; 
+				min-height: 4em; 
+				z-index: 9;  /* 提示框的层叠效果，类似遮罩一样的效果 */
+			}
+		</style>
+	</head>
+	<body>
+		<!-- <header id="header">
+			<div class="back" tapmode onclick="api.closeWin();"></div>
+			<h1>智慧工地</h1>
+		</header> -->
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/db-api.js"></script>
+	<script type="text/javascript" src="../../script/offline-sync-method.js"></script>
+	<script type="text/javascript" src="../../script/offline-sync-attendance.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			//var header = $api.byId('header');
+			//$api.fixStatusBar(header);
+			//var headerH = $api.offset(header).h;
+			// 打开登录Frame
+			
+			//alert("versdion,,"+$reiz.versionApp );
+			if($reiz.versionApp == "2"){
+				initOffOne();
+			}
+
+			api.openFrame({
+				name : 'login_frame',
+				url : './frame_login.html',
+				rect : {
+					//x : 0,
+					//y : headerH,
+					w : 'auto',
+					h : 'auto'
+				},
+				pageParam : {
+					name : 'test'
+				},
+				bounces : false,
+				softInputBarEnabled : false //不显示键盘上方的工具条
+			});
+		};
+
+
+		//0-离线初始化
+		function initOffOne(){
+			setTimeout(function(){
+				initJudgeConnection();
+			},2000);
+			initSqliteDB();
+		}
+
+		//1-自动监听网络；判断有无网络reachability模块
+		function initJudgeConnection(){
+			var reachability = api.require('reachability');
+			reachability.start(function(ret){
+				$api.rmStorage('connectionStatus')
+				$api.setStorage('connectionStatus',ret.status);
+				api.toast( {
+					msg: $reiz.connectionReminder($api.getStorage('connectionStatus')),
+					duration: 60000,
+					location: 'top',
+					global: 'true'
+				} );
+
+				setTimeout(function(){
+					var status = $api.getStorage('connectionStatus');
+					if(status == "-1" || status == "0"){
+						//alert("00无网"+status)
+					}else{
+						syncUploadDbDataToCloud(false);//2同步-上传db库运单数据到云库
+						syncAttendanceUpDbDataToCloud();
+					}
+				},10000);
+			});
+		}
+
+		//2-初始化本机db数据库
+		function initSqliteDB(){
+			var fs = api.require('fs');
+			dbApi.createDir(fs);
+			var db = api.require('db');
+			dbApi.openDatabaseSync(db);
+			setTimeout(function(){
+				var status = $api.getStorage('connectionStatus');
+				if(status == "-1" || status == "0"){
+					//alert("00无网"+status)
+				}else{
+					initSyncISql(db);
+				}
+			},2000);
+		}
+
+		//3-初始化本机db库表
+		function initSyncISql(db){
+			var data = dictSyncDa;
+			var cTableNum = 0;
+			for (let key in data) {
+				var entity = data[key];
+				cTableNum += dbApi.newTableSync(db, entity.tableName, entity.cSql);
+			}
+        
+			if(cTableNum > 0){
+				api.toast({
+					msg: 'DB库表自动创建成功！',
+					duration: 2000,
+					location: 'bottom'
+				});
+				 var tabList = dbApi.queryTables(db)
+				 //alert("已经存在表列表，，"+JSON.stringify(tabList));
+			}else{//DB库自动创建失败！
+				//  var tabList = dbApi.queryTables(db)
+				//  alert("已经存在表列表，，"+JSON.stringify(tabList));
+			}
+		}
+
+
+		//其它-判断有无网络
+		function networkConnection_bak(){
+			var connectionType = $reiz.connectionType;
+			//下面这几行代码就为最关键的，实时监听你网络的变化，来改变connectionType的
+			//值，从而解决了舒心页面的问题
+			api.addEventListener({
+				name: 'online'
+			}, function(ret, err) {
+				connectionType = ret.connectionType;
+				api.alert({
+					title: '有络无连接！',
+					msg: connectionType,
+				})
+			});
+			api.addEventListener({
+				name: 'offline'
+			}, function(ret, err) {
+				connectionType = ret.connectionType;
+				api.alert({
+					title: '网络无连接！',
+					msg: connectionType,
+				})
+			});
+		}
+		
+	</script>
+</html>

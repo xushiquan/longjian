@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>window</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<style>
+			html, body {
+				height: 100%;
+				min-width: 320px;
+			}
+			body {
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<!-- <div class="aui-title">
+				全部应用
+			</div> -->
+			<a class="aui-pull-right aui-btn" onclick="setting()"> <span class="aui-iconfont"></span><span id="title">设置</span></a>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/jquery-1.11.2.min.js"></script>
+	<script>
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+
+			// var nav = $api.byId('wrapper');
+			var header_h = $api.offset(header).h;
+			api.openFrame({
+				name : 'category_frame',
+				url : 'category_frame.html',
+				rect : {
+					x : 0,
+					y : 140,
+					w : 'auto',
+					h : 380
+				}
+			})
+		}
+		function setting() {
+			var title = $("#title").text().toString();
+			if (title == "设置") {
+				api.execScript({
+					frameName : 'category_frame',
+					script : 'setting();'
+				});
+				$("#title").text("完成");
+			} else {
+				api.execScript({
+					frameName : 'category_frame',
+					script : 'save();'
+				});
+				$("#title").text("设置");
+			}
+		}
+	</script>
+</html>

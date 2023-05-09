@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>安全培训</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+  <script src='../../script/rem.js'></script>
+  <style>
+  html,
+  body {
+      width: 100%;
+      height: 100%;
+  }
+
+  .wrap {
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      overflow: auto;
+  }
+
+  .list ul li {
+      border-bottom: 1px solid #EDF7FD;
+      padding: 0.266rem 0;
+  }
+
+  .listTit {
+      margin: 0.4rem 0 0.266rem 0;
+      font-size: 0.29rem;
+      padding-left: 0.266rem;
+      color: #333333;
+      font-weight: bold;
+  }
+
+  .listInfo {
+      width: 100%;
+  }
+
+  .listInfo .textWrap {
+      width: 100%;
+      font-size: 0.23rem;
+      float: left;
+  }
+
+  .t {
+      padding-left: 0.266rem;
+      color: #666666;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+      <div class='list'>
+          <ul class='ulList'>
+              <!-- <li style='overflow:hidden'>
+                  <div class='listInfo'>
+                      <div class="textWrap">
+                          <span class='t'>运距</span><span class='t'>1953km</span>
+                      </div>
+                      <div class="textWrap">
+                          <span class='t'>运距</span><span class='t'>1953km</span>
+                      </div>
+                      <div class="textWrap">
+                          <span class='t'>运距</span><span class='t'>1953km</span>
+                      </div>
+                      <div class="textWrap">
+                          <span class='t'>运距</span><span class='t'>1953km</span>
+                      </div>
+                  </div>
+              </li> -->
+          </ul>
+      </div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+var loginInfo;
+var account;
+var projectCode;
+var pageIndex;
+var pageSize = 10;
+var dataLength;
+var arrayLength;
+var datas = [];
+var count;
+	apiready = function() {
+    api.getPrefs({
+        key: 'loginInfo'
+    }, function(ret, err) {
+        if (ret) {
+            loginInfo = JSON.parse(ret.value);
+            account = loginInfo.account;
+            projectCode = loginInfo.projects.projectCode;
+            getTrainList(account,projectCode);
+        } else {
+            alert("请退出重新登录");
+        }
+    });
+    //下拉加载更多
+    api.addEventListener({
+        name: 'scrolltobottom',
+        extra: {
+          //设置距离底部多少距离时触发，默认值为0，数字类型
+            threshold: 0
+        }
+    }, function(ret, err) {
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        $reiz.request.post($reiz.urls['safe'].getSafeTrainPageList, {
+          "account": account,
+          "projectCode": projectCode,
+          "pageIndex": pageIndex,
+          "pageSize": pageSize,
+        }, function(ret, err) {
+          if (ret.code == '200' && JSON.parse(ret.data).records.length > 0){
+            var data1 = JSON.parse(ret.data);
+            var attendamceList = data1.records;
+            count = attendamceList.total;
+            //算出下拉后最新数据的长度 计算分页
+            arrayLength = arrayLength + attendamceList.length;
+            pageIndex = Math.ceil(arrayLength / pageSize + 1);
+            api.hideProgress();
+            moreData(attendamceList);
+          }else{
+            api.hideProgress();
+            api.toast({
+              msg: '没有更多数据了'
+            });
+          }
+        })
+    })
+
+	};
+  //获取列表数据
+  function getTrainList(account,projectCode) {
+      api.showProgress({
+          title: '加载中...',
+          modal: false
+      });
+      $reiz.request.post($reiz.urls['safe'].getSafeTrainPageList, {
+          body: {
+              "account": account,
+              "projectCode": projectCode,
+              "pageIndex": 1,
+              "pageSize": pageSize,
+          }
+      }, function(ret, err) {
+          if(ret.code == 200){
+            api.hideProgress();
+            $('.ulList').empty();
+             var data1 = JSON.parse(ret.data);
+             count = data1.total;
+             var materialList = data1.records;
+             if(materialList.length>0){
+               arrayLength = materialList.length;
+               pageIndex = Math.ceil(arrayLength / pageSize + 1);
+               //处理数据
+               moreData(materialList);
+             }else{
+               api.toast({
+                 msg: '没有更多数据了'
+               });
+             }
+          }else{
+            api.hideProgress();
+            api.toast({
+              msg: '没有更多数据了'
+            });
+          }
+      })
+    }
+
+    function moreData(data){
+      var list = [];
+      $(data).each(function(index, val) {
+        var trainName = val.trainName || ' '; //培训名称
+        var trainTime = val.trainTime || ' '; //培训时间
+        var trainSite = val.trainSite || ' '; //培训地点
+        var resenter = val.resenter || ' '; //主讲人
+        var ptName = $reiz.handleProjectName(val);
+        list.push("<li style='overflow:hidden'>");
+        list.push("<div class='listInfo'>");
+        list.push("<div class='textWrap'><span class='t'>项目名称</span><span class='t'>" + ptName + "</span></div>");
+        list.push("<div class='textWrap'><span class='t'>培训名称</span><span class='t'>" + trainName + "</span></div>");
+        list.push("<div class='textWrap'><span class='t'>培训时间</span><span class='t'>" + trainTime + "</span></div>");
+        list.push("<div class='textWrap'><span class='t'>培训地点</span><span class='t'>" + trainSite + "</span></div>");
+        list.push("<div class='textWrap'><span class='t'>主&nbsp&nbsp讲&nbsp&nbsp人</span><span class='t'>" + resenter + "</span></div>");
+        list.push("</div></li>");
+      })
+      $('.ulList').append(list.join(''));
+      var ulList = document.querySelectorAll(".ulList li");
+      for(var i=0;i<ulList.length;i++){
+        ulList[i].index = [i];
+        ulList[i].onclick = function(){
+          api.openWin({
+              name: 'train_detail_win',
+              url: './train_detail_win.html',
+              pageParam: {
+                  element: data[this.index]
+              }
+          });
+        }
+      }
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+		<style>
+		html,body{
+			background-color: #ffffff;
+		}
+		.topImg{
+			width: 100%;
+			height: 100px;
+		}
+		.topImg img{
+			width: 100%;
+			height: 100%;
+		}
+		.blue{
+			color:#02B0E9;
+		}
+		.textColor{
+			color:#666666 !important;
+		}
+		.bottomBorder{
+			border-bottom: 1px solid #EDF8FE !important;
+		}
+		</style>
+	</head>
+	<body>
+		<div class='topImg'>
+			<img src="../../image/safetyInspect/questionTop.jpg" alt="">
+		</div>
+		<section class="aui-content">
+        <ul class="aui-list aui-list-in aui-margin-b-15 questionWrap">
+            <!-- <li class="aui-list-item bottomBorder" onclick="">
+                <div class="aui-list-item-label-icon">
+                    <i class="icon iconfont blue icon-daowei"></i>
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="textColor aui-list-item-title">0#岛位</div>
+                </div>
+            </li> -->
+        </ul>
+    </section>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript">
+  var pageIndex = 1;
+  var pageSize = 10;
+  var arrayLength;
+  var count;
+		 apiready = function() {
+        getQuenstionList();
+				api.addEventListener({
+						name: 'scrolltobottom',
+						extra: {
+								threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+						}
+				}, function(ret, err) {
+					api.showProgress({
+							title: '加载中...',
+							modal: false
+					});
+
+
+					api.ajax({
+	             url: $reiz.urls['safetyInspect'].questionList,
+	             method: 'post',
+	             headers: {
+	                 'Content-Type': 'application/json',
+	                 'token':$reiz.appToken,
+	             },
+	             data: {
+	                 body: {
+										 "pageIndex": pageIndex,
+										 "pageSize": pageSize,
+	                 }
+	             }
+	         }, function(ret, err) {
+						 if (ret.code == '200' && JSON.parse(ret.data).records.length > 0){
+							var data = JSON.parse(ret.data);
+							var questionList = data.records;
+							count = questionList.total;
+							arrayLength = arrayLength + questionList.length;
+							pageIndex = Math.ceil(arrayLength / pageSize + 1);
+							moreData(questionList);
+						 }else{
+							api.hideProgress();
+							api.toast({
+								msg: '没有更多数据了'
+							});
+						 }
+					 });
+
+
+
+
+
+
+					// $reiz.request.post($reiz.urls['safetyInspect'].questionList, {
+					// 	 body:{
+					// 		 "pageIndex": pageIndex,
+					// 		 "pageSize": pageSize,
+					// 	 }
+					//  },function(ret,error){
+					// 	 if (ret.code == '200' && JSON.parse(ret.data).records.length > 0){
+					//
+					// 		 var data = JSON.parse(ret.data);
+					// 		 var questionList = data.records;
+					// 		 count = questionList.total;
+					// 		 arrayLength = arrayLength + questionList.length;
+					// 		 pageIndex = Math.ceil(arrayLength / pageSize + 1);
+					// 		 moreData(questionList);
+					// 	 }else{
+					// 		 api.hideProgress();
+					// 		 api.toast({
+					// 			 msg: '没有更多数据了'
+					// 		 });
+					// 	 }
+					//  })
+				})
+		 };
+
+
+
+
+     function getQuenstionList(){
+       api.showProgress({
+           title: '加载中...',
+           modal: false
+       });
+
+
+			 api.ajax({
+						url: $reiz.urls['safetyInspect'].questionList,
+						method: 'post',
+						headers: {
+								'Content-Type': 'application/json',
+								'token':$reiz.appToken,
+						},
+						data: {
+								body: {
+									"pageIndex": pageIndex,
+									"pageSize": pageSize,
+								}
+						}
+				}, function(ret, err) {
+					if(ret.code  == 200){
+							 $('.questionWrap').empty();
+								api.hideProgress();
+								var data = JSON.parse(ret.data);
+								 count = data.total;
+								var questionList = data.records;
+								if(questionList.length>0){
+										arrayLength = questionList.length;
+										pageIndex = Math.ceil(arrayLength / pageSize + 1);
+										moreData(questionList);
+								}
+							}else{
+							 api.hideProgress();
+								api.toast({
+									msg: '没有更多数据了'
+								});
+							}
+				})
+
+
+
+
+
+
+			 //
+      //  $reiz.request.post($reiz.urls['safetyInspect'].questionList, {
+      //     body:{
+			// 			"pageIndex": 1,
+			// 			"pageSize": pageSize,
+      //     }
+      //   },function(ret,error){
+      //      if(ret.code  == 200){
+			// 			 $('.questionWrap').empty();
+      //        api.hideProgress();
+      //        var data = JSON.parse(ret.data);
+      //         count = data.total;
+      //        var questionList = data.records;
+      //        if(questionList.length>0){
+      //            arrayLength = questionList.length;
+      //            pageIndex = Math.ceil(arrayLength / pageSize + 1);
+      //            moreData(questionList);
+      //        }
+      //      }else{
+			// 			 api.hideProgress();
+      //        api.toast({
+      //          msg: '没有更多数据了'
+      //        });
+      //      }
+      //   })
+     }
+     //处理数据及点击事件
+     function moreData(questionListst){
+         for(var i=0;i<questionListst.length;i++){
+           var html = '<li class="aui-list-item bottomBorder">' +
+                      '          <div class="aui-list-item-label-icon">' +
+                      '              <i class="icon iconfont blue icon-daowei"></i>' +
+                      '          </div>' +
+                      '          <div class="aui-list-item-inner aui-list-item-arrow">' +
+                      '              <div class="textColor aui-list-item-title">'+questionListst[i].examName+'</div>' +
+                      '          </div>' +
+                      '      </li>'
+            $('.questionWrap').append(html);
+         }
+        var questionAll=document.querySelectorAll(".questionWrap li");
+        for(var i=0;i<questionAll.length;i++){
+          questionAll[i].index = i;
+          questionAll[i].onclick = function() {
+            openQuestionInfo(questionListst[this.index])
+          }
+        }
+     }
+
+
+     function openQuestionInfo(data){
+        api.openWin({
+        	name: 'answer_win',
+        	url: './answer_win.html',
+        	pageParam: {
+            examId:data.id//试题id
+        	}
+        });
+     }
+
+	</script>
+</html>

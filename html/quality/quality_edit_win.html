@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    </style>
+</head>
+<body>
+	<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				 质量巡检
+			</div>
+			<a class="aui-pull-right aui-btn" onclick="remove()">
+				<span class="aui-iconfont">删除</span>
+			</a>
+		</header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+var id ;
+	apiready = function(){
+		var header = $api.byId('header');
+				$api.fixIos7Bar(header);
+				var nav = $api.byId('wrapper');
+				var header_h = $api.offset(header).h;
+        var element = api.pageParam.element;
+				id = element.id;
+				var account = api.pageParam.account;
+	      var projectCode  = api.pageParam.projectCode;
+				api.openFrame({
+					name : 'quality_edit_frame',
+					url : 'quality_edit_frame.html',
+          pageParam : {
+            element : element,
+						account:account,
+						projectCode:projectCode
+          },
+					rect : {
+						x : 0,
+						y : header_h,
+						w : 'auto',
+						h : 'auto'
+					}
+				})
+	};
+	function remove(){
+		$reiz.request.post($reiz.urls['safe'].deleteCheck, {
+			body: {
+					"id": id,
+			}
+		}, function (ret, err) {
+			api.alert({
+					msg: '删除成功'
+			}, function(ret, err) {
+					api.closeWin();
+			});
+			api.execScript({
+			 name:'quality_check_win',
+			 frameName : 'quality_check_frame',
+			 script : 'getSafeDate();'
+		 });
+		});
+  }
+</script>
+</html>

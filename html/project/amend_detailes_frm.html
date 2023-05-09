@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工程整改</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css" />
+    <link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+    <style>
+        .fjTit {
+            width: 100%;
+            height: 45px;
+            line-height: 45px;
+            border-top: 3px solid #E8F6FF;
+            color: #666666;
+            font-size: 14px;
+            padding: 0 10px;
+        }
+
+        .fileList ul li {
+            width: 100%;
+            height: 45px;
+            line-height: 45px;
+            font-size: 14px;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            border-bottom: 1px solid #92d6ee;
+        }
+
+        .lText {
+            flex: 1;
+            font-size: 12px;
+            padding-left: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .rIcon {
+            width: 50px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 50px;
+            color: #02B0E9;
+        }
+
+        .img-container {
+            float: left;
+            width: 80px;
+            margin: 5px;
+            height: 100px;
+        }
+
+        .img-item {
+            line-height: 80px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .img-bottom-btn {
+            width: 78px;
+            height: 18px;
+            line-height: 18px;
+            font-size: 10px;
+            color: red;
+            border: 1px solid red;
+            border-radius: 1px;
+            display: inline;
+        }
+
+        .pic {
+            display: inline;
+        }
+
+        .pic img {
+            display: block;
+            margin: 9px;
+            width: 80px;
+            height: 80px;
+            float: left;
+        }
+
+        .aui-btn-row:after {
+            border: none;
+        }
+
+        .btn_ {
+            width: 80%;
+            text-align: center;
+            border-radius: 3px;
+            height: 35px;
+            line-height: 35px;
+        }
+
+        .btn2 {
+            color: #ffffff;
+            background: linear-gradient(to right, #23d2ff, #138dc5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+              <div class='fjTit'>整改前</div>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        类&nbsp&nbsp&nbsp&nbsp型
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="checkType" type="text" placeholder="请输入参与人员">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        项目名称
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="projectName" type="text" placeholder="请输入项目名称">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        巡&nbsp&nbsp检&nbsp&nbsp人
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="checkUserName" type="text" placeholder="请输入巡检人">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        巡检时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="checkDate" type="text" placeholder="请选择时间">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        整&nbsp&nbsp改&nbsp&nbsp人
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="amendUserName" type="text" placeholder="请输入整改人">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        整改期限
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="amendTerm" type="text" placeholder="请选择时间">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        整改内容
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input readonly="readonly" class="aui-input" id="checkContent" type="text" placeholder="请输入整改内容">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        状&nbsp&nbsp&nbsp&nbsp态
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select disabled id="status">
+												 <option value=" ">请选择状态</option>
+												 <option value="00">待整改</option>
+												 <option value="01">待审批</option>
+												 <option value="02">审批拒绝</option>
+												 <option value="03">审批通过</option>
+											</select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        理&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp由
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea disabled style="height:135px;" class="aui-input" id="reasonNopass" placeholder="不合格理由(合格请忽略)"></textarea>
+                    </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        附件列表
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="before_Img_container"></div>
+                        </div>
+                    </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        视频列表
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="before_video_container"></div>
+
+                        </div>
+                    </div>
+            </li>
+            <div class='fjTit'>整改后</div>
+            <li class="aui-list-item  isAmend0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        复&nbsp&nbsp查&nbsp&nbsp人
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select id="reviewUser">
+											 	<option value=" ">请选择复查人</option>
+											</select>
+                    </div>
+            </li>
+            <li class="aui-list-item isAmend0">
+                <div class="aui-list-item-inner ">
+                    <div class="aui-list-item-label">
+                        复查单位
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="aui-input" id="reviewUnit" type="text" placeholder="请输入复查单位">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item isAmend0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        复查时间
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="aui-input" id="reviewDate" type="text" readonly="" placeholder="请选择日期">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item isAmend0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        复查意见
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input class="aui-input" id="reviewOpinion" type="text" placeholder="请输入复查意见">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item ">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        整改描述
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea style="height:135px;" class="aui-input" id="amendDescription" placeholder="请输入整改描述 "></textarea>
+                    </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        附件列表
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="after_Img_container"></div>
+                        </div>
+                    </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        视频列表
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="after_video_container"></div>
+
+                        </div>
+                    </div>
+            </li>
+            <li class="aui-list-item  imgWrap">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        上传附件
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="img_container"></div>
+                        <div class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openSetting();"></img>
+                        </div>
+                    </div>
+            </li>
+            <li class="aui-list-item videoWrap">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        小&nbsp&nbsp视&nbsp&nbsp频
+                    </div>
+                    <div class="aui-list-item-input">
+                        <div id="video_container"></div>
+                        <div class="pic"><img id="takepic" src="../../image/common/camero.png" onclick="openVideoSetting();"></img>
+                        </div>
+                    </div>
+            </li>
+            <li class="aui-list-item amendBtn" style='display:none'>
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                    <div class="btn_ btn2" onclick="send();">保存</div>
+                </div>
+            </li>
+            <li class="aui-list-item checkBtn" style='display:none'>
+                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+                    <div class="btn_ btn2" onclick="approvalYes();" style='margin-right:10px'>审批通过</div>
+                    <div class="btn_ btn2" onclick="approvalNo();">审批拒绝</div>
+                </div>
+            </li>
+        </ul>
+        </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script src="../../script/LCalendar/js/LCalendar.js"></script>
+<script type="text/x-dot-template" id="img_tpl">
+    <div class="img-container">
+        <img class="img-item" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showImg('{{=it.lookImg}}',{{=it.isNet}});" />
+        {{? !it.isNet}}
+                <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+        {{?}}
+    </div>
+</script>
+<!-- 小视频 -->
+<script type="text/x-dot-template" id="video_tpl">
+    <div class="img-container">
+        <img class="img-item" data-video="{{=it.video_url}}" id='{{=it.id}}' src="{{=it.img_url}}" onclick="showVideo('{{=it.video_url}}');" />
+        {{? !it.isNet}}
+                <button class="img-bottom-btn" onclick="removeImg(this,{{=it.isNet}},'{{=it.id}}','{{=it.yid}}');">删除</button>
+        {{?}}
+    </div>
+</script>
+<script type="text/javascript">
+    var element;
+    var account;
+		var token;
+    var amendUserAccount; //审批人
+    var checkUserAccount; //整改人
+    var btnStatus; //当前数据的整改状态
+    var beforeFiles; //整改前附件信息
+    var afterFiles; //整改后附件信息
+    apiready = function() {
+				api.getPrefs({
+	          key: 'userJwtToken'
+	      }, function(ret, err){
+	          if( ret ){
+	               token = ret.value;
+	          }else{
+	               alert( JSON.stringify( err ) );
+	          }
+	      });
+        var calendar = new LCalendar();
+        calendar.init({
+            'trigger': '#reviewDate', //标签ID
+            'type': 'date', //date 调出日期选择
+            'minDate': (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+            'maxDate': (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+        });
+        element = api.pageParam.element;
+        account = api.pageParam.account;
+        amendUserAccount = element.amendUserAccount; //整改人
+        checkUserAccount = element.checkUserAccount; //巡检
+        btnStatus = element.status;
+        peopleList(); //复查人下拉
+        switch (element.checkType) {
+            case '1':
+                var typeText = '安全检查'
+                break;
+            case '2':
+                var typeText = '质量检查'
+                break;
+            case '3':
+                var typeText = '工程检查'
+                break;
+        }
+        //整改前数据回显
+        $('#checkType').val(typeText); //类型
+        $('#projectName').val(element.projectName); //项目名称
+        $('#checkUserName').val(element.checkUserName); //巡检人
+        $('#checkDate').val(timeFormatter(element.checkDate)); //巡检日期
+        $('#amendUserName').val(element.amendUserName); //整改人
+        $('#amendTerm').val(timeFormatter(element.amendTerm)); //整改期限
+
+        $('#checkContent').val(element.checkContent); //整改内容
+        $('#status').val(element.status); //状态
+        $('#reasonNopass').val(element.reasonNopass); //不合格理由
+        beforeFiles = element.files; //整改前附件信息
+        afterFiles = element.amendList; //整改后附件信息
+        //整改前附件列表
+        var beforImg = [];
+        var beforVideo = [];
+        var afterImg = [];
+        var afterVideo = [];
+        if(beforeFiles.length>0){
+           for (var i = 0; i < beforeFiles.length; i++) {
+              if(beforeFiles[i].type == 'jpg' ||
+               beforeFiles[i].type == 'png' ||
+               beforeFiles[i].type == 'bmp' ||
+               beforeFiles[i].type == 'gif' ||
+               beforeFiles[i].type == 'jpeg' ){
+                 beforImg.push(beforeFiles[i]);
+              }else if(beforeFiles[i].type == 'mp4' ){
+                 beforVideo.push(beforeFiles[i]);
+              }
+           }
+        }
+        if(afterFiles.length>0){
+           for (var i = 0; i < afterFiles.length; i++) {
+             if(afterFiles[i].type == 'jpg' ||
+              afterFiles[i].type == 'png' ||
+              afterFiles[i].type == 'bmp' ||
+              afterFiles[i].type == 'gif' ||
+              afterFiles[i].type == 'jpeg' ){
+                afterImg.push(afterFiles[i]);
+             }else if(afterFiles[i].type == 'mp4' ){
+                afterVideo.push(afterFiles[i]);
+             }
+           }
+        }
+        //回显整改前的图片
+        setPicNet(beforImg,'before_Img_container');
+          //回显整改前的视频
+        setVideo(beforVideo,'before_video_container');
+        //回显整改后的图片
+        setPicNet(afterImg,'after_Img_container');
+          //回显整改后的视频
+        setVideo(afterVideo,'after_video_container');
+        //回显图片
+        function setPicNet(paths,domId) {
+            var img_tpl = doT.template($api.byId("img_tpl").text);
+            for (var i in paths) {
+                $api.byId(domId).innerHTML += img_tpl({
+                  img_url: paths[i].thumbnail2x,
+                  isNet: true,
+                  id: paths[i].id,
+                  lookImg:paths[i].path
+                });
+            }
+          };
+          //回显视频
+          function setVideo(paths,domId) {
+                var video_tpl = doT.template($api.byId("video_tpl").text);
+                for (var i in paths) {
+                  $api.byId(domId).innerHTML += video_tpl({
+                      img_url: '../../image/10.png',
+                      video_url:paths[i].path,
+                      isNet: true,
+                      id: paths[i].id,
+                  });
+                }
+        };
+        function time(time) {
+            var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+            return date.toJSON().substr(0, 10).replace('T', ' ');
+        }
+        //整改后数据回显
+        $('#reviewUser').val(element.reviewUser); //复查人
+        $('#reviewUnit').val(element.reviewUnit); //复查单位
+        if (element.reviewDate != null) {
+            $('#reviewDate').val(time(element.reviewDate)); //复查时间
+        }
+        $('#reviewOpinion').val(element.reviewOpinion); //复查意见
+        $('#amendDescription').val(element.amendDescription); //整改描述
+        //审批状态判断
+				//当前是审批人 并且状态是待整改 只能看到整改描述但是禁止操作
+				//隐藏所有按钮和上传
+				if (account == checkUserAccount && btnStatus == '00') {
+					$('.isAmend0').hide();
+					$('.amendBtn').hide();
+					$('.checkBtn').hide();
+					$('.imgWrap').hide();
+					$('.videoWrap').hide();
+					$('#amendDescription').attr('disabled', 'disabled');
+				}
+				//当前是审批人 并且状态是待审批 显示审批处理按钮
+				if (account == checkUserAccount && btnStatus == '01') {
+					$('.isAmend0').show();
+					$('.checkBtn').show();
+          $('.imgWrap').hide();
+          $('.videoWrap').hide();
+					$('#amendDescription').attr('disabled', 'disabled');
+				}
+
+        //整改状态判断
+        //当前登录是整改用户并且是待整改只能操作整改描述和上传附件
+        if (account == amendUserAccount && btnStatus == '00') {
+            $('.amendBtn').show();
+            $('.checkBtn').hide();
+            $('.isAmend0').hide();
+        }
+        //当前登录是整改用户并且是待审批只显示整改描述禁止用户操作 所有按钮隐藏
+        if (account == amendUserAccount && btnStatus == '01') {
+            $('.amendBtn').hide();
+            $('.isAmend0').hide();
+            $('.checkBtn').hide();
+            $('.imgWrap').hide();
+            $('.videoWrap').hide();
+            $('#amendDescription').attr('disabled', 'disabled');
+        }
+        //如果整改状态为合格 所有按钮隐藏 禁止所有操作
+        if (btnStatus == '03' || btnStatus == '02') {
+            $('.amendBtn').hide();
+            $('.checkBtn').hide();
+            $('.isAmend0').show();
+            $('.imgWrap').hide();
+            $('.videoWrap').hide();
+            $('#reviewUser').attr('disabled', 'disabled');
+            $('#reviewUnit').attr('disabled', 'disabled');
+            $('#reviewDate').attr('disabled', 'disabled');
+            $('#reviewOpinion').attr('disabled', 'disabled');
+            $('#amendDescription').attr('disabled', 'disabled');
+        };
+    };
+
+		//保存
+    function send() {
+        var amendDescription = $('#amendDescription').val();
+        if (amendDescription == "") {
+            api.alert({
+                msg: "请输入整改描述"
+            });
+            return;
+        }
+        var img = [];
+        var fileIdList = [];
+        api.showProgress({
+            style: 'default',
+            animationType: 'fade',
+            title: '加载中...',
+            text: '请稍后...',
+            modal: false
+        });
+        $('#img_container').find('img').each(function() {
+            if ($(this).attr('isNet') != "true") {
+                img.push($(this).attr('src'));
+            };
+        });
+        $('#video_container').find('img').each(function() {
+            if ($(this).attr('isNet') != "true") {
+                img.push($(this).data('video'));
+            };
+        });
+        if (img.length != 0) {
+					api.ajax({
+						url: $reiz.urls['file'].upload_fujian,
+						method: 'post',
+						headers: {
+						"Authorization": token
+						},
+						data: {
+								values: {
+										masterType: 'bizAmend'
+								},
+								files: {
+										file: img
+								}
+						}
+					}, function(ret, err) {
+							if (ret.code == "200") {
+								var retData = ret.data;
+									 var objData = JSON.parse(retData);
+									 for (var i = 0; i　 < objData.length; i++) {
+											 fileIdList.push(objData[i].fileId);
+									 };
+									 $reiz.request.post($reiz.urls['safe'].amendSubmit, {
+									 		body:{
+												"account":account,
+												"id":element.id,
+												"fileIdList": fileIdList,
+												"amendDescription":$('#amendDescription').val()
+											}
+	 								},function(ret, err) {
+										 if (ret.code == '200') {
+											 api.hideProgress();
+											  api.alert({
+													  msg: '保存成功'
+												}, function(ret, err) {
+														api.closeWin();
+                            api.execScript({
+                             name:'safe_amend_win',
+                             frameName : 'safe_amend_frm',
+                             script : 'setParamer();'
+                           });
+												});
+										 }else{
+											 api.hideProgress();
+											 api.alert({
+													 msg: ret.msg
+											 });
+										 }
+									});
+							}else{
+								api.hideProgress();
+								api.alert({
+										msg: ret.msg
+								});
+							}
+					});
+				}else{
+					$reiz.request.post($reiz.urls['safe'].amendSubmit, {
+						 body:{
+							 "account":account,
+							 "id":element.id,
+							 "fileIdList": [],
+							 "amendDescription":$('#amendDescription').val()
+						 }
+				 },function(ret, err) {
+						if (ret.code == '200') {
+							 api.alert({
+									 msg: '保存成功'
+							 }, function(ret, err) {
+									 api.closeWin();
+                     api.execScript({
+                      name:'safe_amend_win',
+                      frameName : 'safe_amend_frm',
+                      script : 'setParamer();'
+                    });
+							 });
+						}else{
+							api.hideProgress();
+							api.alert({
+									msg: ret.msg
+							});
+						}
+				 });
+				}
+    };
+
+	 //审批通过
+	function approvalYes(){
+		 $reiz.request.post($reiz.urls['safe'].approve, {
+		 	 body:{
+		 		 "account":account,
+		 		 "id":element.id,
+					"approvalType":"03",
+					"reviewUser":$('#reviewUser').val(),
+					"reviewUnit":$('#reviewUnit').val(),
+					"reviewOpinion":$('#reviewOpinion').val(),
+					"reviewDate":$('#reviewDate').val(),
+		 	 }
+		 },function(ret, err) {
+				if(ret.code == 200){
+					api.alert({
+							msg: '审批成功'
+					}, function(ret, err) {
+            api.execScript({
+             name:'safe_amend_win',
+             frameName : 'safe_amend_frm',
+             script : 'setParamer();'
+           });
+						 api.closeWin();
+					});
+				}else{
+					api.hideProgress();
+					api.alert({
+							msg: ret.msg
+					});
+				}
+		 })
+	};
+	//审批拒绝
+ function approvalNo(){
+		$reiz.request.post($reiz.urls['safe'].approve, {
+			body:{
+				"account":account,
+				"id":element.id,
+				 "approvalType":"02",
+				 "reviewUser":$('#reviewUser').val(),
+				 "reviewUnit":$('#reviewUnit').val(),
+				 "reviewOpinion":$('#reviewOpinion').val(),
+				 "reviewDate":$('#reviewDate').val(),
+			}
+		},function(ret, err) {
+			alert(JSON.stringify(ret))
+			 if(ret.code == 200){
+				 api.alert({
+						 msg: '处理成功'
+				 }, function(ret, err) {
+						 api.closeWin();
+						 api.execScript({
+							 name:'safe_amend_win',
+							 frameName : 'safe_amend_frm',
+							 script : 'setParamer();'
+						 });
+				 });
+			 }else{
+				 api.hideProgress();
+				 api.alert({
+						 msg: ret.msg
+				 });
+			 }
+		})
+ };
+    //初始化时间戳
+    function timeFormatter(time) {
+        if (time) {
+            var date = new Date(time) //把定义的时间赋值进来进行下面的转换
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var day = date.getDate().toString().padStart(2, "0");
+            var hour = date.getHours().toString().padStart(2, "0");
+            var minute = date.getMinutes().toString().padStart(2, "0");
+            var second = date.getSeconds().toString().padStart(2, "0");
+            return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        } else {
+            return '';
+        }
+    }
+    //参与人下拉框
+    function peopleList() {
+        $reiz.request.post($reiz.urls['safe'].getUsersByAccount, {
+            body: {
+                "account": account
+            }
+        }, function(ret, err) {
+            for (var i = 0; i < ret.length; i++) {
+                $('#reviewUser').append('<option value=' + ret[i].account + '>' + ret[i].name + '</option>')
+            }
+        });
+    }
+    //上传附件
+    function openSetting() {
+        isSettingOpen = true;
+        api.openFrame({
+            name: 'takepic',
+            url: './takepic.html',
+            bgColor: 'rgba(0,0,0,0.6)',
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                winName: 'amend_detailes_frm'
+            }
+        });
+    };
+    //显示多个上传附件的数据
+    var setPicInfos = function(pathsStr) {
+        var paths = pathsStr.split(',');
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        for (var i in paths) {
+            $api.byId("img_container").innerHTML += img_tpl({
+                img_url: paths[i],
+                isNet: false
+            });
+        }
+        api.closeFrame({
+            name: 'takepic'
+        });
+    };
+    //显示上传附件的数据
+    var setPicInfo = function(path) {
+        var img_tpl = doT.template($api.byId("img_tpl").text);
+        $api.byId("img_container").innerHTML += img_tpl({
+            img_url: path,
+            isNet: false
+        });
+        api.closeFrame({
+            name: 'takepic'
+        });
+    };
+    //上传小视频
+    var openVideoSetting = function() {
+        isSettingOpen = true;
+        api.openFrame({
+            name: 'takepic_video',
+            url: './takepic_video.html',
+            bgColor: 'rgba(0,0,0,0.6)',
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                winName: 'amend_detailes_frm'
+            }
+        });
+    };
+    //删除图片
+    function removeImg(el, isNet, id) {
+        if (isNet) {
+            api.showProgress();
+            api.ajax({
+                url: $reiz.urls['file'].delete_fujian,
+                method: 'post',
+                timeout: 60,
+                dataType: 'json',
+                cache: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': token
+                },
+                data: {
+                    body: {
+                        "id": id
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.hideProgress();
+                    if (ret.code == '200') {
+                        el.parentNode.remove();
+                    } else {
+                        api.alert({
+                            msg: ret.msg
+                        });
+                        api.hideProgress();
+                    }
+                } else {
+                    api.toast({
+                        msg: $reiz.error.getErrorMsg(err)
+                    });
+                    api.hideProgress();
+                }
+            });
+        } else {
+            el.parentNode.remove();
+        }
+    }
+    //上传小视频
+    var setVideoInfos = function(pathsStr) {
+        var paths = pathsStr.split(',');
+        var video_tpl = doT.template($api.byId("video_tpl").text);
+        for (var i in paths) {
+            $api.byId("video_container").innerHTML += video_tpl({
+                img_url: '../../image/10.png',
+                video_url: paths[i],
+                isNet: false
+            });
+        }
+        api.closeFrame({
+            name: 'takepic_video'
+        });
+    };
+    //显示视频
+    function showVideo(videoUrl) {
+        api.openWin({
+            name: 'videoplay',
+            url: './videoplay_win.html',
+            pageParam: {
+                "videoUrl": videoUrl
+            }
+        })
+
+    }
+
+    function showImg(src, isNet) {
+        var photoBrowser = api.require('photoBrowser');
+        if (!isNet) {
+          var img_path = new Array();
+          img_path = src.split('/');
+          var fs = api.require('fs');
+          fs.copyTo({
+              oldPath: src,
+              newPath: 'fs://res'
+          },function(ret,err){
+          if (ret.status) {
+              var fs_path= 'fs://res/'+img_path[img_path.length-1];
+              photoBrowser.open({
+                images : [fs_path],
+                placeholderImg : 'widget://res/img/apicloud.png',
+                bgColor : '#000'
+              }, function(ret, err) {
+                if (ret) {
+                  if (ret.eventType == 'click')
+                    photoBrowser.close();
+                } else {
+                  alert(JSON.stringify(err));
+                }
+              });
+          }else {
+              console.log(err.msg);
+          };
+      });
+        } else {
+            src = src.replace('thumb/thumb_', '/');
+            photoBrowser.open({
+                images: [src],
+                placeholderImg: 'widget://res/img/apicloud.png',
+                bgColor: '#000'
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.eventType == 'click')
+                        photoBrowser.close();
+                } else {
+                    alert(JSON.stringify(err));
+                }
+            });
+        }
+    }
+</script>
+
+</html>

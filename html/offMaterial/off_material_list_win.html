@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>运单列表面</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<style>
+			body {
+				background-color: #ffffff;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+			<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+			<div class="aui-title">
+				<a id="title"></a>
+			</div>
+			<a class="aui-pull-right aui-btn" onclick="initUploadDbToCloud()"> <span class="aui-iconfont">同步运单</span> </a>
+		</header>
+		<div class="aui-bar aui-bar-btn aui-bar-btn-round" style="width:90%;padding-top:5px;">
+			<div class="aui-bar-btn-item aui-active" id="received" onclick="received()">
+				已收车
+			</div>
+			<div class="aui-bar-btn-item" id="unreceived" onclick="unreceived()">
+				未收车
+			</div>
+		</div>
+		<div class="aui-bar aui-bar-btn aui-bar-btn-round" style="width:90%;padding-top:5px;border: 0px solid red;border-bottom: 1px solid rgb(238, 222, 222);">
+			<div class="aui-bar-btn-item" style="width:90%;padding-top:5px;border: 0px solid red;border-bottom:1px solid rgb(238, 222, 222);" id="unsync">
+				未同步运单数
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+	<script type="text/javascript" src="../../script/db-api.js"></script>
+	<script type="text/javascript" src="../../script/offline-sync-method.js"></script>
+	<script type="text/javascript">
+		var hasSelected = 1;
+		apiready = function() {
+			var header = $api.byId('header');
+			$api.fixIos7Bar(header);
+			var nav = $api.byId('wrapper');
+			var header_h = $api.offset(header).h;
+			$("#title").text("");
+
+			api.openFrame({
+				name : 'off_material_list_frame',
+				url : './off_material_list_frame.html',
+				rect : {
+					x : 0,
+					y : header_h + 75,
+					w : 'auto',
+					h : 'auto'
+				}
+			})
+		};
+		
+
+		function count() {
+			api.execScript({
+				frameName : 'off_material_list_frame',
+				script : 'countt();'
+			});
+		}
+
+		//运单数据上传云端
+		function initUploadDbToCloud(){
+			syncUploadDbDataToCloud(true);
+		}
+		function received() {
+			if (hasSelected == 0) {
+				$("#unreceived").removeClass("aui-active");
+				$("#received").addClass("aui-active");
+				hasSelected = 1;
+				api.execScript({
+					frameName : 'off_material_list_frame',
+					script : 'loadWaybillDbDatalist("' + hasSelected + '");'
+				});
+			}
+		}
+
+		function unreceived() {
+			if (hasSelected == 1) {
+				$("#received").removeClass("aui-active");
+				$("#unreceived").addClass("aui-active");
+				hasSelected = 0;
+				api.execScript({
+					frameName : 'off_material_list_frame',
+					script : 'loadWaybillDbDatalist("' + hasSelected + '");'
+				});
+			}
+		}
+
+		function change(count, noCount) {
+			$("#received").text("已收车(" + count + ")");
+			$("#unreceived").text("未收车(" + noCount + ")");
+		}
+
+		function changeTitle(arg) {
+			$("#title").text(arg);
+		}
+
+		function changeDync(count, noCount, unsync) {
+			$("#received").text("已收车(" + count + ")");
+			$("#unreceived").text("未收车(" + noCount + ")");
+			$("#unsync").text("未同步运单(" + unsync + ")");
+		}
+	</script>
+</html>

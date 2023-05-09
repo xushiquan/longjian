@@ -1,0 +1,246 @@
+/*图标*/
+@font-face {
+	font-family: "reizicon";
+	src: url('reiz_icon.ttf') format('truetype');
+}
+.reiz-iconfont {
+	font-family: "reizicon" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.reiz-default:before {
+	content: "\e6BF";
+}
+#func_spjk:before {
+	content: "\e6af";
+}
+#func_tjjk:before {
+	content: "\e6e1";
+}
+#func_rytj:before {
+	content: "\e69d";
+}
+#func_jcrs:before {
+	content: "\e69b";
+}
+#func_hjjc:before {
+	content: "\e649";
+}
+#func_dljk:before {
+	content: "\e6ec";
+}
+#func_cwsj:before {
+	content: "\e697";
+}
+#func_jbxx:before {
+	content: "\e64c";
+}
+#func_sljk:before {
+	content: "\e64f";
+}
+#func_yytj:before {
+	content: "\e6ac";
+}
+#func_grxf:before {
+	content: "\e651";
+}
+#func_erweima:before {
+	content: "\e69c";
+}
+#func_zsjc:before {
+	content: "\e691";
+}
+#func_ycjc:before {
+	content: "\e699";
+}
+#func_weigui:before {
+	content: "\e6b0";
+}
+#func_gzm:before {
+	content: "\e69f";
+}
+#func_tuku:before {
+	content: "\e739";
+}
+#func_hygl:before {
+	content: "\e6a0";
+}
+#func_qyb:before {
+	content: "\e6b2";
+}
+#func_kqcx:before {
+	content: "\e6b4";
+}
+#func_xmdsj:before {
+	content: "\e6e4";
+}
+#func_txl:before {
+	content: "\e6bd";
+}
+#func_grxx:before {
+	content: "\e6e2";
+}
+#func_ldljg:before {
+	content: "\e6e3";
+}
+#func_ajpush:before {
+	content: "\e6ee";
+}
+#func_rwpf:before {
+	content: "\e6ed";
+}
+#func_standard:before {
+	content: "\e6ef";
+}
+#func_jikeng:before {
+	content: "\e6f0";
+}
+#func_gantt:before {
+	content: "\e6f2"
+}
+#func_taskjck:before {
+	content: "\e6f3"
+}
+#func_anquan:before {
+	content: "\e6f4"
+}
+#func_zhiliang:before {
+	content: "\e6f5"
+}
+#func_gzrz:before {
+	content: "\e6f6"
+}
+#func_gcjdjcjl:before {
+	content: "\e6f7"
+}
+#func_zgtzd:before {
+	content: "\e6f8"
+}
+#func_zghfd:before {
+	content: "\e6f9"
+}
+#func_xuncha:before {
+	content: "\e764"
+}
+#more:before {
+	content: "\e69e";
+}
+
+#gzxt:before {
+	content: "\e6b7";
+}
+#jdgl:before {
+	content: "\e6b8";
+}
+#aqgl:before {
+	content: "\e6b9";
+}
+#jsgl:before {
+	content: "\e6ba";
+}
+#lwgl:before {
+	content: "\e6bb";
+}
+#zlgl:before {
+	content: "\e6bc";
+}
+#clgl:before {
+	content: "\e6bd";
+}
+#sbhj:before {
+	content: "\e6bf";
+}
+#xfgl:before {
+	content: "\e6ea";
+}
+#other:before {
+	content: "\e6eb";
+}
+
+.reiz-icon-logout:before {
+	content: "\e6d8";
+}
+.reiz-icon-message:before {
+	content: "\e6d3";
+}
+.reiz-icon-update:before {
+	content: "\e6d6";
+}
+.reiz-icon-modifypwd:before {
+	content: "\e6d5";
+}
+.reiz-icon-system:before {
+	content: "\e6d4";
+}
+.reiz-icon-about:before {
+	content: "\e6d7";
+}
+.reiz-icon-phone:before {
+	content: "\e6cd";
+}
+
+.reiz-icon-fine {
+	color: #FFBB57;
+}
+.reiz-icon-fine:before {
+	content: "\e6dd";
+}
+
+.reiz-icon-search:before {
+	content: "\e65c";
+}
+
+.reiz-icon-people:before {
+	content: "\e686";
+}
+
+.reiz-icon-overcast {
+	color: #898681;
+}
+.reiz-icon-overcast:before {
+	content: "\e6de";
+}
+
+.reiz-icon-rain {
+	color: #00A1E8;
+}
+.reiz-icon-rain:before {
+	content: "\e6df";
+}
+
+.reiz-icon-snow {
+	color: #356B8B;
+}
+.reiz-icon-snow:before {
+	content: "\e6e0";
+}
+
+.reiz-color-azure0 {
+	color: #1647E9 !important;
+}
+.reiz-color-azure1 {
+	color: #A64847 !important;
+}
+.reiz-color-azure2 {
+	color: #F35E4C !important;
+}
+.reiz-color-azure3 {
+	color: #F6A615 !important;
+}
+.reiz-color-azure4 {
+	color: #0DA921 !important;
+}
+.reiz-color-azure5 {
+	color: #4D98B6 !important;
+}
+.reiz-color-azure6 {
+	color: #15BAA9 !important;
+}
+.reiz-color-azure7 {
+	color: #5C74AB !important;
+}
+.reiz-color-azure8 {
+	color: #C0CCAD !important;
+}

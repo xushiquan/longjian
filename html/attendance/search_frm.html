@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+			<link rel="stylesheet" type="text/css" href="../../script/LCalendar/css/LCalendar.css"/>
+	<style>
+	html,body{
+		width: 100%;
+		height: 100%;
+	}
+	.wrap{
+		width: 100%;
+		height: 100%;
+	}
+ .btn_{
+		 width: 6rem;
+		 text-align: center;
+		 margin-right: 0.4rem;
+		 border-radius: 3px;
+		 height: 35px;
+		 line-height: 35px;
+ }
+ .btn1{
+	 border:1px solid #1598CE;
+	 background-color: #ffffff;
+	 color:#666666;
+ }
+ .btn2{
+	 color:#ffffff;
+	 background:linear-gradient(to right,#23d2ff,#138dc5);
+ }
+	</style>
+</head>
+
+<body>
+	<div class="wrap">
+		<div class="aui-content aui-margin-b-15">
+			<form class='from_'>
+				<ul class="aui-list aui-form-list">
+					<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+								<div class="aui-list-item-label">
+										姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名
+								</div>
+								<div class="aui-list-item-input">
+										<input type="text"name='workerName' id='workerName' placeholder="请输入姓名">
+								</div>
+							</div>
+					</li>
+					<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+								<div class="aui-list-item-label">
+										身&nbsp&nbsp份&nbsp&nbsp证
+								</div>
+								<div class="aui-list-item-input">
+										<input type="text" name='idCardNumber' id='idCardNumber'  placeholder="请输入身份证">
+								</div>
+							</div>
+					</li>
+					<li class="aui-list-item">
+		        <div class="aui-list-item-inner">
+		            <div class="aui-list-item-label">
+		                开始时间
+		            </div>
+		            <div class="aui-list-item-input">
+		                <input id='startDate' type="text"   readonly="" placeholder="请选择开始时间">
+		            </div>
+		          </div>
+		      </li>
+					<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+								<div class="aui-list-item-label">
+										结束时间
+								</div>
+								<div class="aui-list-item-input">
+										<input id='endDate' type="text" readonly="" placeholder="请选择结束时间">
+								</div>
+							</div>
+					</li>
+					<li class="aui-list-item">
+		                <div class="aui-list-item-inner aui-list-item-center aui-list-item-btn">
+		                    <div class="btn_ btn1">重置</div>
+		                    <div class="btn_ btn2 search">搜索</div>
+		                </div>
+		            </li>
+				</ul>
+			</div>
+		</div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+	<script src="../../script/LCalendar/js/LCalendar.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+	<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript">
+	apiready = function() {
+		var calendar = new LCalendar();
+		var calendar1 = new LCalendar();
+		calendar.init({
+			'trigger' : '#startDate', //标签ID
+			'type' : 'date', //date 调出日期选择
+			'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+			'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+		});
+		calendar1.init({
+			'trigger' : '#endDate', //标签ID
+			'type' : 'date', //date 调出日期选择
+			'minDate' : (new Date().getFullYear() - 5) + '-' + 1 + '-' + 1, //最小日期
+			'maxDate' : (new Date().getFullYear() + 5) + '-' + 12 + '-' + 31 //最大日期
+		});
+		$('.search').click(function(){
+			var formParams = {
+				"workerName":$("#workerName").val(),
+				"idCardNumber":$("#idCardNumber").val(),
+				"startDate":$("#startDate").val(),
+				"endDate":$("#endDate").val(),
+			}
+				var params = JSON.stringify(formParams);
+				api.execScript({
+						name:'attendance_win',
+						frameName: 'attendance_frm',//frame窗口
+						script: 'getFormParams('+params+');'
+				});
+				api.closeWin();
+		});
+		$('.btn1').click(function(){
+			$("#workerName").val('');
+			$("#idCardNumber").val('');
+			$("#startDate").val('');
+			$("#endDate").val('');
+		})
+	};
+
+</script>
+
+</html>

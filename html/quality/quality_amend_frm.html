@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../icon/iconfont.css" />
+    <style>
+        body {
+            font-family: PingFangSC;
+        }
+
+        .content-box {
+            padding: 0px 20px 30px 20px;
+            /*overflow: hidden;*/
+            /*height:auto;*/
+            height: 250px
+        }
+
+        .content {
+            clear: both;
+            color: #fff;
+            padding: 10px;
+            opacity: 0;
+            transition: all ease .3s;
+            position: absolute;
+            top: 150px;
+            left: 0;
+        }
+
+        .contentin {
+            opacity: 1;
+        }
+        #msglist .aui-content-padded {
+            margin: 0.45rem;
+        }
+
+        #msglist-container {
+            position: relative;
+        }
+
+        #msglist .aui-list {
+            border-top: none;
+        }
+
+        #msglist .msglist-item-header {
+            height: 1.5rem;
+            min-height: 1.5rem;
+            width: 100%;
+            padding: 0rem 0rem;
+            -webkit-justify-content: flex-start;
+            justify-content: flex-start;
+            -webkit-box-align: start;
+            -webkit-align-items: flex-start;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        #msglist .msglist-item-header .aui-pull-right {
+            position: absolute;
+            right: 0.25rem;
+            top: 0.25rem;
+        }
+
+        #msglist .aui-media-list-item-inner .aui-list-item-text {
+            align-items: flex-start;
+        }
+
+        #msglist .msglist-item-status .msglist-item-tag {
+            display: inline-block;
+            padding: 0.3em 0.35em;
+            font-size: 0.6rem;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            margin-top: 0.5rem;
+            border-radius: 0.8rem;
+            border-style: solid;
+            border-width: 0.05rem;
+            border-color: #4bd2d3;
+            color: #4bd2d3;
+            background-color: #e8f0f0;
+            margin-right: 4px;
+        }
+
+        #msglist .msglist-item-tag.risk-extreme {
+            border-color: red;
+            color: red;
+            background-color: yellow;
+        }
+
+        .risk-high {
+            border-color: #f96497;
+            color: #f96497;
+            background-color: #fef4f6;
+        }
+
+        .risk-normal {
+            border-color: #6ed2f3;
+            color: #09a2d4;
+            background-color: #effbff;
+        }
+
+        #msglist .msglist-item-tag.to-rectify {
+            border-color: red;
+            color: red;
+            background-color: yellow;
+        }
+
+         .rectify-pending {
+            border-color: #f96497;
+            color: #f96497;
+            background-color: #fef4f6;
+        }
+
+        #msglist .msglist-item-tag.rectify-pending-inspect {
+            border-color: #f96497;
+            color: #f96497;
+            background-color: #fef4f6;
+        }
+
+        .aui-list-item {
+            padding: 10px;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .aui-list-item :active {
+            background-color: #edf7fd;
+        }
+
+        .aui-media-list-item-inner {
+            margin-top: 10px;
+        }
+
+        .aui-list-item-media {
+            margin-right: 0px;
+            width: 160px;
+            height: 90px;
+        }
+
+        .item-inner-content {
+            display: flex;
+            margin-top: 6px;
+        }
+
+        .item-inner-content-left {
+            width: 120px;
+            height: 80px;
+            margin-right: 6px;
+        }
+
+        .item-inner-content-left img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .item-inner-content-righ-title {
+            white-space: nowrap;
+            width: 198px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: bold;
+        }
+
+        .aui-info-top {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .aui-info-bottom {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .none_data {
+            color: #666;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background-color: #FFFFFF;
+        }
+
+        .none_data>img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        #msglist {
+            width: 100%;
+            height: 100%;
+            background-color: #FFFFFF;
+        }
+        #msglist-container {
+            background-color: #FFFFFF;
+        }
+        .red{
+          color:red !important;
+          border:1px solid red !important;
+        }
+        .textWrap {
+			width: 95%;
+			font-size: 12px;
+            float:left;
+		}
+    </style>
+</head>
+
+<body>
+    <div class="content-box" id='msglist'>
+        <ul id="msglist-container">
+            <!-- <li class="aui-list-item">
+                <div class="item-inner-content">
+                    <div class="item-inner-content-left">
+                        <img src="" />
+                    </div>
+                    <div class="item-inner-content-right">
+                        <div class="item-inner-content-righ-title">32</div>
+                        <div class="aui-info-top">
+                            <span style="color: #666666;">检查人</span>
+                            <span>4343</span> &nbsp &nbsp <span>32</span> </div>
+                        <div class="aui-info-bottom">
+                            <span style="color: #666666;">整改人：</span><span>33</span> &nbsp &nbsp
+                            <span>3232</span> </div>
+                    </div>
+                </div>
+            </li> -->
+        </ul>
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/aui-tab.js"></script>
+<script type="text/javascript" src="../../script/reiz.js"></script>
+<script type="text/javascript" src="../../script/zepto.js"></script>
+<script type="text/javascript">
+    var loginInfo;
+    var account;
+    var projectCode;
+    var pageIndex;
+    var pageSize = 10;
+    var arrayLength;
+    var datas = [];
+    var index;  // 1是待整改//2代巡检
+    var checkType = '2',
+
+    apiready = function() {
+         loginInfo = api.pageParam.loginInfo;
+        account = loginInfo.account;
+        projectCode = loginInfo.projects.projectCode;
+        //分页下拉加载
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+          api.showProgress({
+              title: '加载中...',
+              modal: false
+          });
+          $reiz.request.post($reiz.urls['safe'].getAmendPageList, {
+              body: {
+                "account": account,
+                "projectCode": projectCode,
+                "pageIndex": pageIndex,
+                "pageSize": pageSize,
+                "status":index,
+                "checkType":checkType
+              }
+          },function(ret, err) {
+              if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+                api.hideProgress();
+                var data1 = JSON.parse(ret.data);
+                var safeList = data1.records;
+                datas = datas.concat(safeList);
+                arrayLength = arrayLength + safeList.length;
+                pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                moreData(safeList);
+              }else {
+                  api.hideProgress();
+                  api.toast({
+                      msg: '没有更多数据了'
+                  });
+              }
+           })
+        });
+        query();
+
+    };
+
+    var query = function(isFirst) {
+        api.showProgress({
+          style : 'default',
+          animationType : 'fade',
+          title : '努力加载中...',
+          text : '先喝杯茶...',
+          modal : false
+        });
+        $reiz.request.post($reiz.urls['safe'].getAmendPageList, {
+            body: {
+              "account": account,
+              "projectCode": projectCode,
+              "pageIndex": 1,
+              "pageSize": pageSize,
+              "status":index,
+              "checkType":checkType
+            }
+        },function(ret, err) {
+              $('#msglist-container').empty();
+              if (ret.code == '200' && JSON.parse(ret.data).records.length > 0) {
+                api.hideProgress();
+                var data1 = JSON.parse(ret.data);
+
+                var safeList = data1.records;
+                datas = [];
+                datas = datas.concat(safeList);
+                arrayLength = safeList.length;
+                pageIndex = Math.ceil(arrayLength / pageSize + 1);
+                moreData(safeList);
+              }else{
+                api.hideProgress();
+                api.toast({
+      						msg : '没有更多数据了'
+      					});
+              }
+        })
+    };
+    function timeFormatterAll(time) {
+        if (time) {
+            var date = new Date(time)//把定义的时间赋值进来进行下面的转换
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var day = date.getDate().toString().padStart(2, "0");
+            var hour = date.getHours().toString().padStart(2, "0");
+            var minute = date.getMinutes().toString().padStart(2, "0");
+            var second = date.getSeconds().toString().padStart(2, "0");
+            return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        } else {
+            return '';
+        }
+    }
+
+    function timeFormatter(time) {
+        if (time) {
+            var date = new Date(time)//把定义的时间赋值进来进行下面的转换
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, "0");
+            var day = date.getDate().toString().padStart(2, "0");
+            var hour = date.getHours().toString().padStart(2, "0");
+            var minute = date.getMinutes().toString().padStart(2, "0");
+            var second = date.getSeconds().toString().padStart(2, "0");
+            return year + "-" + month + "-" + day;
+        } else {
+            return '';
+        }
+    }
+    //amendUserAccount整改人   checkUserAccount检查人
+    function moreData(data){
+        for(var i =0;i<data.length;i++){
+          switch (data[i].status){
+            case '00':
+                var type_ = '待整改';
+                break;
+            case '01':
+                var type_ = '待复验';
+                break;
+            case '02':
+                var type_ = '待审批';
+                break;
+            case '03':
+                var type_ = '审批通过';
+                break;
+          }
+          if(data[i].files.length>0){
+              var imgSrc = data[i].files[0].path;
+          }else{
+            var imgSrc = '../../image/error-img.png';
+          }
+          data[i].checkDate = timeFormatter(data[i].checkDate);
+          data[i].amendTerm = timeFormatter(data[i].amendTerm);
+          var ptName = $reiz.handleProjectName(data[i]);
+          var html = '<li class="aui-list-item">' +
+            '<div class="msglist-item-header">'+
+                '<div class="msglist-item-status">'+
+                '<span class="msglist-item-tag type_">'+type_+'</span>'+
+                '</div>' +
+                '<div class="aui-pull-right">'+
+                    '<span class="iconfont icon-gengduo"></span>'+
+                    '</div></div>'+
+                '<div class="item-inner-content">' +
+                '<div class="item-inner-content-left">' +
+                    '<img src="'+imgSrc+'" />' +
+                '</div>' +
+                '<div class="item-inner-content-right">' +
+                '<div class="item-inner-content-righ-title">'+ptName+'</div>' +
+                '<div class="aui-info-top">' +
+                    '<div class="textWrap"><span style="color: #666666;">巡检人：</span>' +
+                    '<span>'+data[i].checkUserAccount+'</span></div>'+
+                    '<div class="textWrap"><span style="color: #666666;">巡检时间：</span>' +
+                    '<span>'+data[i].checkDate+'</span></div> ' +
+                '</div>' +
+                '<div class="aui-info-bottom">' +
+                    '<div class="textWrap"><span style="color: #666666;">整改人：</span>' +
+                    '<span>'+data[i].amendUserAccount+'</span></div>'+
+                    //'<span style="color: #666666;">整改期限：</span>' +
+                    //'<span>'+data[i].amendTerm+'</span>' +
+                ' </div>' +
+                '</div>' +
+                '</div>' +
+                '</li>'
+                $('#msglist-container').append(html);
+
+        }
+
+        var ulList = document.querySelectorAll("#msglist-container li");
+        for(var i=0;i<ulList.length;i++){
+          ulList[i].index = [i];
+          ulList[i].onclick = function(){
+            api.openWin({
+                name: 'amend_details_win',
+                url: './amend_details_win.html',
+                pageParam: {
+                    account:account,
+                    element: data[this.index]
+                }
+            });
+          }
+        }
+        $('.type_').each(function(dom,index){
+            if($(this).html() == '审批拒绝'){
+              $(this).addClass('red');
+            }
+        })
+    }
+    //切换tab
+    function setParamer(num) {
+        index = num;
+        query(true);
+        api.execScript({
+            name : 'quality_amend_win',
+            script : "reset('" + num + "');"
+        });
+    }
+
+</script>
+
+</html>

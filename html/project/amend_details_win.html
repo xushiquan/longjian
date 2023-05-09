@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>工程整改</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+
+</head>
+
+<body>
+	<header id="header" class="aui-bar aui-bar-nav aui-bar-info">
+		<a class="aui-pull-left aui-btn" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span>返回 </a>
+		<div class="aui-title">
+		  工程整改详情
+		</div>
+	</header>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+	apiready = function() {
+    var element = api.pageParam.element;
+    var account = api.pageParam.account;
+		var header = $api.byId('header');
+		$api.fixIos7Bar(header);
+		var header_h = $api.offset(header).h;
+		api.openFrame({
+			name: 'amend_detailes_frm',
+			url: 'amend_detailes_frm.html',
+      pageParam:{
+        element:element,
+        account:account
+      },
+			rect: {
+				x: 0,
+				y: header_h,
+				w: 'auto',
+				h: 'auto'
+			}
+		})
+	};
+
+</script>
+
+</html>
